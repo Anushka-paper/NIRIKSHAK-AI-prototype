@@ -1,43 +1,80 @@
-# Python
+# ==========================================
+# NIRIKSHAK AI Prototype - .gitignore
+# ==========================================
+
+# 1. Virtual Environments
+venv/
+env/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# 2. Python Bytecode & Caches
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
-.Python
-env/
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
+.pytest_cache/
+.coverage
+htmlcov/
+.hypothesis/
+.mypy_cache/
+.ruff_cache/
 *.egg-info/
-.installed.cfg
-*.egg
-
-# Database
-nirikshak.db
-*.sqlite3
-
-# Node / Next.js
-node_modules/
-.next/
-out/
+.eggs/
 build/
+dist/
 
-# Environment Variables
+# 3. Next.js / Frontend / Node.js
+node_modules/
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+.next/
+.out/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-debug.log*
+
+# 4. Databases & Environment Variables
+*.db
+*.sqlite
+*.sqlite3
+backend/app/nirikshak.db
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
-# OS
+# 5. Generated Data & Heavy Datasets
+scratch/
+data/pipeline_summary.json
+
+# Keep directory structure via .gitkeep but ignore generated outputs
+data/profiling/*
+!data/profiling/.gitkeep
+
+data/standardized/*
+!data/standardized/.gitkeep
+
+data/cleaned/*
+!data/cleaned/.gitkeep
+
+# Ignore large generated CSV/Parquet files outside raw
+*.parquet
+
+# 6. IDE & Operating System Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 .DS_Store
 Thumbs.db
+desktop.ini
+
