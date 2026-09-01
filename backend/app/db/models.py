@@ -38,6 +38,7 @@ class MPMaster(Base):
     __tablename__ = 'mp_master'
     mp_id = Column(Integer, primary_key=True, autoincrement=True)
     canonical_name = Column(String, nullable=False)
+    house = Column(String, nullable=True) # "Lok Sabha" or "Rajya Sabha"
     state_id = Column(Integer, ForeignKey('geography.geo_id'))
     constituency_id = Column(Integer, ForeignKey('geography.geo_id'))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -47,12 +48,17 @@ class MPAlias(Base):
     alias_id = Column(Integer, primary_key=True, autoincrement=True)
     mp_id = Column(Integer, ForeignKey('mp_master.mp_id'), nullable=False)
     raw_name = Column(String, nullable=False)
+    normalized_name = Column(String, nullable=True)
+    confidence_score = Column(Float, default=1.0)
+    matching_method = Column(String, default="exact")
+    verified = Column(Boolean, default=True)
     source_file = Column(String)
 
 class VendorMaster(Base):
     __tablename__ = 'vendor_master'
     vendor_id = Column(Integer, primary_key=True, autoincrement=True)
     canonical_name = Column(String, nullable=False)
+    registration_number = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 class VendorAlias(Base):
@@ -60,13 +66,54 @@ class VendorAlias(Base):
     alias_id = Column(Integer, primary_key=True, autoincrement=True)
     vendor_id = Column(Integer, ForeignKey('vendor_master.vendor_id'), nullable=False)
     raw_name = Column(String, nullable=False)
-    match_confidence = Column(Float)
+    normalized_name = Column(String, nullable=True)
+    match_confidence = Column(Float, default=1.0)
+    matching_method = Column(String, default="exact")
+    verified = Column(Boolean, default=True)
 
 class IDAMaster(Base):
     __tablename__ = 'ida_master'
     ida_id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False)
-    state_id = Column(Integer, ForeignKey('geography.geo_id'), nullable=False)
+    state_id = Column(Integer, ForeignKey('geography.geo_id'), nullable=True)
+    parent_agency_id = Column(Integer, ForeignKey('ida_master.ida_id'), nullable=True)
+
+class IDAAlias(Base):
+    __tablename__ = 'ida_alias'
+    alias_id = Column(Integer, primary_key=True, autoincrement=True)
+    ida_id = Column(Integer, ForeignKey('ida_master.ida_id'), nullable=False)
+    raw_name = Column(String, nullable=False)
+    normalized_name = Column(String, nullable=True)
+    match_confidence = Column(Float, default=1.0)
+    matching_method = Column(String, default="exact")
+    verified = Column(Boolean, default=True)
+
+class EntityResolutionResult(Base):
+    __tablename__ = 'entity_resolution_result'
+    result_id = Column(Integer, primary_key=True, autoincrement=True)
+    entity_type = Column(String, nullable=False) # work, mp, vendor, ida
+    source_record_id = Column(String, nullable=False)
+    source_entity_value = Column(String, nullable=False)
+    candidate_entity_id = Column(String, nullable=True)
+    confidence_score = Column(Float, nullable=False)
+    matching_method = Column(String, nullable=False) # exact_id, exact_alias, fuzzy, candidate_scoring
+    matching_features = Column(JSON, nullable=True)
+    resolution_status = Column(String, nullable=False) # AUTO_RESOLVED, REVIEW_REQUIRED, UNRESOLVED
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+class EntityResolutionReview(Base):
+    __tablename__ = 'entity_resolution_review'
+    review_id = Column(Integer, primary_key=True, autoincrement=True)
+    entity_type = Column(String, nullable=False)
+    source_value = Column(String, nullable=False)
+    candidate_id = Column(String, nullable=True)
+    candidate_name = Column(String, nullable=True)
+    confidence_score = Column(Float, nullable=False)
+    reason = Column(String, nullable=True)
+    status = Column(String, default="REVIEW_REQUIRED") # AUTO_RESOLVED, REVIEW_REQUIRED, CONFIRMED, REJECTED, UNRESOLVED
+    reviewer = Column(String, nullable=True)
+    reviewed_at = Column(DateTime(timezone=True), nullable=True)
+    final_decision = Column(String, nullable=True)
 
 # Lifecycle tables
 class Allocation(Base):
@@ -82,6 +129,7 @@ class WorkRecommended(Base):
     __tablename__ = 'works_recommended'
     work_id = Column(Integer, primary_key=True, autoincrement=True)
     work_id_raw = Column(String, nullable=False)
+    house = Column(String, nullable=True) # "Lok Sabha" or "Rajya Sabha"
     mp_id = Column(Integer, ForeignKey('mp_master.mp_id'), nullable=False)
     ida_id = Column(Integer, ForeignKey('ida_master.ida_id'), nullable=False)
     category = Column(String)
