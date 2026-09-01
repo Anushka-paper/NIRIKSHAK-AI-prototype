@@ -1,7 +1,13 @@
 import sys
 import os
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+backend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+app_dir = os.path.abspath(os.path.dirname(__file__))
+
+for d in [root_dir, backend_dir, app_dir]:
+    if d not in sys.path:
+        sys.path.insert(0, d)
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware

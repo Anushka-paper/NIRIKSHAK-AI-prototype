@@ -2,7 +2,6 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from db.session import get_db
 from ingestion.dataset_provider import get_dataset_metrics
-from ingestion.validation.validator import DataValidator
 
 router = APIRouter()
 
