@@ -42,18 +42,6 @@ export default function Dashboard() {
     }
   };
 
-  const handleLiveSync = async () => {
-    setIsSyncing(true);
-    try {
-      await fetch(`${API_URL}/api/v1/sync/trigger?house=${selectedHouse}`, { method: "POST" });
-      await fetchStats(selectedHouse);
-    } catch (err) {
-      console.error("Sync error:", err);
-    } finally {
-      setIsSyncing(false);
-    }
-  };
-
   useEffect(() => {
     fetchStats(selectedHouse);
   }, [selectedHouse]);
@@ -135,18 +123,9 @@ export default function Dashboard() {
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="px-3 py-1 bg-green-500/10 text-green-400 border border-green-500/30 rounded-full text-xs font-semibold flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span> Live eSAKSHI Pipeline
+            <span className="px-3.5 py-1.5 bg-blue-500/10 text-blue-400 border border-blue-500/30 rounded-full text-xs font-semibold flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span> Dynamic House Query Engine
             </span>
-
-            <button
-              onClick={handleLiveSync}
-              disabled={isSyncing}
-              className="px-3.5 py-1.5 bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 border border-blue-500/30 rounded-xl text-xs font-semibold flex items-center gap-2 transition disabled:opacity-50"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? "animate-spin text-blue-400" : ""}`} />
-              {isSyncing ? "Syncing..." : "Sync Live Data"}
-            </button>
           </div>
         </div>
       </header>

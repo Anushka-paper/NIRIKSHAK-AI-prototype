@@ -1,0 +1,190 @@
+{
+  "LS": {
+    "Allocated Limit for Honble MPs (2).csv": {
+      "house": "LOK_SABHA",
+      "line_count": 545,
+      "columns": [
+        "Sr. No.",
+        "State",
+        "Hon'ble Members of Parliaments",
+        "Constituency",
+        "Allocated AMOUNT ( \u20b9 )"
+      ]
+    },
+    "Amount consented for Calamity (2).csv": {
+      "house": "LOK_SABHA",
+      "line_count": 14,
+      "columns": [
+        "Sr. No.",
+        "Calamity Type",
+        "Calamity Name",
+        "Hon'ble Members of Parliament",
+        "Date of Consent",
+        "Consent Amount ( \u20b9 )"
+      ]
+    },
+    "Expenditure on Completed and On-going Works as on Date (3).csv": {
+      "house": "LOK_SABHA",
+      "line_count": 83017,
+      "columns": [
+        "Sr. No.",
+        "State",
+        "Work",
+        "Work ID",
+        "IDA",
+        "Hon'ble Members of Parliament",
+        "Constituency",
+        "Expenditure Date",
+        "Vendor Name",
+        "Payment Status",
+        "Fund Disbursed Amount ( \u20b9 )"
+      ]
+    },
+    "Works Completed (7).csv": {
+      "house": "LOK_SABHA",
+      "line_count": 33977,
+      "columns": [
+        "Sr. No.",
+        "Work Category",
+        "Work",
+        "State",
+        "IDA",
+        "Work Description",
+        "Hon'ble Members of Parliament",
+        "Constituency",
+        "Image",
+        "Completion Date",
+        "Amount Disbursed ( \u20b9 )"
+      ]
+    },
+    "Works Recommended (4).csv": {
+      "house": "LOK_SABHA",
+      "line_count": 103394,
+      "columns": [
+        "Sr. No.",
+        "Work category",
+        "WORK",
+        "State",
+        "IDA",
+        "Hon'ble Members of Parliament",
+        "Constituency",
+        "Work description",
+        "Recommended date",
+        "RECOMMENDED AMOUNT   ( \u20b9 )",
+        "Sanction Date"
+      ]
+    },
+    "Works Sanctioned (1).csv": {
+      "house": "LOK_SABHA",
+      "line_count": 78288,
+      "columns": [
+        "Sr. No.",
+        "Work category",
+        "Work",
+        "State",
+        "IDA",
+        "Hon'ble Members of Parliament",
+        "Constituency",
+        "Work description",
+        "Recommended date",
+        "Sanction Date",
+        "Sanction Amount ( \u20b9 )",
+        "Work Status"
+      ]
+    }
+  },
+  "RS": {
+    "Allocated Limit for Honble MPs (4).csv": {
+      "house": "RAJYA_SABHA",
+      "line_count": 233,
+      "columns": [
+        "Sr. No.",
+        "State",
+        "Hon'ble Members of Parliament",
+        "Elected/Nominated",
+        "Allocated AMOUNT ( \u20b9 )"
+      ]
+    },
+    "Amount consented for Calamity (3).csv": {
+      "house": "RAJYA_SABHA",
+      "line_count": 22,
+      "columns": [
+        "Sr. No.",
+        "Calamity Type",
+        "Calamity Name",
+        "Hon'ble Members of Parliament",
+        "Date of Consent",
+        "Consent Amount ( \u20b9 )"
+      ]
+    },
+    "Expenditure on Completed and On-going Works as on Date (2).csv": {
+      "house": "RAJYA_SABHA",
+      "line_count": 24968,
+      "columns": [
+        "Sr. No.",
+        "State",
+        "Work",
+        "Work ID",
+        "IDA",
+        "Hon'ble Members of Parliament",
+        "Elected/Nominated",
+        "Expenditure Date",
+        "Vendor Name",
+        "Payment Status",
+        "Fund Disbursed Amount ( \u20b9 )"
+      ]
+    },
+    "Works Completed (8).csv": {
+      "house": "RAJYA_SABHA",
+      "line_count": 9913,
+      "columns": [
+        "Sr. No.",
+        "Work Category",
+        "Work",
+        "State",
+        "IDA",
+        "Work Description",
+        "Hon'ble Members of Parliament",
+        "Elected/Nominated",
+        "Image",
+        "Completion Date",
+        "Amount Disbursed ( \u20b9 )"
+      ]
+    },
+    "Works Recommended (2).csv": {
+      "house": "RAJYA_SABHA",
+      "line_count": 24949,
+      "columns": [
+        "Sr. No.",
+        "Work category",
+        "WORK",
+        "State",
+        "IDA",
+        "Hon'ble Members of Parliament",
+        "Elected/Nominated",
+        "Work description",
+        "Recommended date",
+        "RECOMMENDED AMOUNT   ( \u20b9 )",
+        "Sanction Date"
+      ]
+    },
+    "Works Sanctioned (7).csv": {
+      "house": "RAJYA_SABHA",
+      "line_count": 19313,
+      "columns": [
+        "Sr. No.",
+        "Work category",
+        "Work",
+        "State",
+        "IDA",
+        "Hon'ble Members of Parliament",
+        "Elected/Nominated",
+        "Work description",
+        "Recommended date",
+        "Sanction Date",
+        "Sanction Amount ( \u20b9 )",
+        "Work Status"
+      ]
+    }
+  }
+}
