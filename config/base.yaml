@@ -1,0 +1,11 @@
+app_name: "NIRIKSHAK AI"
+environment: "development"
+database:
+  url: ${DATABASE_URL}
+redis:
+  url: ${REDIS_URL}
+celery:
+  broker_url: ${REDIS_URL}
+  result_backend: ${REDIS_URL}
+mlflow:
+  tracking_uri: ${MLFLOW_TRACKING_URI}
