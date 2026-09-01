@@ -28,13 +28,7 @@ export default function Dashboard() {
 
   const fetchStats = async (house: string) => {
     try {
-      // Try localhost first, then 127.0.0.1 fallback
-      let res;
-      try {
-        res = await fetch(`http://localhost:8000/api/v1/dashboard/overview?house=${house}`);
-      } catch {
-        res = await fetch(`http://127.0.0.1:8000/api/v1/dashboard/overview?house=${house}`);
-      }
+      const res = await fetch(`${API_URL}/api/v1/dashboard/overview?house=${house}`);
       
       if (res.ok) {
         const data = await res.json();
@@ -50,12 +44,7 @@ export default function Dashboard() {
   const handleLiveSync = async () => {
     setIsSyncing(true);
     try {
-      let res;
-      try {
-        res = await fetch(`http://localhost:8000/api/v1/sync/trigger?house=${selectedHouse}`, { method: "POST" });
-      } catch {
-        res = await fetch(`http://127.0.0.1:8000/api/v1/sync/trigger?house=${selectedHouse}`, { method: "POST" });
-      }
+      await fetch(`${API_URL}/api/v1/sync/trigger?house=${selectedHouse}`, { method: "POST" });
       await fetchStats(selectedHouse);
     } catch (err) {
       console.error("Sync error:", err);
@@ -65,10 +54,7 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    fetch(`${API_URL}/api/v1/dashboard/overview`)
-      .then((res) => res.json())
-      .then((data) => setStats(data))
-      .catch((err) => console.error("Error fetching stats:", err));
+    fetchStats(selectedHouse);
   }, []);
 
   if (fetchError && !stats) {
@@ -87,6 +73,14 @@ export default function Dashboard() {
             Retry Connection
           </button>
         </div>
+      </div>
+    );
+  }
+
+  if (!stats) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-gray-950 text-white">
+        Loading data...
       </div>
     );
   }

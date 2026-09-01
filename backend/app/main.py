@@ -6,9 +6,11 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..',
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from api.v1 import dashboard, data_quality, entity_resolution, live_sync, standardization
 from core.config import get_cors_origins, settings
-from api.v1 import dashboard
 from db.bootstrap import ensure_demo_database
+from db.session import SessionLocal
+from ingestion.live_sync import sync_live_data
 
 app = FastAPI(title=settings.app_name)
 
@@ -39,6 +41,7 @@ def background_live_sync_loop():
 
 @app.on_event("startup")
 def start_background_live_sync():
+    ensure_demo_database()
     t = threading.Thread(target=background_live_sync_loop, daemon=True)
     t.start()
     print("[NIRIKSHAK AI] Background Dynamic Live Sync Daemon Started (Polling every 60s)!")
@@ -50,7 +53,3 @@ def read_root():
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
-
-@app.on_event("startup")
-def startup():
-    ensure_demo_database()

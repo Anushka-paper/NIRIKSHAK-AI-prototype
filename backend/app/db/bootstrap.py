@@ -73,6 +73,12 @@ def ensure_demo_database() -> None:
 
     inspector = inspect(engine)
     if "works_recommended" in inspector.get_table_names():
+        column_names = {column["name"] for column in inspector.get_columns("works_recommended")}
+        if "house" not in column_names:
+            Base.metadata.drop_all(bind=engine)
+            Base.metadata.create_all(bind=engine)
+            inspector = inspect(engine)
+
         with Session(engine) as session:
             if session.query(WorkRecommended).first():
                 return
