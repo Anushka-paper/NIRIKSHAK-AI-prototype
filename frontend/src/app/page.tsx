@@ -18,6 +18,8 @@ import {
   ShieldCheck
 } from "lucide-react";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
+
 export default function Dashboard() {
   const [stats, setStats] = useState<any>(null);
   const [selectedHouse, setSelectedHouse] = useState<string>("all");
@@ -63,26 +65,11 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    fetchStats(selectedHouse);
-
-    // Auto-polling interval every 10 seconds
-    const interval = setInterval(() => {
-      fetchStats(selectedHouse);
-    }, 10000);
-
-    return () => clearInterval(interval);
-  }, [selectedHouse]);
-
-  if (!stats && !fetchError) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-gray-950 text-white">
-        <div className="flex flex-col items-center gap-3">
-          <Activity className="w-8 h-8 text-blue-500 animate-spin" />
-          <p className="text-gray-400">Loading NIRIKSHAK AI Live Sentinel Data...</p>
-        </div>
-      </div>
-    );
-  }
+    fetch(`${API_URL}/api/v1/dashboard/overview`)
+      .then((res) => res.json())
+      .then((data) => setStats(data))
+      .catch((err) => console.error("Error fetching stats:", err));
+  }, []);
 
   if (fetchError && !stats) {
     return (
