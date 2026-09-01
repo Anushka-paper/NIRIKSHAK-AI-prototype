@@ -1,0 +1,1 @@
+source_dataset,source_row_id,source_work_id,candidate_join_key,failed_join_strategy,reason,integration_status,timestamp
