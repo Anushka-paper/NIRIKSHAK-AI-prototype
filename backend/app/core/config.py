@@ -6,6 +6,8 @@ class Settings(BaseSettings):
     app_name: str = "NIRIKSHAK AI"
     environment: str = "development"
     database_url: str = "sqlite:///../../nirikshak.db"
+    cors_origins: str = "http://localhost:3000,http://127.0.0.1:3000"
+    auto_seed_sqlite: bool = True
     redis_url: str = "sqlite://"
     celery_broker_url: str = ""
     celery_result_backend: str = ""
@@ -30,6 +32,9 @@ class Settings(BaseSettings):
         env_file = ".env"
 
 settings = Settings()
+
+def get_cors_origins() -> list[str]:
+    return [origin.strip() for origin in settings.cors_origins.split(",") if origin.strip()]
 
 # Note: In a full implementation, this file would load values from config/*.yaml
 # files if present, overriding defaults and env vars according to Phase 0 constraints.
