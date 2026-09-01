@@ -15,9 +15,6 @@ from data_pipeline.cleaning.metadata import is_grand_total_row, is_repeated_head
 def test_whitespace_and_encoding():
     assert clean_whitespace("  Ravi Kishan  ") == "Ravi Kishan"
     assert clean_whitespace("Shri  Ravi  Kishan") == "Shri Ravi Kishan"
-    assert clean_whitespace("  	
-Adv  Dean Kuriakose
- ") == "Adv Dean Kuriakose"
     assert clean_whitespace("  \t\nAdv  Dean Kuriakose\n ") == "Adv Dean Kuriakose"
 
 def test_null_value_cleaning():

@@ -1,0 +1,581 @@
+{
+  "house": "RAJYA_SABHA",
+  "total_rows": 79386,
+  "total_errors": 0,
+  "total_warnings": 0,
+  "quality_score": 100.0,
+  "datasets": {
+    "allocated_limit": {
+      "dataset": "allocated_limit",
+      "rows": 231,
+      "errors": 0,
+      "warnings": 0,
+      "status": "VALID",
+      "null_profile": {
+        "source_house": {
+          "total_records": 231,
+          "null_count": 0,
+          "non_null_count": 231,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "source_file": {
+          "total_records": 231,
+          "null_count": 0,
+          "non_null_count": 231,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "source_row_number": {
+          "total_records": 231,
+          "null_count": 0,
+          "non_null_count": 231,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "sr_no": {
+          "total_records": 231,
+          "null_count": 0,
+          "non_null_count": 231,
+          "null_percentage": 0.0,
+          "classification": "OPTIONAL"
+        },
+        "state": {
+          "total_records": 231,
+          "null_count": 0,
+          "non_null_count": 231,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "honble_members_of_parliament": {
+          "total_records": 231,
+          "null_count": 0,
+          "non_null_count": 231,
+          "null_percentage": 0.0,
+          "classification": "OPTIONAL"
+        },
+        "elected/nominated": {
+          "total_records": 231,
+          "null_count": 0,
+          "non_null_count": 231,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "allocated_amount_\u20b9": {
+          "total_records": 231,
+          "null_count": 0,
+          "non_null_count": 231,
+          "null_percentage": 0.0,
+          "classification": "CONDITIONALLY_REQUIRED"
+        }
+      }
+    },
+    "calamity_consent": {
+      "dataset": "calamity_consent",
+      "rows": 20,
+      "errors": 0,
+      "warnings": 0,
+      "status": "VALID",
+      "null_profile": {
+        "source_house": {
+          "total_records": 20,
+          "null_count": 0,
+          "non_null_count": 20,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "source_file": {
+          "total_records": 20,
+          "null_count": 0,
+          "non_null_count": 20,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "source_row_number": {
+          "total_records": 20,
+          "null_count": 0,
+          "non_null_count": 20,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "sr_no": {
+          "total_records": 20,
+          "null_count": 0,
+          "non_null_count": 20,
+          "null_percentage": 0.0,
+          "classification": "OPTIONAL"
+        },
+        "calamity_type": {
+          "total_records": 20,
+          "null_count": 0,
+          "non_null_count": 20,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "calamity_name": {
+          "total_records": 20,
+          "null_count": 0,
+          "non_null_count": 20,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "honble_members_of_parliament": {
+          "total_records": 20,
+          "null_count": 0,
+          "non_null_count": 20,
+          "null_percentage": 0.0,
+          "classification": "OPTIONAL"
+        },
+        "date_of_consent": {
+          "total_records": 20,
+          "null_count": 0,
+          "non_null_count": 20,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "consent_amount_\u20b9": {
+          "total_records": 20,
+          "null_count": 20,
+          "non_null_count": 0,
+          "null_percentage": 100.0,
+          "classification": "CONDITIONALLY_REQUIRED"
+        }
+      }
+    },
+    "expenditure": {
+      "dataset": "expenditure",
+      "rows": 24966,
+      "errors": 0,
+      "warnings": 0,
+      "status": "VALID",
+      "null_profile": {
+        "source_house": {
+          "total_records": 24966,
+          "null_count": 0,
+          "non_null_count": 24966,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "source_file": {
+          "total_records": 24966,
+          "null_count": 0,
+          "non_null_count": 24966,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "source_row_number": {
+          "total_records": 24966,
+          "null_count": 0,
+          "non_null_count": 24966,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "sr_no": {
+          "total_records": 24966,
+          "null_count": 0,
+          "non_null_count": 24966,
+          "null_percentage": 0.0,
+          "classification": "OPTIONAL"
+        },
+        "state": {
+          "total_records": 24966,
+          "null_count": 0,
+          "non_null_count": 24966,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "work": {
+          "total_records": 24966,
+          "null_count": 0,
+          "non_null_count": 24966,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "work_id": {
+          "total_records": 24966,
+          "null_count": 0,
+          "non_null_count": 24966,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "ida": {
+          "total_records": 24966,
+          "null_count": 0,
+          "non_null_count": 24966,
+          "null_percentage": 0.0,
+          "classification": "OPTIONAL"
+        },
+        "honble_members_of_parliament": {
+          "total_records": 24966,
+          "null_count": 0,
+          "non_null_count": 24966,
+          "null_percentage": 0.0,
+          "classification": "OPTIONAL"
+        },
+        "elected/nominated": {
+          "total_records": 24966,
+          "null_count": 0,
+          "non_null_count": 24966,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "expenditure_date": {
+          "total_records": 24966,
+          "null_count": 0,
+          "non_null_count": 24966,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "vendor_name": {
+          "total_records": 24966,
+          "null_count": 0,
+          "non_null_count": 24966,
+          "null_percentage": 0.0,
+          "classification": "OPTIONAL"
+        },
+        "payment_status": {
+          "total_records": 24966,
+          "null_count": 0,
+          "non_null_count": 24966,
+          "null_percentage": 0.0,
+          "classification": "OPTIONAL"
+        },
+        "fund_disbursed_amount_\u20b9": {
+          "total_records": 24966,
+          "null_count": 0,
+          "non_null_count": 24966,
+          "null_percentage": 0.0,
+          "classification": "CONDITIONALLY_REQUIRED"
+        }
+      }
+    },
+    "works_completed": {
+      "dataset": "works_completed",
+      "rows": 9911,
+      "errors": 0,
+      "warnings": 0,
+      "status": "VALID",
+      "null_profile": {
+        "source_house": {
+          "total_records": 9911,
+          "null_count": 0,
+          "non_null_count": 9911,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "source_file": {
+          "total_records": 9911,
+          "null_count": 0,
+          "non_null_count": 9911,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "source_row_number": {
+          "total_records": 9911,
+          "null_count": 0,
+          "non_null_count": 9911,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "sr_no": {
+          "total_records": 9911,
+          "null_count": 0,
+          "non_null_count": 9911,
+          "null_percentage": 0.0,
+          "classification": "OPTIONAL"
+        },
+        "work_category": {
+          "total_records": 9911,
+          "null_count": 5,
+          "non_null_count": 9906,
+          "null_percentage": 0.05,
+          "classification": "OPTIONAL"
+        },
+        "work": {
+          "total_records": 9911,
+          "null_count": 0,
+          "non_null_count": 9911,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "state": {
+          "total_records": 9911,
+          "null_count": 0,
+          "non_null_count": 9911,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "ida": {
+          "total_records": 9911,
+          "null_count": 0,
+          "non_null_count": 9911,
+          "null_percentage": 0.0,
+          "classification": "OPTIONAL"
+        },
+        "work_description": {
+          "total_records": 9911,
+          "null_count": 6,
+          "non_null_count": 9905,
+          "null_percentage": 0.06,
+          "classification": "OPTIONAL"
+        },
+        "honble_members_of_parliament": {
+          "total_records": 9911,
+          "null_count": 0,
+          "non_null_count": 9911,
+          "null_percentage": 0.0,
+          "classification": "OPTIONAL"
+        },
+        "elected/nominated": {
+          "total_records": 9911,
+          "null_count": 0,
+          "non_null_count": 9911,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "image": {
+          "total_records": 9911,
+          "null_count": 3458,
+          "non_null_count": 6453,
+          "null_percentage": 34.89,
+          "classification": "OPTIONAL"
+        },
+        "completion_date": {
+          "total_records": 9911,
+          "null_count": 0,
+          "non_null_count": 9911,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "amount_disbursed_\u20b9": {
+          "total_records": 9911,
+          "null_count": 18,
+          "non_null_count": 9893,
+          "null_percentage": 0.18,
+          "classification": "CONDITIONALLY_REQUIRED"
+        }
+      }
+    },
+    "works_recommended": {
+      "dataset": "works_recommended",
+      "rows": 24947,
+      "errors": 0,
+      "warnings": 0,
+      "status": "VALID",
+      "null_profile": {
+        "source_house": {
+          "total_records": 24947,
+          "null_count": 0,
+          "non_null_count": 24947,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "source_file": {
+          "total_records": 24947,
+          "null_count": 0,
+          "non_null_count": 24947,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "source_row_number": {
+          "total_records": 24947,
+          "null_count": 0,
+          "non_null_count": 24947,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "sr_no": {
+          "total_records": 24947,
+          "null_count": 0,
+          "non_null_count": 24947,
+          "null_percentage": 0.0,
+          "classification": "OPTIONAL"
+        },
+        "work_category": {
+          "total_records": 24947,
+          "null_count": 5,
+          "non_null_count": 24942,
+          "null_percentage": 0.02,
+          "classification": "OPTIONAL"
+        },
+        "work": {
+          "total_records": 24947,
+          "null_count": 0,
+          "non_null_count": 24947,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "state": {
+          "total_records": 24947,
+          "null_count": 0,
+          "non_null_count": 24947,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "ida": {
+          "total_records": 24947,
+          "null_count": 0,
+          "non_null_count": 24947,
+          "null_percentage": 0.0,
+          "classification": "OPTIONAL"
+        },
+        "honble_members_of_parliament": {
+          "total_records": 24947,
+          "null_count": 0,
+          "non_null_count": 24947,
+          "null_percentage": 0.0,
+          "classification": "OPTIONAL"
+        },
+        "elected/nominated": {
+          "total_records": 24947,
+          "null_count": 0,
+          "non_null_count": 24947,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "work_description": {
+          "total_records": 24947,
+          "null_count": 23,
+          "non_null_count": 24924,
+          "null_percentage": 0.09,
+          "classification": "OPTIONAL"
+        },
+        "recommended_date": {
+          "total_records": 24947,
+          "null_count": 0,
+          "non_null_count": 24947,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "recommended_amount_\u20b9": {
+          "total_records": 24947,
+          "null_count": 0,
+          "non_null_count": 24947,
+          "null_percentage": 0.0,
+          "classification": "CONDITIONALLY_REQUIRED"
+        },
+        "sanction_date": {
+          "total_records": 24947,
+          "null_count": 5880,
+          "non_null_count": 19067,
+          "null_percentage": 23.57,
+          "classification": "CONDITIONALLY_REQUIRED"
+        }
+      }
+    },
+    "works_sanctioned": {
+      "dataset": "works_sanctioned",
+      "rows": 19311,
+      "errors": 0,
+      "warnings": 0,
+      "status": "VALID",
+      "null_profile": {
+        "source_house": {
+          "total_records": 19311,
+          "null_count": 0,
+          "non_null_count": 19311,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "source_file": {
+          "total_records": 19311,
+          "null_count": 0,
+          "non_null_count": 19311,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "source_row_number": {
+          "total_records": 19311,
+          "null_count": 0,
+          "non_null_count": 19311,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "sr_no": {
+          "total_records": 19311,
+          "null_count": 0,
+          "non_null_count": 19311,
+          "null_percentage": 0.0,
+          "classification": "OPTIONAL"
+        },
+        "work_category": {
+          "total_records": 19311,
+          "null_count": 7,
+          "non_null_count": 19304,
+          "null_percentage": 0.04,
+          "classification": "OPTIONAL"
+        },
+        "work": {
+          "total_records": 19311,
+          "null_count": 0,
+          "non_null_count": 19311,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "state": {
+          "total_records": 19311,
+          "null_count": 0,
+          "non_null_count": 19311,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "ida": {
+          "total_records": 19311,
+          "null_count": 0,
+          "non_null_count": 19311,
+          "null_percentage": 0.0,
+          "classification": "OPTIONAL"
+        },
+        "honble_members_of_parliament": {
+          "total_records": 19311,
+          "null_count": 0,
+          "non_null_count": 19311,
+          "null_percentage": 0.0,
+          "classification": "OPTIONAL"
+        },
+        "elected/nominated": {
+          "total_records": 19311,
+          "null_count": 0,
+          "non_null_count": 19311,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "work_description": {
+          "total_records": 19311,
+          "null_count": 11,
+          "non_null_count": 19300,
+          "null_percentage": 0.06,
+          "classification": "OPTIONAL"
+        },
+        "recommended_date": {
+          "total_records": 19311,
+          "null_count": 0,
+          "non_null_count": 19311,
+          "null_percentage": 0.0,
+          "classification": "CONDITIONALLY_REQUIRED"
+        },
+        "sanction_date": {
+          "total_records": 19311,
+          "null_count": 0,
+          "non_null_count": 19311,
+          "null_percentage": 0.0,
+          "classification": "REQUIRED"
+        },
+        "sanction_amount_\u20b9": {
+          "total_records": 19311,
+          "null_count": 0,
+          "non_null_count": 19311,
+          "null_percentage": 0.0,
+          "classification": "CONDITIONALLY_REQUIRED"
+        },
+        "work_status": {
+          "total_records": 19311,
+          "null_count": 0,
+          "non_null_count": 19311,
+          "null_percentage": 0.0,
+          "classification": "OPTIONAL"
+        }
+      }
+    }
+  }
+}
