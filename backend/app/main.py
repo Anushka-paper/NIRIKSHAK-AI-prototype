@@ -6,17 +6,16 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..',
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from core.config import settings
-from api.v1 import dashboard, data_quality, live_sync, standardization, entity_resolution
-from db.session import SessionLocal
-from ingestion.live_sync import sync_live_data
+from core.config import get_cors_origins, settings
+from api.v1 import dashboard
+from db.bootstrap import ensure_demo_database
 
 app = FastAPI(title=settings.app_name)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=get_cors_origins(),
+    allow_credentials="*" not in get_cors_origins(),
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -46,8 +45,12 @@ def start_background_live_sync():
 
 @app.get("/")
 def read_root():
-    return {
-        "message": "NIRIKSHAK AI Dynamic Backend Engine Running",
-        "live_daemon": "active",
-        "sync_interval_seconds": 60
-    }
+    return {"message": "NIRIKSHAK AI API Stub"}
+
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
+
+@app.on_event("startup")
+def startup():
+    ensure_demo_database()
