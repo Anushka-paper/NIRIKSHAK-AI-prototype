@@ -2,8 +2,8 @@ import pandas as pd
 from sqlalchemy import create_engine
 import os
 
-# Connect to the local docker Postgres instance
-DATABASE_URL = "sqlite:///../../nirikshak.db"
+db_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'backend', 'app', 'nirikshak.db'))
+DATABASE_URL = f"sqlite:///{db_path}"
 engine = create_engine(DATABASE_URL)
 
 RAW_DIR = os.path.join(os.path.dirname(__file__), 'raw_csvs')

@@ -5,7 +5,7 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     app_name: str = "NIRIKSHAK AI"
     environment: str = "development"
-    database_url: str = "sqlite:///../../nirikshak.db"
+    database_url: str = "sqlite:///c:/Users/ASUS/Desktop/nirikshak/NIRIKSHAK-AI-prototype/backend/app/nirikshak.db"
     redis_url: str = "sqlite://"
     celery_broker_url: str = ""
     celery_result_backend: str = ""
