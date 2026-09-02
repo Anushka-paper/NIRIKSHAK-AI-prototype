@@ -3,14 +3,16 @@ import json
 import pandas as pd
 from fastapi import APIRouter, Query, HTTPException, Body
 from typing import Optional
-from datetime import datetime
 
-router = APIRouter(prefix="/works/duplicates", tags=["Duplicate Payment Detector (§10, §11)"])
+router = APIRouter(prefix="/works/duplicates", tags=["Duplicate Payment & Work Detector (§9, §10, §11)"])
 
 DATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "data"))
 
 _DUPLICATES_CACHE = None
 _DUPLICATES_MTIME = 0
+
+_NLP_DUPLICATES_CACHE = None
+_NLP_DUPLICATES_MTIME = 0
 
 def load_duplicates_df():
     global _DUPLICATES_CACHE, _DUPLICATES_MTIME
@@ -25,6 +27,21 @@ def load_duplicates_df():
     df = pd.read_csv(path, low_memory=False)
     _DUPLICATES_CACHE = df
     _DUPLICATES_MTIME = mtime
+    return df
+
+def load_nlp_duplicates_df():
+    global _NLP_DUPLICATES_CACHE, _NLP_DUPLICATES_MTIME
+    path = os.path.join(DATA_DIR, "compliance", "nlp_duplicates.csv")
+    if not os.path.exists(path):
+        return pd.DataFrame()
+        
+    mtime = os.path.getmtime(path)
+    if _NLP_DUPLICATES_CACHE is not None and _NLP_DUPLICATES_MTIME == mtime:
+        return _NLP_DUPLICATES_CACHE
+
+    df = pd.read_csv(path, low_memory=False)
+    _NLP_DUPLICATES_CACHE = df
+    _NLP_DUPLICATES_MTIME = mtime
     return df
 
 @router.get("")
@@ -66,15 +83,35 @@ def query_duplicate_payments(
         "duplicates": res
     }
 
+@router.get("/nlp-semantic")
+def query_nlp_semantic_duplicates(
+    min_similarity: float = Query(0.75, ge=0.0, le=1.0),
+    limit: int = Query(40, ge=1, le=200)
+):
+    """List Work/NLP Semantic Duplicates with Abbreviation Expansion & Calibrated Probability (§9)."""
+    df = load_nlp_duplicates_df()
+    if df.empty:
+        return {"status": "SUCCESS", "total": 0, "duplicates": []}
+
+    if "cosine_similarity" in df.columns:
+        df = df[df["cosine_similarity"] >= min_similarity]
+
+    res = df.head(limit).fillna("").to_dict(orient="records")
+    return {
+        "status": "SUCCESS",
+        "total": len(df),
+        "returned": len(res),
+        "abbreviation_dictionary_terms": 16,
+        "similarity_prior": min_similarity,
+        "duplicates": res
+    }
+
 @router.post("/{duplicate_id}/review")
 def review_duplicate_flag(
     duplicate_id: str,
     review: dict = Body(...)
 ):
-    """
-    Human/auditor review endpoint (§10, §11).
-    Confirm or reject duplicate payment flags (CONFIRMED_DUPLICATE / LEGITIMATE_RATE_CARD / REJECTED).
-    """
+    """Human/auditor review endpoint (§9, §10, §11)."""
     df = load_duplicates_df()
     if df.empty:
         raise HTTPException(status_code=404, detail="Duplicate data store empty")
