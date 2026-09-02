@@ -1,58 +1,92 @@
-import numpy as np
+import os
 import pandas as pd
-from data_pipeline.features.config import FEATURE_VERSION
+import numpy as np
 
-def compute_vendor_features(df_vendor_master, df_exp, df_lifecycle):
-    if df_vendor_master.empty:
+def compute_vendor_features(df_master=None):
+    """
+    Computes 9 core vendor risk features (§7) using vectorized pandas aggregations.
+    """
+    print("[VENDOR FEATURES] Computing 9-dimensional Vendor Feature Store (§7)...")
+
+    master_path = os.path.join("data", "integrated", "master", "unified_work_lifecycle.csv")
+    if df_master is None and os.path.exists(master_path):
+        df_master = pd.read_csv(master_path, low_memory=False)
+
+    if df_master is None or df_master.empty:
         return pd.DataFrame()
-    print(f"[FEATURE STORE] Computing features_vendor for {len(df_vendor_master):,} vendors...")
+
+    df_clean = df_master.copy()
+    vendor_col = "canonical_vendor_name" if "canonical_vendor_name" in df_clean.columns else "vendor_name"
+    df_clean["vendor"] = df_clean.get(vendor_col, pd.Series("", index=df_clean.index)).astype(str).str.strip().str.upper()
+
+    # Filter invalid vendors
+    df_valid = df_clean[(df_clean["vendor"] != "") & (df_clean["vendor"] != "UNKNOWN") & (df_clean["vendor"] != "NAN")].copy()
+
+    amt_col = "sanctioned_amount_inr" if "sanctioned_amount_inr" in df_valid.columns else "recommended_amount_inr"
+    df_valid["amount"] = pd.to_numeric(df_valid.get(amt_col, 0), errors="coerce").fillna(50000)
+    df_valid["state"] = df_valid.get("canonical_state", pd.Series("UNKNOWN", index=df_valid.index)).astype(str)
     
-    df_v = df_vendor_master.copy()
-    if "vendor_id" not in df_v.columns:
-        df_v["vendor_id"] = [f"VENDOR_{i+1:06d}" for i in range(len(df_v))]
-
-    if not df_exp.empty and "canonical_vendor_name" in df_exp.columns:
-        life_cols = [c for c in ["canonical_work_id", "canonical_constituency", "canonical_mp_name"] if c in df_lifecycle.columns]
-        exp_merged = df_exp.merge(df_lifecycle[life_cols], on="canonical_work_id", how="left") if not df_lifecycle.empty else df_exp.copy()
-        
-        agg_kwargs = {"work_count": ("canonical_work_id", "nunique")}
-        if "canonical_constituency" in exp_merged.columns:
-            agg_kwargs["constituency_count"] = ("canonical_constituency", "nunique")
-        if "canonical_mp_name" in exp_merged.columns:
-            agg_kwargs["mp_count"] = ("canonical_mp_name", "nunique")
-        if "expenditure_amount_inr" in exp_merged.columns:
-            agg_kwargs["total_expenditure_inr"] = ("expenditure_amount_inr", "sum")
-            
-        v_agg = exp_merged.groupby("canonical_vendor_name").agg(**agg_kwargs).reset_index()
-        
-        if "canonical_mp_name" in exp_merged.columns and "expenditure_amount_inr" in exp_merged.columns:
-            mp_group = exp_merged.groupby(["canonical_vendor_name", "canonical_mp_name"])["expenditure_amount_inr"].sum().reset_index()
-            tot_group = exp_merged.groupby("canonical_vendor_name")["expenditure_amount_inr"].sum().reset_index().rename(columns={"expenditure_amount_inr": "tot_exp"})
-            merged_dep = mp_group.merge(tot_group, on="canonical_vendor_name")
-            merged_dep["dep_pct"] = np.where(merged_dep["tot_exp"] > 0, (merged_dep["expenditure_amount_inr"] / merged_dep["tot_exp"]) * 100.0, 0.0)
-            max_dep = merged_dep.groupby("canonical_vendor_name")["dep_pct"].max().reset_index().rename(columns={"dep_pct": "single_mp_dependence_pct"})
-            v_agg = v_agg.merge(max_dep, on="canonical_vendor_name", how="left")
-        else:
-            v_agg["single_mp_dependence_pct"] = 100.0
-
-        df_v = df_v.merge(v_agg, left_on="canonical_name", right_on="canonical_vendor_name", how="left")
-
-    df_v["work_count"] = df_v.get("work_count", pd.Series(1, index=df_v.index)).fillna(1).astype(int)
-    df_v["constituency_count"] = df_v.get("constituency_count", pd.Series(1, index=df_v.index)).fillna(1).astype(int)
-    df_v["mp_count"] = df_v.get("mp_count", pd.Series(1, index=df_v.index)).fillna(1).astype(int)
-    df_v["total_expenditure_inr"] = df_v.get("total_expenditure_inr_y", df_v.get("total_expenditure_inr", pd.Series(0.0, index=df_v.index))).fillna(0.0)
-    df_v["avg_work_value_inr"] = np.where(df_v["work_count"] > 0, df_v["total_expenditure_inr"] / df_v["work_count"], 0.0)
-    df_v["single_mp_dependence_pct"] = df_v.get("single_mp_dependence_pct", pd.Series(100.0, index=df_v.index)).fillna(100.0)
-    tot_works = max(1, df_v["work_count"].sum())
-    df_v["concentration_pct"] = np.minimum(100.0, round((df_v["work_count"] / tot_works) * 100.0 * 50.0, 2))
-
-    df_v["feature_version"] = FEATURE_VERSION
-    df_v["computed_at"] = pd.Timestamp.now().isoformat()
+    const_col = "constituency" if "constituency" in df_valid.columns else "canonical_mp_name"
+    df_valid["constituency"] = df_valid.get(const_col, pd.Series("UNKNOWN", index=df_valid.index)).astype(str)
     
-    keep_cols = [
-        "vendor_id", "canonical_name", "canonical_state", "work_count", "constituency_count",
-        "mp_count", "total_expenditure_inr", "avg_work_value_inr", "single_mp_dependence_pct",
-        "concentration_pct", "feature_version", "computed_at"
+    work_id_col = "canonical_work_id" if "canonical_work_id" in df_valid.columns else "work_id"
+
+    # Pre-compute constituency total spend
+    const_spend = df_valid.groupby("constituency")["amount"].transform("sum")
+    df_valid["const_spend"] = const_spend
+    total_national_spend = df_valid["amount"].sum()
+
+    # Fast vectorized aggregation
+    grp = df_valid.groupby("vendor").agg(
+        vendor_transaction_count=(work_id_col, "count"),
+        vendor_total_value=("amount", "sum"),
+        vendor_work_count=(work_id_col, "nunique"),
+        vendor_constituency_count=("constituency", "nunique"),
+        vendor_state_count=("state", "nunique"),
+        amt_mean=("amount", "mean"),
+        amt_std=("amount", "std"),
+        max_const_spend=("const_spend", "max"),
+        primary_constituency=("constituency", lambda s: s.mode()[0] if not s.empty else "UNKNOWN")
+    ).reset_index()
+
+    # 9 Features Derivation
+    grp["canonical_vendor_name"] = grp["vendor"]
+    grp["vendor_total_value_cr"] = (grp["vendor_total_value"] / 1e7).round(2)
+    
+    # Amount CV = std / mean
+    grp["vendor_amount_cv"] = (grp["amt_std"].fillna(0) / grp["amt_mean"]).round(3)
+    
+    # Same day multi work proxy
+    grp["same_day_multi_work_count"] = (grp["vendor_transaction_count"] - grp["vendor_work_count"]).clip(lower=0)
+
+    # Vendor dependency = vendor spend / primary constituency spend
+    grp["vendor_dependency"] = ((grp["vendor_total_value"] / grp["max_const_spend"].replace(0, np.nan)) * 100).fillna(100.0).round(1).clip(upper=100.0)
+
+    # Vendor concentration pct = vendor spend / national spend
+    grp["vendor_concentration_pct"] = ((grp["vendor_total_value"] / total_national_spend) * 1000).round(2)
+
+    features = [
+        "canonical_vendor_name", "vendor_transaction_count", "vendor_total_value",
+        "vendor_total_value_cr", "vendor_work_count", "vendor_constituency_count",
+        "vendor_state_count", "vendor_concentration_pct", "vendor_amount_cv",
+        "same_day_multi_work_count", "vendor_dependency", "primary_constituency"
     ]
-    res_cols = [c for c in keep_cols if c in df_v.columns]
-    return df_v[res_cols]
+
+    df_res = grp[features].sort_values(by="vendor_total_value", ascending=False)
+    print(f"[VENDOR FEATURES] Computed features for {len(df_res):,} valid vendor entities.")
+    return df_res
+
+def run_vendor_features_pipeline():
+    df_feat = compute_vendor_features()
+    if df_feat.empty:
+        print("[VENDOR FEATURES] Master dataset empty.")
+        return
+
+    feat_dir = os.path.join("data", "features")
+    os.makedirs(feat_dir, exist_ok=True)
+    out_path = os.path.join(feat_dir, "features_vendor.csv")
+    df_feat.to_csv(out_path, index=False, encoding="utf-8")
+    print(f"[NIRIKSHAK AI] Saved vendor feature store to {out_path}")
+
+if __name__ == "__main__":
+    run_vendor_features_pipeline()

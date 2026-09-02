@@ -1,14 +1,41 @@
 import os
+import json
 import pandas as pd
 from fastapi import APIRouter, Query
+from typing import Optional
 
-router = APIRouter(prefix="/vendors", tags=["Vendor Intelligence Layer (§22)"])
+router = APIRouter(prefix="/vendors", tags=["Vendor Intelligence Engine (§7, §22)"])
 
 DATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "data"))
 
 @router.get("/risk")
-def get_vendor_risk_rankings(limit: int = Query(30, ge=1, le=100)):
-    """Returns vendor concentration ranking, transaction profile & risk (§22)."""
+def get_vendor_risk_rankings(
+    search: Optional[str] = Query(None, description="Search by vendor name or primary constituency"),
+    limit: int = Query(30, ge=1, le=100)
+):
+    """
+    Returns vendor concentration ranking, IsolationForest anomaly scores, 
+    monopoly dependency ratios, and coefficient of variation (§7, §22).
+    """
+    rep_path = os.path.join(DATA_DIR, "reports", "vendor_risk_report.json")
+    if os.path.exists(rep_path):
+        try:
+            with open(rep_path, "r", encoding="utf-8") as f:
+                report = json.load(f)
+                vendors = report.get("vendors", [])
+                if search:
+                    s_upper = search.strip().upper()
+                    vendors = [
+                        v for v in vendors
+                        if s_upper in str(v.get("canonical_vendor_name", "")).upper() or
+                           s_upper in str(v.get("primary_constituency", "")).upper()
+                    ]
+                report["returned"] = len(vendors[:limit])
+                report["vendors"] = vendors[:limit]
+                return report
+        except Exception:
+            pass
+
     master_path = os.path.join(DATA_DIR, "integrated", "master", "unified_work_lifecycle.csv")
     if not os.path.exists(master_path):
         return {"status": "insufficient_data", "vendors": []}
@@ -36,4 +63,3 @@ def get_vendor_risk_rankings(limit: int = Query(30, ge=1, le=100)):
         "total_vendors_tracked": len(grp),
         "vendors": vendors
     }
-
