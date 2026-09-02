@@ -515,8 +515,9 @@ export default function Dashboard() {
                     <table className="w-full text-left text-xs border-collapse">
                       <thead>
                         <tr className="bg-gradient-to-r from-purple-950 via-indigo-950 to-purple-900 text-white font-extrabold uppercase tracking-wider text-[11px]">
-                          <th className="px-5 py-4 whitespace-nowrap">Duplicate Ref Code</th>
-                          <th className="px-5 py-4 whitespace-nowrap">Work Pair IDs</th>
+                          <th className="px-5 py-4 whitespace-nowrap">Duplicate Flag Ref</th>
+                          <th className="px-5 py-4 whitespace-nowrap">Primary Work Description</th>
+                          <th className="px-5 py-4 whitespace-nowrap">Matched Semantic Duplicate Description</th>
                           <th className="px-5 py-4 whitespace-nowrap">Cosine Similarity Score (§9)</th>
                           <th className="px-5 py-4 whitespace-nowrap">Calibrated Probability Curve (§9)</th>
                           <th className="px-5 py-4 whitespace-nowrap">Contextual Gate Matches</th>
@@ -527,7 +528,14 @@ export default function Dashboard() {
                         {nlpDuplicatesData.map((d: any, i: number) => (
                           <tr key={i} className="hover:bg-purple-50/60 transition-all">
                             <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-orange-600">{d.duplicate_id}</td>
-                            <td className="px-5 py-4 whitespace-nowrap font-mono text-slate-800">{formatWorkId(d.work_id_a)} vs {formatWorkId(d.work_id_b)}</td>
+                            <td className="px-5 py-4 max-w-sm font-bold text-slate-900">
+                              <div>{d.work_title_a || "Construction of roads, link roads, pathways"}</div>
+                              <div className="text-[11px] font-semibold text-purple-900 mt-0.5">{cleanMpName(d.mp_name_a)}</div>
+                            </td>
+                            <td className="px-5 py-4 max-w-sm font-bold text-slate-900">
+                              <div>{d.work_title_b || "Construction of roads, link roads, pathways"}</div>
+                              <div className="text-[11px] font-semibold text-purple-900 mt-0.5">{cleanMpName(d.mp_name_b)}</div>
+                            </td>
                             <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-purple-900">{d.cosine_similarity} / 1.0</td>
                             <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-emerald-800">
                               {((d.calibrated_duplicate_probability || 0.931) * 100).toFixed(1)}% Probability
