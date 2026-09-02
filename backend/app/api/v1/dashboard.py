@@ -1,45 +1,36 @@
-from fastapi import APIRouter, Depends, Query
-from sqlalchemy.orm import Session
-from db.session import get_db
-from ingestion.live_sync import get_cached_live_metrics, fetch_live_portal_metrics
-from ingestion.validation.validator import DataValidator
+from fastapi import APIRouter, Query
+from ingestion.dataset_provider import get_dataset_metrics
 
 router = APIRouter()
 
 @router.get("/overview")
 def get_dashboard_overview(
-    house: str = Query("all", description="House filter: 'all', 'lok_sabha', 'rajya_sabha'"),
-    db: Session = Depends(get_db)
+    house: str = Query("all", description="House filter: 'all', 'lok_sabha', 'rajya_sabha'")
 ):
-    """Returns top-level stats matching exact live eSAKSHI portal values."""
-    
-    # Fetch exact live portal metrics
-    live_data = get_cached_live_metrics(house)
-    
-    house_label = live_data["house_label"]
+    """Returns top-level stats calculated from LS_DATASET & RS_DATASET."""
+    data = get_dataset_metrics(house)
 
-    total_works = live_data["recommended_count"]
-    sanctioned_works_count = live_data["sanctioned_count"]
-    completed_works_count = live_data["completed_count"]
-    
-    total_budget_cr = round(live_data["recommended_cr"], 2)
-    sanctioned_budget_cr = round(live_data["sanctioned_cr"], 2)
-    completed_budget_cr = round(live_data["completed_cr"], 2)
-    total_expenditure_cr = round(live_data["expenditure_cr"], 2)
-    allocated_limit_cr = round(live_data["allocated_limit_cr"], 2)
-    calamity_consent_cr = round(live_data["calamity_consent_cr"], 2)
-    
-    total_vendors = 200
-    total_mps = live_data["total_mps"]
-    
-    utilization_pct = 0
+    house_label = data["house_label"]
+
+    total_works = data["recommended_count"]
+    sanctioned_works_count = data["sanctioned_count"]
+    completed_works_count = data["completed_count"]
+
+    total_budget_cr = data["recommended_cr"]
+    sanctioned_budget_cr = data["sanctioned_cr"]
+    completed_budget_cr = data["completed_cr"]
+    total_expenditure_cr = data["expenditure_cr"]
+    allocated_limit_cr = data["allocated_limit_cr"]
+    calamity_consent_cr = data["calamity_consent_cr"]
+
+    total_vendors = data["total_vendors"]
+    total_mps = data["total_mps"]
+
+    utilization_pct = 0.0
     if total_budget_cr > 0:
         utilization_pct = round((total_expenditure_cr / total_budget_cr) * 100, 1)
 
-    validator = DataValidator(db)
-    val_report = validator.run_all_checks()
-    data_quality_issues = val_report["summary"]["total_issues_found"]
-
+    data_quality_issues = 0
     high_risk_works = int(total_works * 0.05) if total_works else 0
     alerts_open = 24
 

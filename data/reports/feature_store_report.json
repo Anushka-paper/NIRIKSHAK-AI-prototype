@@ -1,0 +1,10 @@
+{
+  "status": "SUCCESS",
+  "feature_version": "v1.0",
+  "canonical_tables": {
+    "features_work": 243886,
+    "features_transaction": 107981,
+    "features_vendor": 21177,
+    "features_mp": 727
+  }
+}

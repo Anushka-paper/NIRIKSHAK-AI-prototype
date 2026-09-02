@@ -26,6 +26,7 @@ def get_db():
 
 def find_file(directory, pattern):
     matches = glob.glob(os.path.join(directory, pattern))
+    matches = [m for m in matches if "sample" not in os.path.basename(m).lower()]
     if matches:
         return matches[0]
     return None
@@ -321,7 +322,7 @@ def ingest_dataset(house_name, folder_path):
     print(f"Finished ingesting {house_name}!")
 
 if __name__ == "__main__":
-    BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data', 'synthetic', 'raw_csvs'))
+    BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))
     
     ls_dir = os.path.join(BASE_DIR, 'LS_DATASET')
     rs_dir = os.path.join(BASE_DIR, 'RS_DATASET')

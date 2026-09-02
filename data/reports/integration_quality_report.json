@@ -1,0 +1,30 @@
+{
+  "total_integrated_works": 243886,
+  "match_counts": {
+    "WORK_ID": 243886
+  },
+  "financial_reconciliation": {
+    "recommended": {
+      "source": 78402586124.48,
+      "integrated": 78402586124.48001,
+      "diff": -0.0
+    },
+    "sanctioned": {
+      "source": 58163118440.95,
+      "integrated": 58163118440.950005,
+      "diff": -0.0
+    },
+    "expenditure": {
+      "source": 39724545322.14,
+      "integrated": 39724545322.14,
+      "diff": 0.0
+    },
+    "completed": {
+      "source": 23901754163.61,
+      "integrated": 23901754163.61,
+      "diff": 0.0
+    },
+    "financial_integrity_status": "PASSED"
+  },
+  "status": "SUCCESS"
+}

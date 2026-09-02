@@ -1,0 +1,56 @@
+[
+  {
+    "dataset": "allocated_limit",
+    "raw_rows": 544,
+    "clean_rows": 543,
+    "blank_rows_removed": 0,
+    "footer_rows_stripped": 1,
+    "repeated_headers_removed": 0,
+    "quarantined_rows": 0
+  },
+  {
+    "dataset": "calamity_consent",
+    "raw_rows": 13,
+    "clean_rows": 12,
+    "blank_rows_removed": 0,
+    "footer_rows_stripped": 1,
+    "repeated_headers_removed": 0,
+    "quarantined_rows": 0
+  },
+  {
+    "dataset": "works_recommended",
+    "raw_rows": 103393,
+    "clean_rows": 103392,
+    "blank_rows_removed": 0,
+    "footer_rows_stripped": 1,
+    "repeated_headers_removed": 0,
+    "quarantined_rows": 0
+  },
+  {
+    "dataset": "works_sanctioned",
+    "raw_rows": 78287,
+    "clean_rows": 78286,
+    "blank_rows_removed": 0,
+    "footer_rows_stripped": 1,
+    "repeated_headers_removed": 0,
+    "quarantined_rows": 0
+  },
+  {
+    "dataset": "works_completed",
+    "raw_rows": 33976,
+    "clean_rows": 33975,
+    "blank_rows_removed": 0,
+    "footer_rows_stripped": 1,
+    "repeated_headers_removed": 0,
+    "quarantined_rows": 0
+  },
+  {
+    "dataset": "expenditure",
+    "raw_rows": 83016,
+    "clean_rows": 83015,
+    "blank_rows_removed": 0,
+    "footer_rows_stripped": 1,
+    "repeated_headers_removed": 0,
+    "quarantined_rows": 0
+  }
+]

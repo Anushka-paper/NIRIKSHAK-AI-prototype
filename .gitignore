@@ -21,6 +21,15 @@ wheels/
 .installed.cfg
 *.egg
 
+# Scratch & Temp
+scratch/
+
+# Generated Pipeline Output Data (Can be regenerated via python -m data_pipeline...)
+# Uncomment these if you do not want to track large generated CSVs in Git:
+# data/cleaned/
+# data/standardised/
+# data/entity_resolution/
+
 # Database
 nirikshak.db
 *.sqlite3

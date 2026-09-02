@@ -15,7 +15,8 @@ import {
   Landmark,
   RefreshCw,
   Coins,
-  ShieldCheck
+  ShieldCheck,
+  ExternalLink
 } from "lucide-react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
@@ -41,21 +42,9 @@ export default function Dashboard() {
     }
   };
 
-  const handleLiveSync = async () => {
-    setIsSyncing(true);
-    try {
-      await fetch(`${API_URL}/api/v1/sync/trigger?house=${selectedHouse}`, { method: "POST" });
-      await fetchStats(selectedHouse);
-    } catch (err) {
-      console.error("Sync error:", err);
-    } finally {
-      setIsSyncing(false);
-    }
-  };
-
   useEffect(() => {
     fetchStats(selectedHouse);
-  }, []);
+  }, [selectedHouse]);
 
   if (fetchError && !stats) {
     return (
@@ -134,31 +123,30 @@ export default function Dashboard() {
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="px-3 py-1 bg-green-500/10 text-green-400 border border-green-500/30 rounded-full text-xs font-semibold flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span> Live eSAKSHI Pipeline
+            <span className="px-3.5 py-1.5 bg-blue-500/10 text-blue-400 border border-blue-500/30 rounded-full text-xs font-semibold flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span> Dynamic House Query Engine
             </span>
-
-            <button
-              onClick={handleLiveSync}
-              disabled={isSyncing}
-              className="px-3.5 py-1.5 bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 border border-blue-500/30 rounded-xl text-xs font-semibold flex items-center gap-2 transition disabled:opacity-50"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? "animate-spin text-blue-400" : ""}`} />
-              {isSyncing ? "Syncing..." : "Sync Live Data"}
-            </button>
           </div>
         </div>
       </header>
 
       {/* Currently Selected House Banner */}
-      <div className="mb-6 flex items-center justify-between bg-blue-950/30 border border-blue-900/40 rounded-xl px-5 py-3 text-sm">
+      <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 bg-blue-950/30 border border-blue-900/40 rounded-xl px-5 py-3 text-sm">
         <div className="flex items-center gap-2 text-blue-300 font-medium">
           <Landmark className="w-4 h-4 text-blue-400" />
           <span>Viewing Live Data For: <strong className="text-white font-bold">{stats.house_label}</strong></span>
         </div>
-        <span className="text-xs text-gray-400">
-          Tracking {stats.total_works.toLocaleString()} recommended works across {stats.total_mps} MPs
-        </span>
+        <div className="flex items-center gap-4 text-xs text-gray-400">
+          <span>Tracking {stats.total_works.toLocaleString()} recommended works across {stats.total_mps} MPs</span>
+          <a 
+            href="https://mplads.mospi.gov.in/digigov/dashboard.html" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="flex items-center gap-1 text-blue-400 hover:text-blue-300 underline font-semibold transition"
+          >
+            Source: eSAKSHI MoSPI <ExternalLink className="w-3 h-3" />
+          </a>
+        </div>
       </div>
 
       {/* Official eSAKSHI Core Program Tile Cards */}

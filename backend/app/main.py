@@ -1,16 +1,19 @@
 import sys
 import os
-import threading
-import time
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+
+root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+backend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+app_dir = os.path.abspath(os.path.dirname(__file__))
+
+for d in [root_dir, backend_dir, app_dir]:
+    if d not in sys.path:
+        sys.path.insert(0, d)
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api.v1 import dashboard, data_quality, entity_resolution, live_sync, standardization
+from api.v1 import dashboard, data_quality, entity_resolution, standardization
 from core.config import get_cors_origins, settings
 from db.bootstrap import ensure_demo_database
-from db.session import SessionLocal
-from ingestion.live_sync import sync_live_data
 
 app = FastAPI(title=settings.app_name)
 
@@ -24,32 +27,20 @@ app.add_middleware(
 
 app.include_router(dashboard.router, prefix="/api/v1/dashboard", tags=["Dashboard"])
 app.include_router(data_quality.router, prefix="/api/v1/data-quality", tags=["Data Quality"])
-app.include_router(live_sync.router, prefix="/api/v1/sync", tags=["Live Sync"])
 app.include_router(standardization.router, prefix="/api/v1", tags=["Data Standardization"])
 app.include_router(entity_resolution.router, prefix="/api/v1", tags=["Entity Resolution"])
 
-def background_live_sync_loop():
-    """Continuous background daemon syncing live eSAKSHI data every 60 seconds."""
-    while True:
-        try:
-            db = SessionLocal()
-            sync_live_data(db, house_filter="all")
-            db.close()
-        except Exception as e:
-            print(f"[Background Live Sync Error]: {e}")
-        time.sleep(60)
-
 @app.on_event("startup")
-def start_background_live_sync():
+def startup_event():
     ensure_demo_database()
-    t = threading.Thread(target=background_live_sync_loop, daemon=True)
-    t.start()
-    print("[NIRIKSHAK AI] Background Dynamic Live Sync Daemon Started (Polling every 60s)!")
+    print("[NIRIKSHAK AI] Database initialized successfully.")
 
 @app.get("/")
 def read_root():
-    return {"message": "NIRIKSHAK AI API Stub"}
+    return {"message": "NIRIKSHAK AI API"}
 
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
+
+# reload

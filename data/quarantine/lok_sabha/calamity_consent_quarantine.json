@@ -1,0 +1,170 @@
+[
+  {
+    "source_house": "LOK_SABHA",
+    "source_file": "Amount consented for Calamity (2).csv",
+    "source_row_number": 2,
+    "raw_record": {
+      "Sr. No.": "1",
+      "Calamity Type": "National Calamity",
+      "Calamity Name": "Flood 2025 in Punjab",
+      "Hon'ble Members of Parliament": "Shri Gurjeet Singh Aujla",
+      "Date of Consent": "07-Dec-2025",
+      "Consent Amount ( \u20b9 )": "7067400"
+    },
+    "quarantine_reason": "Invalid date in column consent_amount_\u20b9: '7067400'"
+  },
+  {
+    "source_house": "LOK_SABHA",
+    "source_file": "Amount consented for Calamity (2).csv",
+    "source_row_number": 3,
+    "raw_record": {
+      "Sr. No.": "2",
+      "Calamity Type": "National Calamity",
+      "Calamity Name": "Flood 2025 in Punjab",
+      "Hon'ble Members of Parliament": "GURMEET SINGH MEET HAYER",
+      "Date of Consent": "03-Nov-2025",
+      "Consent Amount ( \u20b9 )": "7500000"
+    },
+    "quarantine_reason": "Invalid date in column consent_amount_\u20b9: '7500000'"
+  },
+  {
+    "source_house": "LOK_SABHA",
+    "source_file": "Amount consented for Calamity (2).csv",
+    "source_row_number": 4,
+    "raw_record": {
+      "Sr. No.": "3",
+      "Calamity Type": "National Calamity",
+      "Calamity Name": "Flood 2025 in Punjab",
+      "Hon'ble Members of Parliament": "Shri Jual Oram",
+      "Date of Consent": "10-Oct-2025",
+      "Consent Amount ( \u20b9 )": "10000000"
+    },
+    "quarantine_reason": "Invalid date in column consent_amount_\u20b9: '10000000'"
+  },
+  {
+    "source_house": "LOK_SABHA",
+    "source_file": "Amount consented for Calamity (2).csv",
+    "source_row_number": 5,
+    "raw_record": {
+      "Sr. No.": "4",
+      "Calamity Type": "National Calamity",
+      "Calamity Name": "Andhra Pradesh rainfall and consequent floods - 2024",
+      "Hon'ble Members of Parliament": "Krishna Prasad Tenneti",
+      "Date of Consent": "26-Mar-2025",
+      "Consent Amount ( \u20b9 )": "1000000"
+    },
+    "quarantine_reason": "Invalid date in column consent_amount_\u20b9: '1000000'"
+  },
+  {
+    "source_house": "LOK_SABHA",
+    "source_file": "Amount consented for Calamity (2).csv",
+    "source_row_number": 6,
+    "raw_record": {
+      "Sr. No.": "5",
+      "Calamity Type": "National Calamity",
+      "Calamity Name": "Meppadi landslides 2024",
+      "Hon'ble Members of Parliament": "SHAFI PARAMBIL",
+      "Date of Consent": "02-Mar-2025",
+      "Consent Amount ( \u20b9 )": "2500000"
+    },
+    "quarantine_reason": "Invalid date in column consent_amount_\u20b9: '2500000'"
+  },
+  {
+    "source_house": "LOK_SABHA",
+    "source_file": "Amount consented for Calamity (2).csv",
+    "source_row_number": 7,
+    "raw_record": {
+      "Sr. No.": "6",
+      "Calamity Type": "State Calamity",
+      "Calamity Name": "Vilangad Landslides 2024",
+      "Hon'ble Members of Parliament": "SHAFI PARAMBIL",
+      "Date of Consent": "01-Mar-2025",
+      "Consent Amount ( \u20b9 )": "2500000"
+    },
+    "quarantine_reason": "Invalid date in column consent_amount_\u20b9: '2500000'"
+  },
+  {
+    "source_house": "LOK_SABHA",
+    "source_file": "Amount consented for Calamity (2).csv",
+    "source_row_number": 8,
+    "raw_record": {
+      "Sr. No.": "7",
+      "Calamity Type": "National Calamity",
+      "Calamity Name": "Meppadi landslides 2024",
+      "Hon'ble Members of Parliament": "DR C N MANJUNATH",
+      "Date of Consent": "17-Feb-2025",
+      "Consent Amount ( \u20b9 )": "500000"
+    },
+    "quarantine_reason": "Invalid date in column consent_amount_\u20b9: '500000'"
+  },
+  {
+    "source_house": "LOK_SABHA",
+    "source_file": "Amount consented for Calamity (2).csv",
+    "source_row_number": 9,
+    "raw_record": {
+      "Sr. No.": "8",
+      "Calamity Type": "National Calamity",
+      "Calamity Name": "Meppadi landslides 2024",
+      "Hon'ble Members of Parliament": "Andimuthu Raja",
+      "Date of Consent": "05-Feb-2025",
+      "Consent Amount ( \u20b9 )": "2500000"
+    },
+    "quarantine_reason": "Invalid date in column consent_amount_\u20b9: '2500000'"
+  },
+  {
+    "source_house": "LOK_SABHA",
+    "source_file": "Amount consented for Calamity (2).csv",
+    "source_row_number": 10,
+    "raw_record": {
+      "Sr. No.": "9",
+      "Calamity Type": "State Calamity",
+      "Calamity Name": "Wayanad landslides 2024",
+      "Hon'ble Members of Parliament": "Shri NK Premachandran",
+      "Date of Consent": "07-Dec-2024",
+      "Consent Amount ( \u20b9 )": "1000000"
+    },
+    "quarantine_reason": "Invalid date in column consent_amount_\u20b9: '1000000'"
+  },
+  {
+    "source_house": "LOK_SABHA",
+    "source_file": "Amount consented for Calamity (2).csv",
+    "source_row_number": 11,
+    "raw_record": {
+      "Sr. No.": "10",
+      "Calamity Type": "State Calamity",
+      "Calamity Name": "Vilangad Landslides 2024",
+      "Hon'ble Members of Parliament": "Shri NK Premachandran",
+      "Date of Consent": "07-Dec-2024",
+      "Consent Amount ( \u20b9 )": "1000000"
+    },
+    "quarantine_reason": "Invalid date in column consent_amount_\u20b9: '1000000'"
+  },
+  {
+    "source_house": "LOK_SABHA",
+    "source_file": "Amount consented for Calamity (2).csv",
+    "source_row_number": 12,
+    "raw_record": {
+      "Sr. No.": "11",
+      "Calamity Type": "State Calamity",
+      "Calamity Name": "Wayanad landslides 2024",
+      "Hon'ble Members of Parliament": "K RADHAKRISHNAN",
+      "Date of Consent": "04-Dec-2024",
+      "Consent Amount ( \u20b9 )": "2500000"
+    },
+    "quarantine_reason": "Invalid date in column consent_amount_\u20b9: '2500000'"
+  },
+  {
+    "source_house": "LOK_SABHA",
+    "source_file": "Amount consented for Calamity (2).csv",
+    "source_row_number": 13,
+    "raw_record": {
+      "Sr. No.": "12",
+      "Calamity Type": "State Calamity",
+      "Calamity Name": "Natural Calamity Affected Area",
+      "Hon'ble Members of Parliament": "BIPLAB KUMAR DEB",
+      "Date of Consent": "03-Sep-2024",
+      "Consent Amount ( \u20b9 )": "2500000"
+    },
+    "quarantine_reason": "Invalid date in column consent_amount_\u20b9: '2500000'"
+  }
+]
