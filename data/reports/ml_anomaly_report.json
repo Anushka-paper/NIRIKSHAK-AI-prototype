@@ -1,0 +1,7 @@
+{
+  "status": "SUCCESS",
+  "total_works_evaluated": 243886,
+  "total_ml_anomalies": 101,
+  "isolation_forest_estimators": 100,
+  "lof_neighbors": 20
+}
