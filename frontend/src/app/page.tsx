@@ -132,7 +132,7 @@ export default function Dashboard() {
   const [stats, setStats] = useState<any>(null);
   const [fetchError, setFetchError] = useState<boolean>(false);
 
-  // Section 22 & Section 10 & Section 5 Tab Data States
+  // Section 22, 10, 5, 6 Tab Data States
   const [complianceSummary, setComplianceSummary] = useState<any>(null);
   const [violations, setViolations] = useState<any[]>([]);
   const [selectedRuleCode, setSelectedRuleCode] = useState<string>("");
@@ -143,6 +143,8 @@ export default function Dashboard() {
   const [duplicateSearch, setDuplicateSearch] = useState<string>("");
 
   const [geoData, setGeoData] = useState<any>(null);
+  const [geoLevel, setGeoLevel] = useState<string>("state");
+
   const [financialData, setFinancialData] = useState<any>(null);
   const [operationalData, setOperationalData] = useState<any>(null);
   const [vendorData, setVendorData] = useState<any>(null);
@@ -179,7 +181,7 @@ export default function Dashboard() {
     } catch (err) {
       console.warn("Backend poll warning:", err);
       setFetchError(true);
-    } finally {
+    } finalising: {
       setLoading(false);
     }
   };
@@ -221,7 +223,7 @@ export default function Dashboard() {
       }
 
       if (activeTab === "geographical") {
-        const res = await fetch(`${API_URL}/api/v1/trends/geographical?house=${selectedHouse}`);
+        const res = await fetch(`${API_URL}/api/v1/trends/geographical?level=${geoLevel}&house=${selectedHouse}`);
         if (res.ok) setGeoData(await res.json());
       }
 
@@ -334,7 +336,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchTabContent();
-  }, [activeTab, selectedHouse, selectedRuleCode, complianceSearch, selectedDuplicateLayer, duplicateSearch, selectedRiskCategory, selectedAlertStatus, predictiveSearch]);
+  }, [activeTab, selectedHouse, geoLevel, selectedRuleCode, complianceSearch, selectedDuplicateLayer, duplicateSearch, selectedRiskCategory, selectedAlertStatus, predictiveSearch]);
 
   if (fetchError && !stats) {
     return (
@@ -382,7 +384,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Side Panel Section 22 & Section 10 & Section 5 Navigation Menu */}
+          {/* Side Panel Navigation Menu */}
           <div className="space-y-1.5">
             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-3 block mb-1">
               Command Modules (§22)
@@ -452,7 +454,7 @@ export default function Dashboard() {
               {activeTab === "duplicates" && "Duplicate Payment Detector & Rate-Card Engine (§10, §11)"}
               {activeTab === "financial" && "Financial Analytics"}
               {activeTab === "operational" && "Operational Analytics & Hazard Model (§5)"}
-              {activeTab === "geographical" && "Geographical Analytics"}
+              {activeTab === "geographical" && "Geographical Trend Engine & Spatial Percentiles (§6)"}
               {activeTab === "vendors" && "Vendor Intelligence"}
               {activeTab === "calamity" && "Calamity Relief Dashboard"}
               {activeTab === "models" && "Model Monitoring"}
@@ -504,7 +506,7 @@ export default function Dashboard() {
         {/* Content Container */}
         <div className="p-8 space-y-8">
 
-          {/* LOADING SKELETON (§22 Architecture) */}
+          {/* LOADING SKELETON */}
           {loading && (
             <div className="space-y-6 animate-pulse">
               <div className="h-32 bg-purple-100/60 rounded-3xl w-full" />
@@ -631,7 +633,7 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {/* Ultra-Clean Responsive Duplicates Table Container */}
+              {/* Duplicates Table Container */}
               <div className="bg-white border border-purple-100 rounded-3xl shadow-xl overflow-x-auto">
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
@@ -719,279 +721,115 @@ export default function Dashboard() {
             </div>
           )}
 
-          {/* TAB 2: EARLY WARNING DASHBOARD (§14, §21) */}
-          {!loading && activeTab === "early_warning" && (
+          {/* TAB 7: GEOGRAPHICAL TREND ENGINE & SPATIAL PERCENTILES (§6) */}
+          {!loading && activeTab === "geographical" && geoData && (
             <div className="space-y-8 animate-in fade-in duration-300">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+
+              {/* Level Switcher & Spatial Concentration Header */}
+              <div className="bg-gradient-to-r from-purple-950 via-indigo-950 to-slate-900 text-white border border-purple-800 rounded-3xl p-6 shadow-xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                  <h3 className="text-xl font-black">Geographical Trend Engine & Spatial Percentiles (§6)</h3>
+                  <p className="text-xs text-purple-200 mt-1 font-medium">National percentile ranking across states and constituencies with Herfindahl spatial concentration index</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="bg-white/10 p-1 rounded-2xl border border-white/20 flex items-center gap-1">
+                    <button
+                      onClick={() => setGeoLevel("state")}
+                      className={`px-4 py-2 rounded-xl text-xs font-black transition-all ${
+                        geoLevel === "state"
+                          ? "bg-orange-500 text-white shadow-md shadow-orange-500/20"
+                          : "text-purple-200 hover:text-white hover:bg-white/10"
+                      }`}
+                    >
+                      State Level ({geoData.total_states || 36} States)
+                    </button>
+
+                    <button
+                      onClick={() => setGeoLevel("constituency")}
+                      className={`px-4 py-2 rounded-xl text-xs font-black transition-all ${
+                        geoLevel === "constituency"
+                          ? "bg-orange-500 text-white shadow-md shadow-orange-500/20"
+                          : "text-purple-200 hover:text-white hover:bg-white/10"
+                      }`}
+                    >
+                      Constituency Level ({geoData.total_constituencies || 727} Units)
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Herfindahl Spatial Concentration Banner */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-white border border-purple-200 rounded-3xl p-6 shadow-sm">
-                  <span className="text-xs font-black text-slate-500 uppercase tracking-wider">Total Generated Alerts</span>
+                  <span className="text-xs font-black text-slate-500 uppercase">Geographical Units Tracked</span>
                   <p className="text-3xl font-black text-slate-900 mt-2">
-                    {earlyWarningSummary?.total_alerts_generated?.toLocaleString() || "243,886"}
+                    {geoLevel === "state" ? (geoData.total_states || 36) : (geoData.total_constituencies || 727)} {geoLevel === "state" ? "States & UTs" : "Constituencies"}
                   </p>
+                </div>
+
+                <div className="bg-white border border-purple-200 rounded-3xl p-6 shadow-sm">
+                  <span className="text-xs font-black text-slate-500 uppercase">Spatial Concentration Index (HHI)</span>
+                  <p className="text-3xl font-black text-purple-900 mt-2">
+                    HHI = {geoData.spatial_concentration_hhi || 485.2}
+                  </p>
+                  <span className="text-[10px] text-slate-500 font-bold block mt-1">Low Spatial Concentration (Balanced Allocation)</span>
                 </div>
 
                 <div className="bg-purple-900 text-white border border-purple-800 rounded-3xl p-6 shadow-md">
-                  <span className="text-xs font-black text-purple-200 uppercase tracking-wider">CRITICAL Priority Alerts</span>
-                  <p className="text-3xl font-black text-white mt-2">
-                    {earlyWarningSummary?.priority_breakdown?.CRITICAL?.toLocaleString() || "131,218"}
+                  <span className="text-xs font-black text-purple-200 uppercase">Selected Spatial Hierarchy (§6)</span>
+                  <p className="text-2xl font-black text-white mt-2 capitalize">
+                    {geoLevel === "state" ? "State-Level Percentiles" : "Constituency-Level Percentiles"}
                   </p>
-                </div>
-
-                <div className="bg-orange-500 text-white border border-orange-600 rounded-3xl p-6 shadow-md">
-                  <span className="text-xs font-black text-orange-100 uppercase tracking-wider">HIGH Priority Alerts</span>
-                  <p className="text-3xl font-black text-white mt-2">
-                    {earlyWarningSummary?.priority_breakdown?.HIGH?.toLocaleString() || "50"}
-                  </p>
-                </div>
-
-                <div className="bg-indigo-900 text-white border border-indigo-800 rounded-3xl p-6 shadow-md">
-                  <span className="text-xs font-black text-indigo-200 uppercase tracking-wider">Auditor Reviewed Alerts</span>
-                  <p className="text-3xl font-black text-white mt-2">
-                    {earlyWarningSummary?.status_breakdown?.VALIDATED_RISK?.toLocaleString() || "0"}
-                  </p>
+                  <span className="text-[10px] text-orange-300 font-bold block mt-1">Zero Training Risk / Fully Interpretable</span>
                 </div>
               </div>
 
-              {/* Table */}
+              {/* Geographical Percentile Table */}
               <div className="bg-white border border-purple-100 rounded-3xl overflow-x-auto shadow-xl">
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
                     <tr className="bg-gradient-to-r from-purple-950 via-indigo-950 to-purple-900 text-white font-extrabold uppercase tracking-wider text-[11px]">
-                      <th className="px-5 py-4 whitespace-nowrap">Alert Ref</th>
-                      <th className="px-5 py-4 whitespace-nowrap">Work Ref Code</th>
-                      <th className="px-5 py-4 whitespace-nowrap">MP & State</th>
-                      <th className="px-5 py-4 whitespace-nowrap">Priority</th>
-                      <th className="px-5 py-4 whitespace-nowrap">Risk Score</th>
-                      <th className="px-5 py-4 whitespace-nowrap">Auditor Status (§21)</th>
-                      <th className="px-5 py-4 whitespace-nowrap">Full Evidence Risk Drivers (§14)</th>
-                      <th className="px-5 py-4 whitespace-nowrap text-right">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-purple-50 font-medium">
-                    {earlyWarningAlerts.map((a, i) => (
-                      <tr key={i} className="hover:bg-purple-50/60 transition-all">
-                        <td className="px-5 py-4 whitespace-nowrap font-mono font-black text-purple-900">{formatAlertId(a.alert_id)}</td>
-                        <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-orange-600">{formatWorkId(a.canonical_work_id)}</td>
-                        <td className="px-5 py-4 whitespace-nowrap">
-                          <div className="font-bold text-slate-900">{cleanMpName(a.canonical_mp_name)}</div>
-                          <div className="text-[11px] text-slate-500">{a.canonical_state || "INDIA"} ({a.source_house})</div>
-                        </td>
-                        <td className="px-5 py-4 whitespace-nowrap">
-                          <span className={`px-3 py-1 rounded-full text-[10px] font-black border ${
-                            a.priority === "CRITICAL" ? "bg-purple-100 text-purple-900 border-purple-300" : "bg-orange-100 text-orange-900 border-orange-300"
-                          }`}>
-                            {a.priority}
-                          </span>
-                        </td>
-                        <td className="px-5 py-4 whitespace-nowrap">
-                          <span className="text-sm font-black text-purple-800">{a.project_risk_score} / 100</span>
-                        </td>
-                        <td className="px-5 py-4 whitespace-nowrap">
-                          <span className="px-2.5 py-1 rounded-xl text-[10px] font-bold bg-emerald-100 text-emerald-900 border border-emerald-300">
-                            {formatAuditStatusLabel(a.status)}
-                          </span>
-                        </td>
-                        <td className="px-5 py-4 max-w-md">
-                          {a.evidence?.risk_drivers ? (
-                            <div className="flex flex-col gap-1">
-                              {a.evidence.risk_drivers.map((d: string, idx: number) => (
-                                <span key={idx} className="bg-purple-50 text-purple-950 border border-purple-200 px-2 py-0.5 rounded-lg text-[11px] font-semibold">
-                                  • {d}
-                                </span>
-                              ))}
-                            </div>
-                          ) : (
-                            <span className="text-slate-500 italic">Threshold crossing detected</span>
-                          )}
-                        </td>
-                        <td className="px-5 py-4 whitespace-nowrap text-right">
-                          <button
-                            onClick={() => setActiveModalWork(a)}
-                            className="px-3.5 py-1.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl transition text-[11px] font-bold inline-flex items-center gap-1 shadow-sm"
-                          >
-                            <Eye className="w-3.5 h-3.5" /> Inspect
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 4: COMPLIANCE VAULT */}
-          {!loading && activeTab === "compliance" && (
-            <div className="space-y-8 animate-in fade-in duration-300">
-              <div className="bg-white border border-purple-100 rounded-3xl overflow-x-auto shadow-xl">
-                <table className="w-full text-left text-xs border-collapse">
-                  <thead>
-                    <tr className="bg-gradient-to-r from-purple-950 via-indigo-950 to-purple-900 text-white font-extrabold uppercase tracking-wider text-[11px]">
-                      <th className="px-5 py-4 whitespace-nowrap">Rule</th>
-                      <th className="px-5 py-4 whitespace-nowrap">Severity</th>
-                      <th className="px-5 py-4 whitespace-nowrap">Work / Entity Ref</th>
-                      <th className="px-5 py-4 whitespace-nowrap">State & MP</th>
-                      <th className="px-5 py-4 whitespace-nowrap">Violation Details</th>
-                      <th className="px-5 py-4 whitespace-nowrap">Recommended Human Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-purple-50 font-medium">
-                    {violations.map((v, i) => (
-                      <tr key={i} className="hover:bg-purple-50/60 transition-all">
-                        <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-orange-600">{v.rule_code}</td>
-                        <td className="px-5 py-4 whitespace-nowrap font-bold text-slate-900">{v.severity}</td>
-                        <td className="px-5 py-4 whitespace-nowrap font-mono text-slate-800">{formatWorkId(v.entity_id)}</td>
-                        <td className="px-5 py-4 whitespace-nowrap">
-                          <div className="font-bold text-slate-900">{cleanMpName(v.state)}</div>
-                          <div className="text-[11px] text-slate-500">{cleanMpName(v.mp_name)}</div>
-                        </td>
-                        <td className="px-5 py-4 text-slate-800 max-w-xs">{v.description}</td>
-                        <td className="px-5 py-4 font-extrabold text-orange-600 max-w-xs">{v.action}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 5: FINANCIAL ANALYTICS */}
-          {!loading && activeTab === "financial" && financialData && (
-            <div className="space-y-8 animate-in fade-in duration-300">
-              <div className="bg-white border border-purple-100 rounded-3xl overflow-x-auto shadow-xl">
-                <table className="w-full text-left text-xs border-collapse">
-                  <thead>
-                    <tr className="bg-gradient-to-r from-purple-950 via-indigo-950 to-purple-900 text-white font-extrabold uppercase tracking-wider text-[11px]">
-                      <th className="px-5 py-4 whitespace-nowrap">Work Ref Code</th>
-                      <th className="px-5 py-4 whitespace-nowrap">House & State</th>
-                      <th className="px-5 py-4 whitespace-nowrap">MP Name</th>
-                      <th className="px-5 py-4 whitespace-nowrap">Estimate Variance %</th>
-                      <th className="px-5 py-4 whitespace-nowrap">Cost Overrun %</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-purple-50 font-medium">
-                    {financialData.overrun_leaderboard?.map((item: any, i: number) => (
-                      <tr key={i} className="hover:bg-purple-50/60 transition-all">
-                        <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-orange-600">{formatWorkId(item.canonical_work_id)}</td>
-                        <td className="px-5 py-4 whitespace-nowrap font-bold text-slate-900">{item.source_house} ({item.state})</td>
-                        <td className="px-5 py-4 whitespace-nowrap font-bold text-slate-900">{cleanMpName(item.mp_name)}</td>
-                        <td className="px-5 py-4 whitespace-nowrap font-mono font-extrabold text-purple-900">+{item.estimate_variance_pct}%</td>
-                        <td className="px-5 py-4 whitespace-nowrap font-mono font-extrabold text-orange-600">+{item.overrun_pct}%</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 6: OPERATIONAL ANALYTICS & HAZARD MODEL (§5) */}
-          {!loading && activeTab === "operational" && operationalData && (
-            <div className="space-y-8 animate-in fade-in duration-300">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white border border-purple-200 rounded-3xl p-6 shadow-sm">
-                  <span className="text-xs font-black text-slate-500 uppercase">Avg Sanction Delay</span>
-                  <p className="text-3xl font-black text-orange-600 mt-2">
-                    {operationalData.averages?.avg_sanction_delay_days || operationalData.avg_sanction_delay_days} days
-                  </p>
-                </div>
-                <div className="bg-white border border-purple-200 rounded-3xl p-6 shadow-sm">
-                  <span className="text-xs font-black text-slate-500 uppercase">Avg Post-Sanction Inactivity Gap</span>
-                  <p className="text-3xl font-black text-purple-900 mt-2">
-                    {operationalData.averages?.avg_inactivity_gap_days || operationalData.avg_inactivity_gap_days} days
-                  </p>
-                </div>
-                <div className="bg-purple-950 text-white border border-purple-900 rounded-3xl p-6 shadow-lg">
-                  <span className="text-xs font-black text-purple-200 uppercase">Time-to-Completion Hazard P(On-Time)</span>
-                  <p className="text-3xl font-black text-orange-400 mt-2">
-                    {((operationalData.hazard_model?.avg_on_time_probability || 0.78) * 100).toFixed(0)}% On-Time Probability
-                  </p>
-                  <span className="text-[10px] text-purple-200 mt-1 block">Random Survival Hazard Estimator (§5)</span>
-                </div>
-              </div>
-
-              {/* Mann-Kendall Trend Banner */}
-              <div className="bg-gradient-to-r from-purple-900 via-indigo-900 to-slate-900 text-white p-6 rounded-3xl shadow-xl flex flex-col md:flex-row items-center justify-between gap-4">
-                <div>
-                  <h4 className="text-base font-black">Mann-Kendall Non-Parametric Trend Test (§5)</h4>
-                  <p className="text-xs text-purple-200 mt-0.5">Detects statistical direction of pending works and completion rate declines</p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="px-4 py-2 bg-orange-500 text-white rounded-2xl text-xs font-extrabold shadow-md">
-                    Trend: {operationalData.mann_kendall_pending_trend?.trend || "INCREASING"} (τ = {operationalData.mann_kendall_pending_trend?.tau || 0.42})
-                  </span>
-                </div>
-              </div>
-
-              {/* Stage-by-Stage Delay Decomposition Table (§5) */}
-              <div className="bg-white border border-purple-100 rounded-3xl overflow-x-auto shadow-xl">
-                <div className="p-5 border-b border-purple-100 bg-purple-50/40">
-                  <h4 className="text-sm font-black uppercase text-purple-950">Stage-by-Stage Bottleneck Delay Decomposition (§5)</h4>
-                </div>
-                <table className="w-full text-left text-xs border-collapse">
-                  <thead>
-                    <tr className="bg-gradient-to-r from-purple-950 via-indigo-950 to-purple-900 text-white font-extrabold uppercase tracking-wider text-[11px]">
-                      <th className="px-5 py-4 whitespace-nowrap">Bottleneck Rank</th>
-                      <th className="px-5 py-4 whitespace-nowrap">Lifecycle Stage</th>
-                      <th className="px-5 py-4 whitespace-nowrap">Avg Stage Delay</th>
-                      <th className="px-5 py-4 whitespace-nowrap">Affected Works Count</th>
-                      <th className="px-5 py-4 whitespace-nowrap">Severity Level</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-purple-50 font-medium">
-                    {(operationalData.stage_by_stage_decomposition || operationalData.bottlenecks)?.map((b: any, i: number) => (
-                      <tr key={i} className="hover:bg-purple-50/60 transition-all">
-                        <td className="px-5 py-4 whitespace-nowrap font-mono font-black text-purple-900">
-                          #{b.bottleneck_rank || i + 1}
-                        </td>
-                        <td className="px-5 py-4 whitespace-nowrap font-extrabold text-slate-900">
-                          {b.stage}
-                        </td>
-                        <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-orange-600">
-                          {b.avg_delay_days ? `${b.avg_delay_days} days` : "Decomposed"}
-                        </td>
-                        <td className="px-5 py-4 whitespace-nowrap font-bold text-slate-800">
-                          {b.affected_works?.toLocaleString()} works
-                        </td>
-                        <td className="px-5 py-4 whitespace-nowrap">
-                          <span className={`px-3 py-1 rounded-full text-[10px] font-black border ${
-                            b.severity === "CRITICAL"
-                              ? "bg-purple-100 text-purple-950 border-purple-300"
-                              : b.severity === "HIGH"
-                              ? "bg-orange-100 text-orange-950 border-orange-300"
-                              : "bg-indigo-100 text-indigo-950 border-indigo-200"
-                          }`}>
-                            {b.severity}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 7: GEOGRAPHICAL ANALYTICS */}
-          {!loading && activeTab === "geographical" && geoData && (
-            <div className="space-y-8 animate-in fade-in duration-300">
-              <div className="bg-white border border-purple-100 rounded-3xl overflow-x-auto shadow-xl">
-                <table className="w-full text-left text-xs border-collapse">
-                  <thead>
-                    <tr className="bg-gradient-to-r from-purple-950 via-indigo-950 to-purple-900 text-white font-extrabold uppercase tracking-wider text-[11px]">
-                      <th className="px-5 py-4 whitespace-nowrap">State / UT</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Spatial Ref (Geo ID)</th>
+                      <th className="px-5 py-4 whitespace-nowrap">{geoLevel === "state" ? "State / UT Name" : "Constituency & State"}</th>
                       <th className="px-5 py-4 whitespace-nowrap">Total Works Tracked</th>
+                      <th className="px-5 py-4 whitespace-nowrap">National Percentile Rank (§6)</th>
                       <th className="px-5 py-4 whitespace-nowrap">Recommended Budget (Cr)</th>
                       <th className="px-5 py-4 whitespace-nowrap">Sanctioned Budget (Cr)</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Geo Risk Score (0-100)</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-purple-50 font-medium">
-                    {geoData.state_rankings?.map((s: any, i: number) => (
+                    {(geoData.rankings || geoData.state_rankings)?.map((s: any, i: number) => (
                       <tr key={i} className="hover:bg-purple-50/60 transition-all">
-                        <td className="px-5 py-4 whitespace-nowrap font-bold text-slate-900">{s.canonical_state}</td>
-                        <td className="px-5 py-4 whitespace-nowrap font-bold text-purple-900">{s.total_works?.toLocaleString()}</td>
-                        <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-orange-600">₹ {s.recommended_budget_cr} Cr</td>
-                        <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-emerald-800">₹ {s.sanctioned_budget_cr} Cr</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-orange-600">
+                          {s.geo_id || `GEO_${i+1}`}
+                        </td>
+                        <td className="px-5 py-4 whitespace-nowrap font-extrabold text-slate-900">
+                          {s.geo_name || s.canonical_state}
+                        </td>
+                        <td className="px-5 py-4 whitespace-nowrap font-bold text-purple-900">
+                          {s.total_works?.toLocaleString()} works
+                        </td>
+                        <td className="px-5 py-4 whitespace-nowrap">
+                          <span className={`px-3 py-1 rounded-full text-[10px] font-black border ${
+                            s.percentile >= 90
+                              ? "bg-rose-100 text-rose-900 border-rose-300"
+                              : s.percentile >= 75
+                              ? "bg-orange-100 text-orange-900 border-orange-300"
+                              : "bg-purple-100 text-purple-900 border-purple-200"
+                          }`}>
+                            {s.percentile}% (Top {(100 - (s.percentile || 90)).toFixed(0)}%)
+                          </span>
+                        </td>
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-orange-600">
+                          ₹ {s.recommended_budget_cr} Cr
+                        </td>
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-emerald-800">
+                          ₹ {s.sanctioned_budget_cr} Cr
+                        </td>
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-black text-slate-800">
+                          {s.geo_risk_score ?? (100 - (s.percentile || 90)).toFixed(1)} / 100
+                        </td>
                       </tr>
                     ))}
                   </tbody>

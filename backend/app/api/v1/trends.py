@@ -5,7 +5,7 @@ import pandas as pd
 from fastapi import APIRouter, Query
 from typing import Optional
 
-router = APIRouter(prefix="/trends", tags=["Trends & Analytics Layer (§22, §5)"])
+router = APIRouter(prefix="/trends", tags=["Trends & Analytics Layer (§22, §5, §6)"])
 
 DATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "data"))
 
@@ -29,11 +29,31 @@ def load_work_features_df():
     return pd.DataFrame()
 
 @router.get("/geographical")
-def get_geographical_trends(house: Optional[str] = Query(None)):
-    """Returns geographical distribution, state & constituency rankings (§22)."""
+def get_geographical_trends(
+    level: Optional[str] = Query("state", description="Spatial level: 'state' or 'constituency'"),
+    house: Optional[str] = Query(None, description="House filter: 'LOK_SABHA', 'RAJYA_SABHA', or 'ALL'")
+):
+    """
+    Returns geographical distribution, state & constituency rankings, percentile ranks, and geo risk scores (§6, §22).
+    """
+    rep_path = os.path.join(DATA_DIR, "reports", "geographical_trends_report.json")
+    if os.path.exists(rep_path):
+        try:
+            with open(rep_path, "r", encoding="utf-8") as f:
+                report = json.load(f)
+                selected_level = level.lower() if level else "state"
+                if selected_level == "constituency":
+                    report["rankings"] = report.get("constituency_rankings", [])
+                else:
+                    report["rankings"] = report.get("state_rankings", [])
+                report["level"] = selected_level
+                return report
+        except Exception:
+            pass
+
     df = load_master_df()
     if df.empty:
-        return {"status": "insufficient_data", "state_rankings": []}
+        return {"status": "insufficient_data", "rankings": [], "level": level}
 
     if house and house.upper() != "ALL":
         df = df[df["source_house"].astype(str).str.upper() == house.upper()]
@@ -44,12 +64,18 @@ def get_geographical_trends(house: Optional[str] = Query(None)):
         sanctioned_budget_cr=("sanctioned_amount_inr", lambda s: round(pd.to_numeric(s, errors="coerce").fillna(0).sum() / 1e7, 2))
     ).reset_index()
 
+    state_grp["percentile"] = (state_grp["total_works"].rank(pct=True) * 100).round(1)
+    state_grp["geo_risk_score"] = (100 - state_grp["percentile"]).round(1)
+    state_grp["geo_id"] = "STATE_" + state_grp["canonical_state"].astype(str).str.upper().str.replace(" ", "_")
+    state_grp["geo_name"] = state_grp["canonical_state"]
     state_grp = state_grp.sort_values(by="total_works", ascending=False)
     rankings = state_grp.head(35).to_dict(orient="records")
 
     return {
         "status": "SUCCESS",
+        "level": level,
         "total_states": len(state_grp),
+        "rankings": rankings,
         "state_rankings": rankings
     }
 
