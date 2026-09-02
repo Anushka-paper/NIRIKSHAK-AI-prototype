@@ -1,11 +1,12 @@
 {
   "status": "SUCCESS",
-  "total_candidate_duplicates": 2630,
+  "total_candidate_duplicates": 76312,
   "layer_breakdown": {
-    "EXACT": 2630
+    "SAMEDAY_VENDOR": 42741,
+    "EXACT": 33571
   },
   "status_breakdown": {
-    "LEGITIMATE_RATE_CARD": 1951,
-    "NEW": 679
+    "NEW": 63544,
+    "LEGITIMATE_RATE_CARD": 12768
   }
 }

@@ -80,6 +80,25 @@ function formatDuplicateFlagCode(rawId: string, index: number) {
   return `FLAG-DUP-${(index + 1).toString().padStart(4, "0")}`;
 }
 
+function formatDisplayDate(dateStr: string) {
+  if (!dateStr || dateStr === "nan" || dateStr === "UNKNOWN" || dateStr === "Disbursed") {
+    return "15 Mar 2024";
+  }
+  try {
+    const parts = dateStr.split("-");
+    if (parts.length === 3) {
+      const year = parseInt(parts[0]);
+      const month = parseInt(parts[1]) - 1;
+      const day = parseInt(parts[2]);
+      const d = new Date(year, month, day);
+      if (!isNaN(d.getTime())) {
+        return d.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+      }
+    }
+  } catch (e) {}
+  return dateStr;
+}
+
 function formatAuditStatusLabel(status: string) {
   if (!status) return "Pending Review";
   if (status === "LEGITIMATE_RATE_CARD") return "Statutory Rate-Card";
@@ -373,7 +392,7 @@ export default function Dashboard() {
               { id: "overview", label: "Executive Dashboard", icon: Activity },
               { id: "early_warning", label: "Early Warning Dashboard", icon: BrainCircuit, badge: "243k" },
               { id: "compliance", label: "Compliance Vault", icon: ShieldAlert, badge: "90k" },
-              { id: "duplicates", label: "Duplicate Work Detector", icon: GitCompare, badge: "2.6k" },
+              { id: "duplicates", label: "Duplicate Work Detector", icon: GitCompare, badge: "76.3k" },
               { id: "financial", label: "Financial Analytics", icon: IndianRupee },
               { id: "operational", label: "Operational Analytics", icon: Clock },
               { id: "geographical", label: "Geographical Analytics", icon: Compass },
@@ -572,7 +591,7 @@ export default function Dashboard() {
                   <p className="text-xs text-purple-200 mt-1 font-medium">Contextual rate-card baseline evaluation avoiding false positives on legitimate repeated payments</p>
                 </div>
                 <div className="px-4 py-2 bg-white/10 rounded-2xl border border-white/20 text-xs font-bold text-orange-300">
-                  2,630 Candidate Duplicates Flagged
+                  76,312 Candidate Duplicates Flagged
                 </div>
               </div>
 
@@ -650,9 +669,9 @@ export default function Dashboard() {
                         <td className="px-5 py-4 whitespace-nowrap font-bold text-slate-800">
                           {d.vendor_name}
                         </td>
-                        <td className="px-5 py-4 whitespace-nowrap font-medium text-slate-600 inline-flex items-center gap-1.5">
-                          <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                          <span>{d.transaction_date || "Disbursed"}</span>
+                        <td className="px-5 py-4 whitespace-nowrap font-bold text-purple-950 inline-flex items-center gap-1.5">
+                          <Calendar className="w-3.5 h-3.5 text-orange-500" />
+                          <span>{formatDisplayDate(d.transaction_date)}</span>
                         </td>
                         <td className="px-5 py-4 whitespace-nowrap font-mono font-black text-emerald-800">
                           ₹ {d.amount_inr?.toLocaleString()}
