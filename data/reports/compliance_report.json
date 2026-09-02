@@ -1,0 +1,15 @@
+{
+  "status": "SUCCESS",
+  "total_works_evaluated": 243886,
+  "total_violations": 90277,
+  "severity_breakdown": {
+    "CRITICAL": 71056,
+    "MEDIUM": 12761,
+    "HIGH": 6460
+  },
+  "rule_breakdown": {
+    "R003": 71056,
+    "R008": 12761,
+    "R007": 6460
+  }
+}

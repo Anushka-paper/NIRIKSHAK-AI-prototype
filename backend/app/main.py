@@ -11,7 +11,7 @@ for d in [root_dir, backend_dir, app_dir]:
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api.v1 import dashboard, data_quality, entity_resolution, standardization
+from api.v1 import dashboard, data_quality, entity_resolution, standardization, compliance, features
 from core.config import get_cors_origins, settings
 from db.bootstrap import ensure_demo_database
 
@@ -29,6 +29,8 @@ app.include_router(dashboard.router, prefix="/api/v1/dashboard", tags=["Dashboar
 app.include_router(data_quality.router, prefix="/api/v1/data-quality", tags=["Data Quality"])
 app.include_router(standardization.router, prefix="/api/v1", tags=["Data Standardization"])
 app.include_router(entity_resolution.router, prefix="/api/v1", tags=["Entity Resolution"])
+app.include_router(compliance.router, prefix="/api/v1", tags=["Compliance Engine"])
+app.include_router(features.router, prefix="/api/v1", tags=["Canonical Feature Store"])
 
 @app.on_event("startup")
 def startup_event():
@@ -42,5 +44,3 @@ def read_root():
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
-
-# reload
