@@ -31,7 +31,7 @@ def load_duplicates_df():
 def query_duplicate_payments(
     layer_type: Optional[str] = Query(None, description="Layer filter: 'EXACT', 'NEAR', 'REPEATED_AMOUNT', 'SAMEDAY_VENDOR'"),
     status: Optional[str] = Query(None, description="Status filter: 'NEW', 'CONFIRMED_DUPLICATE', 'LEGITIMATE_RATE_CARD', 'REJECTED'"),
-    search: Optional[str] = Query(None, description="Search in duplicate_id, canonical_work_id, or vendor_name"),
+    search: Optional[str] = Query(None, description="Search in duplicate_id, canonical_work_id, work_name, or vendor_name"),
     offset: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=500)
 ):
@@ -51,7 +51,8 @@ def query_duplicate_payments(
         id_match = df["duplicate_id"].astype(str).str.upper().str.contains(s_upper, na=False)
         work_match = df["canonical_work_id"].astype(str).str.upper().str.contains(s_upper, na=False)
         vendor_match = df["vendor_name"].astype(str).str.upper().str.contains(s_upper, na=False)
-        df = df[id_match | work_match | vendor_match]
+        name_match = df["work_name"].astype(str).str.upper().str.contains(s_upper, na=False) if "work_name" in df.columns else False
+        df = df[id_match | work_match | vendor_match | name_match]
 
     total_count = len(df)
     page_df = df.iloc[offset:offset+limit]
@@ -106,4 +107,3 @@ def review_duplicate_flag(
         "message": f"Duplicate '{duplicate_id}' review status updated to '{new_status}'.",
         "duplicate": updated_row
     }
-

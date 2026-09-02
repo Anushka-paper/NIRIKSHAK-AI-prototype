@@ -19,6 +19,11 @@ def run_duplicate_payment_detection(df_txn, df_work=None):
 
     df_clean = df_txn.copy()
     
+    # Work Name / Description extraction
+    work_desc = df_clean.get("work", pd.Series("", index=df_clean.index)).astype(str).str.strip()
+    work_desc = work_desc.replace("nan", "").replace("", "Infrastructure Development Work")
+    df_clean["work_name"] = work_desc
+
     # Amount resolution: expenditure_amount_inr -> sanctioned_amount_inr -> recommended_amount_inr -> default 50000.0
     amt_series = pd.to_numeric(df_clean.get("expenditure_amount_inr", pd.Series(np.nan, index=df_clean.index)), errors="coerce")
     if "sanctioned_amount_inr" in df_clean.columns:
@@ -47,7 +52,6 @@ def run_duplicate_payment_detection(df_txn, df_work=None):
     df_valid = df_clean[(df_clean["amount"] > 0) & (df_clean["vendor"] != "") & (df_clean["vendor"] != "UNKNOWN") & (df_clean["vendor"] != "NAN")].copy()
 
     # Rate-Card Baseline Engine (§10 Check b):
-    # Compute frequency of exact amounts across DISTINCT vendors
     amount_vendor_counts = df_valid.groupby("amount")["vendor"].nunique().to_dict()
     RATE_CARD_VENDOR_THRESHOLD = 5
 
@@ -59,11 +63,13 @@ def run_duplicate_payment_detection(df_txn, df_work=None):
         amt = float(r["amount"])
         is_rate_card = amount_vendor_counts.get(amt, 0) >= RATE_CARD_VENDOR_THRESHOLD
         txn_dt = str(r.get("date", "")).replace("nan", "").strip() or "2025-05-09"
+        w_name = str(r.get("work_name", "")).replace("nan", "").strip() or "Infrastructure Development Work"
 
         records.append({
             "duplicate_id": f"DUP_EXACT_{r['work_id']}_{int(amt)}",
             "layer_type": "EXACT",
             "canonical_work_id": r["work_id"],
+            "work_name": w_name,
             "vendor_name": r["vendor"],
             "amount_inr": amt,
             "transaction_date": txn_dt,
@@ -80,10 +86,12 @@ def run_duplicate_payment_detection(df_txn, df_work=None):
     for r in df_sameday.to_dict(orient="records"):
         amt = float(r["amount"])
         txn_dt = str(r.get("date", "")).replace("nan", "").strip() or "2025-05-09"
+        w_name = str(r.get("work_name", "")).replace("nan", "").strip() or "Infrastructure Development Work"
         records.append({
             "duplicate_id": f"DUP_SAMEDAY_{r['vendor']}_{txn_dt}",
             "layer_type": "SAMEDAY_VENDOR",
             "canonical_work_id": r["work_id"],
+            "work_name": w_name,
             "vendor_name": r["vendor"],
             "amount_inr": amt,
             "transaction_date": txn_dt,
@@ -94,7 +102,7 @@ def run_duplicate_payment_detection(df_txn, df_work=None):
         })
 
     df_res = pd.DataFrame(records).drop_duplicates(subset=["duplicate_id", "canonical_work_id"]) if records else pd.DataFrame(columns=[
-        "duplicate_id", "layer_type", "canonical_work_id", "vendor_name", "amount_inr",
+        "duplicate_id", "layer_type", "canonical_work_id", "work_name", "vendor_name", "amount_inr",
         "transaction_date", "rate_card_baseline_flag", "contextual_validation_notes", "severity", "status"
     ])
 
