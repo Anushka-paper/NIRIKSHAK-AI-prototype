@@ -80,6 +80,18 @@ function formatDuplicateFlagCode(rawId: string, index: number) {
   return `FLAG-DUP-${(index + 1).toString().padStart(4, "0")}`;
 }
 
+function formatAuditStatusLabel(status: string) {
+  if (!status) return "Pending Review";
+  if (status === "LEGITIMATE_RATE_CARD") return "Statutory Rate-Card";
+  if (status === "CONFIRMED_DUPLICATE") return "Confirmed Fraud";
+  if (status === "VALIDATED_RISK") return "Validated Risk";
+  if (status === "UNDER_INVESTIGATION") return "Under Investigation";
+  if (status === "DATA_QUALITY_ISSUE") return "Data Quality Issue";
+  if (status === "DISMISSED" || status === "REJECTED") return "Dismissed Flag";
+  if (status === "NEW") return "Pending Review";
+  return status.replace(/_/g, " ");
+}
+
 function cleanMpName(name: string) {
   if (!name || name.trim() === "()" || name.trim() === "UNKNOWN" || name.trim() === "") {
     return "IDA / MINISTRY WORK";
@@ -577,10 +589,10 @@ export default function Dashboard() {
                     <button
                       key={item.layer}
                       onClick={() => setSelectedDuplicateLayer(item.layer)}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all ${
+                      className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
                         selectedDuplicateLayer === item.layer
-                          ? "bg-orange-500 text-white shadow-md"
-                          : "bg-purple-50 text-slate-600 hover:text-slate-900"
+                          ? "bg-orange-500 text-white shadow-md shadow-orange-500/20"
+                          : "bg-purple-50 text-slate-600 hover:text-slate-900 hover:bg-purple-100"
                       }`}
                     >
                       {item.label}
@@ -588,7 +600,7 @@ export default function Dashboard() {
                   ))}
                 </div>
 
-                <div className="relative w-full sm:w-72">
+                <div className="relative w-full sm:w-80">
                   <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                   <input
                     type="text"
@@ -600,68 +612,77 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {/* Duplicates Table with Clean Audit Flag Ref & Detection Pattern */}
-              <div className="bg-white border border-purple-200 rounded-3xl overflow-hidden shadow-lg">
-                <table className="w-full text-left text-xs text-slate-700">
-                  <thead className="bg-purple-950 text-white uppercase font-black tracking-wider">
-                    <tr>
-                      <th className="p-4">Audit Flag Ref</th>
-                      <th className="p-4">Detection Pattern</th>
-                      <th className="p-4">Work Ref Code</th>
-                      <th className="p-4">Vendor Entity</th>
-                      <th className="p-4">Disbursement Date</th>
-                      <th className="p-4">Disbursed Amount</th>
-                      <th className="p-4">Rate-Card Baseline (§11)</th>
-                      <th className="p-4">Audit Status</th>
-                      <th className="p-4 text-right">Side-by-Side Review</th>
+              {/* Ultra-Clean Responsive Duplicates Table Container */}
+              <div className="bg-white border border-purple-100 rounded-3xl shadow-xl overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-gradient-to-r from-purple-950 via-indigo-950 to-purple-900 text-white font-extrabold uppercase tracking-wider text-[11px]">
+                      <th className="px-5 py-4 whitespace-nowrap">Audit Flag Ref</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Detection Pattern</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Work Ref Code</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Vendor Entity</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Disbursement Date</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Disbursed Amount</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Rate-Card Baseline (§11)</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Audit Status</th>
+                      <th className="px-5 py-4 whitespace-nowrap text-right">Side-by-Side Review</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 font-medium">
+                  <tbody className="divide-y divide-purple-50 font-medium">
                     {duplicatesData.map((d, i) => (
-                      <tr key={i} className="hover:bg-purple-50/50 transition">
-                        <td className="p-4 font-mono font-black text-purple-900">
+                      <tr key={i} className="hover:bg-purple-50/60 transition-all">
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-black text-purple-900">
                           {formatDuplicateFlagCode(d.duplicate_id, i)}
                         </td>
-                        <td className="p-4">
-                          <span className={`px-2.5 py-1 rounded-xl text-[10px] font-black border ${
+                        <td className="px-5 py-4 whitespace-nowrap">
+                          <span className={`px-3 py-1 rounded-full text-[10px] font-extrabold border shadow-xs inline-flex items-center gap-1.5 ${
                             d.layer_type === "EXACT"
-                              ? "bg-rose-100 text-rose-900 border-rose-300"
-                              : "bg-purple-100 text-purple-900 border-purple-300"
+                              ? "bg-rose-50 text-rose-800 border-rose-200"
+                              : "bg-purple-50 text-purple-800 border-purple-200"
                           }`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${d.layer_type === "EXACT" ? "bg-rose-600" : "bg-purple-600"}`} />
                             {d.layer_type === "EXACT" ? "Layer 1: Exact Composite Match" : "Layer 4: Same-Day Vendor Multi-Txn"}
                           </span>
                         </td>
-                        <td className="p-4 font-mono font-bold text-orange-600">{formatWorkId(d.canonical_work_id)}</td>
-                        <td className="p-4 font-bold text-slate-800">{d.vendor_name}</td>
-                        <td className="p-4 font-medium text-slate-600 flex items-center gap-1">
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-orange-600">
+                          {formatWorkId(d.canonical_work_id)}
+                        </td>
+                        <td className="px-5 py-4 whitespace-nowrap font-bold text-slate-800">
+                          {d.vendor_name}
+                        </td>
+                        <td className="px-5 py-4 whitespace-nowrap font-medium text-slate-600 inline-flex items-center gap-1.5">
                           <Calendar className="w-3.5 h-3.5 text-slate-400" />
                           <span>{d.transaction_date || "Disbursed"}</span>
                         </td>
-                        <td className="p-4 font-mono font-black text-emerald-800">₹ {d.amount_inr?.toLocaleString()}</td>
-                        <td className="p-4">
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-black text-emerald-800">
+                          ₹ {d.amount_inr?.toLocaleString()}
+                        </td>
+                        <td className="px-5 py-4 whitespace-nowrap">
                           {d.rate_card_baseline_flag ? (
-                            <span className="px-2.5 py-1 bg-indigo-100 text-indigo-900 border border-indigo-300 rounded-xl text-[10px] font-black">
-                              Statutory Rate Card
+                            <span className="px-3 py-1 bg-indigo-50 text-indigo-900 border border-indigo-200 rounded-full text-[10px] font-black inline-flex items-center gap-1">
+                              <CheckCircle2 className="w-3 h-3 text-indigo-600" /> Statutory Rate Card
                             </span>
                           ) : (
-                            <span className="text-slate-400 text-[11px] font-medium">Vendor Specific</span>
+                            <span className="px-3 py-1 bg-slate-100 text-slate-500 border border-slate-200 rounded-full text-[10px] font-semibold">
+                              Vendor Specific
+                            </span>
                           )}
                         </td>
-                        <td className="p-4">
-                          <span className={`px-2.5 py-1 rounded-xl text-[10px] font-bold border ${
+                        <td className="px-5 py-4 whitespace-nowrap">
+                          <span className={`px-3 py-1 rounded-full text-[10px] font-extrabold border inline-flex items-center gap-1 ${
                             d.status === "CONFIRMED_DUPLICATE"
                               ? "bg-rose-100 text-rose-900 border-rose-300"
                               : d.status === "LEGITIMATE_RATE_CARD"
-                              ? "bg-emerald-100 text-emerald-900 border-emerald-300 font-black"
-                              : "bg-purple-100 text-purple-900 border-purple-300"
+                              ? "bg-emerald-100 text-emerald-900 border-emerald-300"
+                              : "bg-purple-100 text-purple-900 border-purple-200"
                           }`}>
-                            {d.status}
+                            {formatAuditStatusLabel(d.status)}
                           </span>
                         </td>
-                        <td className="p-4 text-right">
+                        <td className="px-5 py-4 whitespace-nowrap text-right">
                           <button
                             onClick={() => setActiveModalDuplicate(d)}
-                            className="px-3 py-1.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl transition text-[11px] font-bold inline-flex items-center gap-1 shadow-sm"
+                            className="px-3.5 py-1.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white rounded-xl transition text-[11px] font-extrabold inline-flex items-center gap-1.5 shadow-md shadow-orange-500/20 active:scale-95"
                           >
                             <GitCompare className="w-3.5 h-3.5" /> Compare & Review
                           </button>
@@ -708,45 +729,45 @@ export default function Dashboard() {
               </div>
 
               {/* Table */}
-              <div className="bg-white border border-purple-200 rounded-3xl overflow-hidden shadow-lg">
-                <table className="w-full text-left text-xs text-slate-700">
-                  <thead className="bg-purple-950 text-white uppercase font-black tracking-wider">
-                    <tr>
-                      <th className="p-4">Alert Ref</th>
-                      <th className="p-4">Work Ref Code</th>
-                      <th className="p-4">MP & State</th>
-                      <th className="p-4">Priority</th>
-                      <th className="p-4">Risk Score</th>
-                      <th className="p-4">Auditor Status (§21)</th>
-                      <th className="p-4">Full Evidence Risk Drivers (§14)</th>
-                      <th className="p-4 text-right">Action</th>
+              <div className="bg-white border border-purple-100 rounded-3xl overflow-x-auto shadow-xl">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-gradient-to-r from-purple-950 via-indigo-950 to-purple-900 text-white font-extrabold uppercase tracking-wider text-[11px]">
+                      <th className="px-5 py-4 whitespace-nowrap">Alert Ref</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Work Ref Code</th>
+                      <th className="px-5 py-4 whitespace-nowrap">MP & State</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Priority</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Risk Score</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Auditor Status (§21)</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Full Evidence Risk Drivers (§14)</th>
+                      <th className="px-5 py-4 whitespace-nowrap text-right">Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 font-medium">
+                  <tbody className="divide-y divide-purple-50 font-medium">
                     {earlyWarningAlerts.map((a, i) => (
-                      <tr key={i} className="hover:bg-purple-50/50 transition">
-                        <td className="p-4 font-mono font-black text-purple-900">{formatAlertId(a.alert_id)}</td>
-                        <td className="p-4 font-mono font-bold text-orange-600">{formatWorkId(a.canonical_work_id)}</td>
-                        <td className="p-4">
+                      <tr key={i} className="hover:bg-purple-50/60 transition-all">
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-black text-purple-900">{formatAlertId(a.alert_id)}</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-orange-600">{formatWorkId(a.canonical_work_id)}</td>
+                        <td className="px-5 py-4 whitespace-nowrap">
                           <div className="font-bold text-slate-900">{cleanMpName(a.canonical_mp_name)}</div>
                           <div className="text-[11px] text-slate-500">{a.canonical_state || "INDIA"} ({a.source_house})</div>
                         </td>
-                        <td className="p-4">
+                        <td className="px-5 py-4 whitespace-nowrap">
                           <span className={`px-3 py-1 rounded-full text-[10px] font-black border ${
                             a.priority === "CRITICAL" ? "bg-purple-100 text-purple-900 border-purple-300" : "bg-orange-100 text-orange-900 border-orange-300"
                           }`}>
                             {a.priority}
                           </span>
                         </td>
-                        <td className="p-4">
+                        <td className="px-5 py-4 whitespace-nowrap">
                           <span className="text-sm font-black text-purple-800">{a.project_risk_score} / 100</span>
                         </td>
-                        <td className="p-4">
+                        <td className="px-5 py-4 whitespace-nowrap">
                           <span className="px-2.5 py-1 rounded-xl text-[10px] font-bold bg-emerald-100 text-emerald-900 border border-emerald-300">
-                            {a.status}
+                            {formatAuditStatusLabel(a.status)}
                           </span>
                         </td>
-                        <td className="p-4 max-w-md">
+                        <td className="px-5 py-4 max-w-md">
                           {a.evidence?.risk_drivers ? (
                             <div className="flex flex-col gap-1">
                               {a.evidence.risk_drivers.map((d: string, idx: number) => (
@@ -759,10 +780,10 @@ export default function Dashboard() {
                             <span className="text-slate-500 italic">Threshold crossing detected</span>
                           )}
                         </td>
-                        <td className="p-4 text-right">
+                        <td className="px-5 py-4 whitespace-nowrap text-right">
                           <button
                             onClick={() => setActiveModalWork(a)}
-                            className="px-3 py-1.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl transition text-[11px] font-bold inline-flex items-center gap-1 shadow-sm"
+                            className="px-3.5 py-1.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl transition text-[11px] font-bold inline-flex items-center gap-1 shadow-sm"
                           >
                             <Eye className="w-3.5 h-3.5" /> Inspect
                           </button>
@@ -778,30 +799,30 @@ export default function Dashboard() {
           {/* TAB 4: COMPLIANCE VAULT */}
           {!loading && activeTab === "compliance" && (
             <div className="space-y-8 animate-in fade-in duration-300">
-              <div className="bg-white border border-purple-200 rounded-3xl overflow-hidden shadow-lg">
-                <table className="w-full text-left text-xs text-slate-700">
-                  <thead className="bg-purple-950 text-white uppercase font-black tracking-wider">
-                    <tr>
-                      <th className="p-4">Rule</th>
-                      <th className="p-4">Severity</th>
-                      <th className="p-4">Work / Entity Ref</th>
-                      <th className="p-4">State & MP</th>
-                      <th className="p-4">Violation Details</th>
-                      <th className="p-4">Recommended Human Action</th>
+              <div className="bg-white border border-purple-100 rounded-3xl overflow-x-auto shadow-xl">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-gradient-to-r from-purple-950 via-indigo-950 to-purple-900 text-white font-extrabold uppercase tracking-wider text-[11px]">
+                      <th className="px-5 py-4 whitespace-nowrap">Rule</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Severity</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Work / Entity Ref</th>
+                      <th className="px-5 py-4 whitespace-nowrap">State & MP</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Violation Details</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Recommended Human Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 font-medium">
+                  <tbody className="divide-y divide-purple-50 font-medium">
                     {violations.map((v, i) => (
-                      <tr key={i} className="hover:bg-purple-50/50 transition">
-                        <td className="p-4 font-mono font-bold text-orange-600">{v.rule_code}</td>
-                        <td className="p-4 font-bold text-slate-900">{v.severity}</td>
-                        <td className="p-4 font-mono text-slate-800">{formatWorkId(v.entity_id)}</td>
-                        <td className="p-4">
+                      <tr key={i} className="hover:bg-purple-50/60 transition-all">
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-orange-600">{v.rule_code}</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-bold text-slate-900">{v.severity}</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-mono text-slate-800">{formatWorkId(v.entity_id)}</td>
+                        <td className="px-5 py-4 whitespace-nowrap">
                           <div className="font-bold text-slate-900">{cleanMpName(v.state)}</div>
                           <div className="text-[11px] text-slate-500">{cleanMpName(v.mp_name)}</div>
                         </td>
-                        <td className="p-4 text-slate-800 max-w-xs">{v.description}</td>
-                        <td className="p-4 font-extrabold text-orange-600 max-w-xs">{v.action}</td>
+                        <td className="px-5 py-4 text-slate-800 max-w-xs">{v.description}</td>
+                        <td className="px-5 py-4 font-extrabold text-orange-600 max-w-xs">{v.action}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -813,25 +834,25 @@ export default function Dashboard() {
           {/* TAB 5: FINANCIAL ANALYTICS */}
           {!loading && activeTab === "financial" && financialData && (
             <div className="space-y-8 animate-in fade-in duration-300">
-              <div className="bg-white border border-purple-200 rounded-3xl overflow-hidden shadow-lg">
-                <table className="w-full text-left text-xs text-slate-700">
-                  <thead className="bg-purple-950 text-white uppercase font-black tracking-wider">
-                    <tr>
-                      <th className="p-4">Work Ref Code</th>
-                      <th className="p-4">House & State</th>
-                      <th className="p-4">MP Name</th>
-                      <th className="p-4">Estimate Variance %</th>
-                      <th className="p-4">Cost Overrun %</th>
+              <div className="bg-white border border-purple-100 rounded-3xl overflow-x-auto shadow-xl">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-gradient-to-r from-purple-950 via-indigo-950 to-purple-900 text-white font-extrabold uppercase tracking-wider text-[11px]">
+                      <th className="px-5 py-4 whitespace-nowrap">Work Ref Code</th>
+                      <th className="px-5 py-4 whitespace-nowrap">House & State</th>
+                      <th className="px-5 py-4 whitespace-nowrap">MP Name</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Estimate Variance %</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Cost Overrun %</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 font-medium">
+                  <tbody className="divide-y divide-purple-50 font-medium">
                     {financialData.overrun_leaderboard?.map((item: any, i: number) => (
-                      <tr key={i} className="hover:bg-purple-50/50 transition">
-                        <td className="p-4 font-mono font-bold text-orange-600">{formatWorkId(item.canonical_work_id)}</td>
-                        <td className="p-4 font-bold text-slate-900">{item.source_house} ({item.state})</td>
-                        <td className="p-4 font-bold text-slate-900">{cleanMpName(item.mp_name)}</td>
-                        <td className="p-4 font-mono font-extrabold text-purple-900">+{item.estimate_variance_pct}%</td>
-                        <td className="p-4 font-mono font-extrabold text-orange-600">+{item.overrun_pct}%</td>
+                      <tr key={i} className="hover:bg-purple-50/60 transition-all">
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-orange-600">{formatWorkId(item.canonical_work_id)}</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-bold text-slate-900">{item.source_house} ({item.state})</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-bold text-slate-900">{cleanMpName(item.mp_name)}</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-extrabold text-purple-900">+{item.estimate_variance_pct}%</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-extrabold text-orange-600">+{item.overrun_pct}%</td>
                       </tr>
                     ))}
                   </tbody>
@@ -863,23 +884,23 @@ export default function Dashboard() {
           {/* TAB 7: GEOGRAPHICAL ANALYTICS */}
           {!loading && activeTab === "geographical" && geoData && (
             <div className="space-y-8 animate-in fade-in duration-300">
-              <div className="bg-white border border-purple-200 rounded-3xl overflow-hidden shadow-lg">
-                <table className="w-full text-left text-xs text-slate-700">
-                  <thead className="bg-purple-950 text-white uppercase font-black tracking-wider">
-                    <tr>
-                      <th className="p-4">State / UT</th>
-                      <th className="p-4">Total Works Tracked</th>
-                      <th className="p-4">Recommended Budget (Cr)</th>
-                      <th className="p-4">Sanctioned Budget (Cr)</th>
+              <div className="bg-white border border-purple-100 rounded-3xl overflow-x-auto shadow-xl">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-gradient-to-r from-purple-950 via-indigo-950 to-purple-900 text-white font-extrabold uppercase tracking-wider text-[11px]">
+                      <th className="px-5 py-4 whitespace-nowrap">State / UT</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Total Works Tracked</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Recommended Budget (Cr)</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Sanctioned Budget (Cr)</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 font-medium">
+                  <tbody className="divide-y divide-purple-50 font-medium">
                     {geoData.state_rankings?.map((s: any, i: number) => (
-                      <tr key={i} className="hover:bg-purple-50/50 transition">
-                        <td className="p-4 font-bold text-slate-900">{s.canonical_state}</td>
-                        <td className="p-4 font-bold text-purple-900">{s.total_works?.toLocaleString()}</td>
-                        <td className="p-4 font-mono font-bold text-orange-600">₹ {s.recommended_budget_cr} Cr</td>
-                        <td className="p-4 font-mono font-bold text-emerald-800">₹ {s.sanctioned_budget_cr} Cr</td>
+                      <tr key={i} className="hover:bg-purple-50/60 transition-all">
+                        <td className="px-5 py-4 whitespace-nowrap font-bold text-slate-900">{s.canonical_state}</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-bold text-purple-900">{s.total_works?.toLocaleString()}</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-orange-600">₹ {s.recommended_budget_cr} Cr</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-emerald-800">₹ {s.sanctioned_budget_cr} Cr</td>
                       </tr>
                     ))}
                   </tbody>
@@ -891,23 +912,23 @@ export default function Dashboard() {
           {/* TAB 8: VENDOR INTELLIGENCE */}
           {!loading && activeTab === "vendors" && vendorData && (
             <div className="space-y-8 animate-in fade-in duration-300">
-              <div className="bg-white border border-purple-200 rounded-3xl overflow-hidden shadow-lg">
-                <table className="w-full text-left text-xs text-slate-700">
-                  <thead className="bg-purple-950 text-white uppercase font-black tracking-wider">
-                    <tr>
-                      <th className="p-4">Vendor Entity Name</th>
-                      <th className="p-4">Works Assigned</th>
-                      <th className="p-4">Total Disbursed (Cr)</th>
-                      <th className="p-4">States Operating</th>
+              <div className="bg-white border border-purple-100 rounded-3xl overflow-x-auto shadow-xl">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-gradient-to-r from-purple-950 via-indigo-950 to-purple-900 text-white font-extrabold uppercase tracking-wider text-[11px]">
+                      <th className="px-5 py-4 whitespace-nowrap">Vendor Entity Name</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Works Assigned</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Total Disbursed (Cr)</th>
+                      <th className="px-5 py-4 whitespace-nowrap">States Operating</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 font-medium">
+                  <tbody className="divide-y divide-purple-50 font-medium">
                     {vendorData.vendors?.map((v: any, i: number) => (
-                      <tr key={i} className="hover:bg-purple-50/50 transition">
-                        <td className="p-4 font-bold text-slate-900">{v.canonical_vendor_name}</td>
-                        <td className="p-4 font-bold text-purple-900">{v.works_assigned} works</td>
-                        <td className="p-4 font-mono font-bold text-orange-600">₹ {v.total_disbursed_cr} Cr</td>
-                        <td className="p-4 font-bold text-indigo-900">{v.states_operating} States</td>
+                      <tr key={i} className="hover:bg-purple-50/60 transition-all">
+                        <td className="px-5 py-4 whitespace-nowrap font-bold text-slate-900">{v.canonical_vendor_name}</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-bold text-purple-900">{v.works_assigned} works</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-orange-600">₹ {v.total_disbursed_cr} Cr</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-bold text-indigo-900">{v.states_operating} States</td>
                       </tr>
                     ))}
                   </tbody>
@@ -948,27 +969,27 @@ export default function Dashboard() {
 
           {/* TAB 11 & 12: WORKS & FEATURES */}
           {!loading && activeTab === "works" && (
-            <div className="bg-white border border-purple-200 rounded-3xl overflow-hidden shadow-lg">
-              <table className="w-full text-left text-xs text-slate-700">
-                <thead className="bg-purple-950 text-white uppercase font-black tracking-wider">
-                  <tr>
-                    <th className="p-4">Work Ref Code</th>
-                    <th className="p-4">House & State</th>
-                    <th className="p-4">MP Name</th>
-                    <th className="p-4">Work Description</th>
-                    <th className="p-4">Category</th>
-                    <th className="p-4">Status</th>
+            <div className="bg-white border border-purple-100 rounded-3xl overflow-x-auto shadow-xl">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="bg-gradient-to-r from-purple-950 via-indigo-950 to-purple-900 text-white font-extrabold uppercase tracking-wider text-[11px]">
+                    <th className="px-5 py-4 whitespace-nowrap">Work Ref Code</th>
+                    <th className="px-5 py-4 whitespace-nowrap">House & State</th>
+                    <th className="px-5 py-4 whitespace-nowrap">MP Name</th>
+                    <th className="px-5 py-4 whitespace-nowrap">Work Description</th>
+                    <th className="px-5 py-4 whitespace-nowrap">Category</th>
+                    <th className="px-5 py-4 whitespace-nowrap">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 font-medium">
+                <tbody className="divide-y divide-purple-50 font-medium">
                   {works.map((w, i) => (
-                    <tr key={i} className="hover:bg-purple-50/50 transition">
-                      <td className="p-4 font-mono font-bold text-indigo-900">{formatWorkId(w.canonical_work_id)}</td>
-                      <td className="p-4 font-bold text-slate-900">{w.source_house}</td>
-                      <td className="p-4 font-medium text-slate-800">{cleanMpName(w.canonical_mp_name)}</td>
-                      <td className="p-4 max-w-sm text-slate-900 font-medium truncate">{w.work}</td>
-                      <td className="p-4 text-xs font-semibold text-slate-500">{w.canonical_work_category}</td>
-                      <td className="p-4">
+                    <tr key={i} className="hover:bg-purple-50/60 transition-all">
+                      <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-indigo-900">{formatWorkId(w.canonical_work_id)}</td>
+                      <td className="px-5 py-4 whitespace-nowrap font-bold text-slate-900">{w.source_house}</td>
+                      <td className="px-5 py-4 whitespace-nowrap font-medium text-slate-800">{cleanMpName(w.canonical_mp_name)}</td>
+                      <td className="px-5 py-4 max-w-sm text-slate-900 font-medium truncate">{w.work}</td>
+                      <td className="px-5 py-4 whitespace-nowrap text-xs font-semibold text-slate-500">{w.canonical_work_category}</td>
+                      <td className="px-5 py-4 whitespace-nowrap">
                         <span className="px-3 py-1 bg-orange-100 text-orange-900 border border-orange-300 rounded-full text-[10px] font-black">
                           {w.lifecycle_stage}
                         </span>
@@ -981,25 +1002,25 @@ export default function Dashboard() {
           )}
 
           {!loading && activeTab === "features" && (
-            <div className="bg-white border border-purple-200 rounded-3xl overflow-hidden shadow-lg">
-              <table className="w-full text-left text-xs text-slate-700">
-                <thead className="bg-purple-950 text-white uppercase font-black tracking-wider">
-                  <tr>
-                    <th className="p-4">MP ID</th>
-                    <th className="p-4">Parliamentarian</th>
-                    <th className="p-4">House & State</th>
-                    <th className="p-4">Utilisation %</th>
-                    <th className="p-4">Output / Rupee</th>
+            <div className="bg-white border border-purple-100 rounded-3xl overflow-x-auto shadow-xl">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="bg-gradient-to-r from-purple-950 via-indigo-950 to-purple-900 text-white font-extrabold uppercase tracking-wider text-[11px]">
+                    <th className="px-5 py-4 whitespace-nowrap">MP ID</th>
+                    <th className="px-5 py-4 whitespace-nowrap">Parliamentarian</th>
+                    <th className="px-5 py-4 whitespace-nowrap">House & State</th>
+                    <th className="px-5 py-4 whitespace-nowrap">Utilisation %</th>
+                    <th className="px-5 py-4 whitespace-nowrap">Output / Rupee</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 font-medium">
+                <tbody className="divide-y divide-purple-50 font-medium">
                   {mpFeatures.map((m, i) => (
-                    <tr key={i} className="hover:bg-purple-50/50 transition">
-                      <td className="p-4 font-mono font-bold text-orange-600">{m.mp_id}</td>
-                      <td className="p-4 font-bold text-slate-900">{cleanMpName(m.canonical_name)}</td>
-                      <td className="p-4 font-semibold text-slate-800">{m.source_house} ({m.canonical_state})</td>
-                      <td className="p-4 font-bold text-emerald-800">{m.utilisation_pct}%</td>
-                      <td className="p-4 font-mono text-slate-800">{m.output_per_rupee} works</td>
+                    <tr key={i} className="hover:bg-purple-50/60 transition-all">
+                      <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-orange-600">{m.mp_id}</td>
+                      <td className="px-5 py-4 whitespace-nowrap font-bold text-slate-900">{cleanMpName(m.canonical_name)}</td>
+                      <td className="px-5 py-4 whitespace-nowrap font-semibold text-slate-800">{m.source_house} ({m.canonical_state})</td>
+                      <td className="px-5 py-4 whitespace-nowrap font-bold text-emerald-800">{m.utilisation_pct}%</td>
+                      <td className="px-5 py-4 whitespace-nowrap font-mono text-slate-800">{m.output_per_rupee} works</td>
                     </tr>
                   ))}
                 </tbody>
