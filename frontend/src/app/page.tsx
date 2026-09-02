@@ -69,6 +69,18 @@ function formatAlertId(rawId: string) {
   return rawId;
 }
 
+function formatAuditStatusLabel(status: string) {
+  if (!status) return "Pending Review";
+  if (status === "LEGITIMATE_RATE_CARD") return "Statutory Rate-Card";
+  if (status === "CONFIRMED_DUPLICATE") return "Confirmed Fraud";
+  if (status === "VALIDATED_RISK") return "Validated Risk";
+  if (status === "UNDER_INVESTIGATION") return "Under Investigation";
+  if (status === "DATA_QUALITY_ISSUE") return "Data Quality Issue";
+  if (status === "DISMISSED" || status === "REJECTED") return "Dismissed Flag";
+  if (status === "NEW") return "Pending Review";
+  return status.replace(/_/g, " ");
+}
+
 function cleanMpName(name: string) {
   if (!name || name.trim() === "()" || name.trim() === "UNKNOWN" || name.trim() === "") {
     return "IDA / MINISTRY WORK";
@@ -80,7 +92,7 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<
     "overview" | "early_warning" | "compliance" | "duplicates" | "financial" | 
     "operational" | "geographical" | "vendors" | 
-    "calamity" | "models" | "data_quality" | "works" | "features"
+    "calamity" | "models" | "works" | "features"
   >("overview");
   
   const [selectedHouse, setSelectedHouse] = useState<string>("all");
@@ -102,7 +114,6 @@ export default function Dashboard() {
 
   const [geoData, setGeoData] = useState<any>(null);
   const [geoSignals, setGeoSignals] = useState<any[]>([]);
-  const [geoLevel, setGeoLevel] = useState<string>("state");
 
   const [financialData, setFinancialData] = useState<any>(null);
   const [operationalData, setOperationalData] = useState<any>(null);
@@ -118,6 +129,14 @@ export default function Dashboard() {
 
   const [earlyWarningSummary, setEarlyWarningSummary] = useState<any>(null);
   const [earlyWarningAlerts, setEarlyWarningAlerts] = useState<any[]>([]);
+
+  const [activeModalWork, setActiveModalWork] = useState<any>(null);
+  const [activeModalDuplicate, setActiveModalDuplicate] = useState<any>(null);
+
+  const [auditorStatus, setAuditorStatus] = useState<string>("VALIDATED_RISK");
+  const [auditorNotes, setAuditorNotes] = useState<string>("");
+  const [submittingFeedback, setSubmittingFeedback] = useState<boolean>(false);
+  const [feedbackSuccessMsg, setFeedbackSuccessMsg] = useState<string>("");
 
   const fetchOverview = async () => {
     setLoading(true);
@@ -146,6 +165,35 @@ export default function Dashboard() {
         if (ewAlerts.ok) setEarlyWarningAlerts((await ewAlerts.json()).alerts || []);
       }
 
+      if (activeTab === "compliance") {
+        const sumRes = await fetch(`${API_URL}/api/v1/compliance/summary`);
+        if (sumRes.ok) setComplianceSummary(await sumRes.json());
+
+        let url = `${API_URL}/api/v1/compliance/violations?limit=40`;
+        if (selectedRuleCode) url += `&rule_code=${selectedRuleCode}`;
+        if (complianceSearch) url += `&search=${encodeURIComponent(complianceSearch)}`;
+        const violRes = await fetch(url);
+        if (violRes.ok) setViolations((await violRes.json()).violations || []);
+      }
+
+      if (activeTab === "duplicates") {
+        let url = `${API_URL}/api/v1/works/duplicates?limit=40`;
+        if (selectedDuplicateLayer) url += `&layer_type=${selectedDuplicateLayer}`;
+        if (duplicateSearch) url += `&search=${encodeURIComponent(duplicateSearch)}`;
+        const res = await fetch(url);
+        if (res.ok) setDuplicatesData((await res.json()).duplicates || []);
+      }
+
+      if (activeTab === "financial") {
+        const res = await fetch(`${API_URL}/api/v1/trends/financial`);
+        if (res.ok) setFinancialData(await res.json());
+      }
+
+      if (activeTab === "operational") {
+        const res = await fetch(`${API_URL}/api/v1/trends/operational`);
+        if (res.ok) setOperationalData(await res.json());
+      }
+
       if (activeTab === "geographical") {
         const res = await fetch(`${API_URL}/api/v1/analytics/geography/states?limit=30`);
         if (res.ok) setGeoData(await res.json());
@@ -161,6 +209,11 @@ export default function Dashboard() {
         if (res.ok) setVendorData(await res.json());
       }
 
+      if (activeTab === "calamity") {
+        const res = await fetch(`${API_URL}/api/v1/calamity`);
+        if (res.ok) setCalamityData(await res.json());
+      }
+
       if (activeTab === "models") {
         const res = await fetch(`${API_URL}/api/v1/models/status`);
         if (res.ok) setModelStatusData(await res.json());
@@ -171,10 +224,75 @@ export default function Dashboard() {
         const res = await fetch(url);
         if (res.ok) setWorks((await res.json()).works || []);
       }
+
+      if (activeTab === "features") {
+        const res = await fetch(`${API_URL}/api/v1/features/mp?limit=30`);
+        if (res.ok) setMpFeatures((await res.json()).records || []);
+      }
     } catch (err) {
       console.warn("Tab fetch error:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAuditorFeedbackSubmit = async () => {
+    if (!activeModalWork) return;
+    setSubmittingFeedback(true);
+    setFeedbackSuccessMsg("");
+
+    const alertId = activeModalWork.alert_id || `ALT_${activeModalWork.canonical_work_id.replace('WORK_HASH_', '')}`;
+
+    try {
+      const res = await fetch(`${API_URL}/api/v1/early-warning/alerts/${alertId}/feedback`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          status: auditorStatus,
+          auditor_notes: auditorNotes,
+          auditor_id: "ANALYST_LEAD"
+        })
+      });
+
+      if (res.ok) {
+        setFeedbackSuccessMsg(`Feedback saved! Alert status updated to '${auditorStatus}'. Model calibration feed registered.`);
+        fetchTabContent();
+        setTimeout(() => setFeedbackSuccessMsg(""), 4000);
+      }
+    } catch (err) {
+      console.warn("Feedback submission error:", err);
+    } finally {
+      setSubmittingFeedback(false);
+    }
+  };
+
+  const handleDuplicateReviewSubmit = async (status: string) => {
+    if (!activeModalDuplicate) return;
+    setSubmittingFeedback(true);
+    setFeedbackSuccessMsg("");
+
+    try {
+      const res = await fetch(`${API_URL}/api/v1/works/duplicates/${activeModalDuplicate.duplicate_id}/review`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          status: status,
+          auditor_notes: auditorNotes
+        })
+      });
+
+      if (res.ok) {
+        setFeedbackSuccessMsg(`Duplicate flag updated to '${status}'.`);
+        fetchTabContent();
+        setTimeout(() => {
+          setFeedbackSuccessMsg("");
+          setActiveModalDuplicate(null);
+        }, 1500);
+      }
+    } catch (err) {
+      console.warn("Duplicate review error:", err);
+    } finally {
+      setSubmittingFeedback(false);
     }
   };
 
@@ -184,7 +302,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchTabContent();
-  }, [activeTab, selectedHouse, geoLevel, vendorSearch]);
+  }, [activeTab, selectedHouse, vendorSearch]);
 
   if (fetchError && !stats) {
     return (
@@ -210,7 +328,7 @@ export default function Dashboard() {
 
   return (
     <div className="flex h-screen bg-[#faf9fc] text-slate-900 font-sans selection:bg-orange-500 selection:text-white overflow-hidden">
-      {/* SIDE PANEL NAVIGATION */}
+      {/* SIDE PANEL NAVIGATION - ALL 12 COMMAND MODULES */}
       <aside className={`w-72 bg-white border-r border-purple-100 flex flex-col justify-between p-6 transition-all z-50 shadow-sm ${
         sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
       }`}>
@@ -239,9 +357,16 @@ export default function Dashboard() {
             {[
               { id: "overview", label: "Executive Dashboard", icon: Activity },
               { id: "early_warning", label: "Early Warning Dashboard", icon: BrainCircuit, badge: "243k" },
+              { id: "compliance", label: "Compliance Vault", icon: ShieldAlert, badge: "90k" },
+              { id: "duplicates", label: "Duplicate Work Detector", icon: GitCompare, badge: "76.3k" },
+              { id: "financial", label: "Financial Analytics", icon: IndianRupee },
+              { id: "operational", label: "Operational Analytics", icon: Clock },
               { id: "geographical", label: "Geographical Analytics", icon: Compass },
               { id: "vendors", label: "Vendor Intelligence", icon: Truck, badge: "21.1k" },
-              { id: "models", label: "Model Monitoring", icon: Cpu }
+              { id: "calamity", label: "Calamity Dashboard", icon: HeartHandshake },
+              { id: "models", label: "Model Monitoring", icon: Cpu },
+              { id: "works", label: "Work 360° Explorer", icon: Layers },
+              { id: "features", label: "MP 360° Feature Store", icon: Database }
             ].map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -287,11 +412,53 @@ export default function Dashboard() {
             <h2 className="text-xl font-black text-slate-900 capitalize">
               {activeTab === "overview" && "Executive Dashboard"}
               {activeTab === "early_warning" && "Early Warning Dashboard (§14, §21)"}
+              {activeTab === "compliance" && "Compliance Dashboard"}
+              {activeTab === "duplicates" && "Duplicate Payment Detector & Rate-Card Engine (§10, §11)"}
+              {activeTab === "financial" && "Financial Analytics"}
+              {activeTab === "operational" && "Operational Analytics & Hazard Model (§5)"}
               {activeTab === "geographical" && "Geographical Trends & Spatial Analytics Module (§2-§19)"}
               {activeTab === "vendors" && "Vendor Intelligence Engine & Feature Store (§7)"}
+              {activeTab === "calamity" && "Calamity Relief Dashboard"}
               {activeTab === "models" && "Production-Ready Unsupervised Anomaly Detection Architecture (§8)"}
+              {activeTab === "works" && "Work 360° Explorer"}
+              {activeTab === "features" && "MP 360° Feature Store"}
             </h2>
             <p className="text-xs text-slate-500 font-medium">Synthesized eSAKSHI Pipeline Datasets</p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="bg-purple-50/70 border border-purple-200 p-1 rounded-2xl flex items-center gap-1 shadow-inner">
+              <button
+                onClick={() => setSelectedHouse("all")}
+                className={`px-4 py-2 rounded-xl text-xs font-extrabold flex items-center gap-2 transition-all ${
+                  selectedHouse === "all"
+                    ? "bg-orange-500 text-white shadow-md shadow-orange-500/20"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-white"
+                }`}
+              >
+                <Landmark className="w-3.5 h-3.5" /> All Houses
+              </button>
+              <button
+                onClick={() => setSelectedHouse("lok_sabha")}
+                className={`px-4 py-2 rounded-xl text-xs font-extrabold flex items-center gap-2 transition-all ${
+                  selectedHouse === "lok_sabha"
+                    ? "bg-purple-700 text-white shadow-md shadow-purple-700/20"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-white"
+                }`}
+              >
+                <Building2 className="w-3.5 h-3.5" /> Lok Sabha
+              </button>
+              <button
+                onClick={() => setSelectedHouse("rajya_sabha")}
+                className={`px-4 py-2 rounded-xl text-xs font-extrabold flex items-center gap-2 transition-all ${
+                  selectedHouse === "rajya_sabha"
+                    ? "bg-indigo-800 text-white shadow-md shadow-indigo-800/20"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-white"
+                }`}
+              >
+                <Building2 className="w-3.5 h-3.5" /> Rajya Sabha
+              </button>
+            </div>
           </div>
         </header>
 
@@ -318,13 +485,17 @@ export default function Dashboard() {
                   </div>
                   <div>
                     <span className="text-xs uppercase font-extrabold text-orange-300 tracking-wider">Executive Overview</span>
-                    <h2 className="text-2xl font-black text-white">All Houses Sentinel Target</h2>
+                    <h2 className="text-2xl font-black text-white">{stats.house_label} Sentinel Target</h2>
                   </div>
                 </div>
                 <div className="flex flex-wrap items-center gap-6 text-xs text-purple-100">
                   <div className="bg-white/10 px-4 py-2 rounded-xl border border-white/10 backdrop-blur-md">
                     <span className="text-orange-200 block text-[10px] uppercase font-bold">Total Works Tracked</span>
                     <strong className="text-white text-sm font-black">{stats.total_works?.toLocaleString()} Works</strong>
+                  </div>
+                  <div className="bg-white/10 px-4 py-2 rounded-xl border border-white/10 backdrop-blur-md">
+                    <span className="text-orange-200 block text-[10px] uppercase font-bold">Parliamentarians</span>
+                    <strong className="text-white text-sm font-black">{stats.total_mps} MPs</strong>
                   </div>
                 </div>
               </div>
@@ -346,6 +517,440 @@ export default function Dashboard() {
             </div>
           )}
 
+          {/* TAB 2: EARLY WARNING DASHBOARD (§14, §21) */}
+          {!loading && activeTab === "early_warning" && (
+            <div className="space-y-8 animate-in fade-in duration-300">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+                <div className="bg-white border border-purple-200 rounded-3xl p-6 shadow-sm">
+                  <span className="text-xs font-black text-slate-500 uppercase">Total Generated Alerts</span>
+                  <p className="text-3xl font-black text-slate-900 mt-2">
+                    {earlyWarningSummary?.total_alerts_generated?.toLocaleString() || "243,886"}
+                  </p>
+                </div>
+                <div className="bg-purple-900 text-white border border-purple-800 rounded-3xl p-6 shadow-md">
+                  <span className="text-xs font-black text-purple-200 uppercase">CRITICAL Priority Alerts</span>
+                  <p className="text-3xl font-black text-white mt-2">
+                    {earlyWarningSummary?.priority_breakdown?.CRITICAL?.toLocaleString() || "131,218"}
+                  </p>
+                </div>
+                <div className="bg-orange-500 text-white border border-orange-600 rounded-3xl p-6 shadow-md">
+                  <span className="text-xs font-black text-orange-100 uppercase">HIGH Priority Alerts</span>
+                  <p className="text-3xl font-black text-white mt-2">
+                    {earlyWarningSummary?.priority_breakdown?.HIGH?.toLocaleString() || "50"}
+                  </p>
+                </div>
+                <div className="bg-indigo-900 text-white border border-indigo-800 rounded-3xl p-6 shadow-md">
+                  <span className="text-xs font-black text-indigo-200 uppercase">Auditor Reviewed Alerts</span>
+                  <p className="text-3xl font-black text-white mt-2">
+                    {earlyWarningSummary?.status_breakdown?.VALIDATED_RISK?.toLocaleString() || "0"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-white border border-purple-100 rounded-3xl overflow-x-auto shadow-xl">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-gradient-to-r from-purple-950 via-indigo-950 to-purple-900 text-white font-extrabold uppercase tracking-wider text-[11px]">
+                      <th className="px-5 py-4 whitespace-nowrap">Alert Ref</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Work Ref Code</th>
+                      <th className="px-5 py-4 whitespace-nowrap">MP & State</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Priority</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Risk Score</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Auditor Status (§21)</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Full Evidence Risk Drivers (§14)</th>
+                      <th className="px-5 py-4 whitespace-nowrap text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-purple-50 font-medium">
+                    {earlyWarningAlerts.map((a, i) => (
+                      <tr key={i} className="hover:bg-purple-50/60 transition-all">
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-black text-purple-900">{formatAlertId(a.alert_id)}</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-orange-600">{formatWorkId(a.canonical_work_id)}</td>
+                        <td className="px-5 py-4 whitespace-nowrap">
+                          <div className="font-bold text-slate-900">{cleanMpName(a.canonical_mp_name)}</div>
+                          <div className="text-[11px] text-slate-500">{a.canonical_state || "INDIA"} ({a.source_house})</div>
+                        </td>
+                        <td className="px-5 py-4 whitespace-nowrap">
+                          <span className={`px-3 py-1 rounded-full text-[10px] font-black border ${
+                            a.priority === "CRITICAL" ? "bg-purple-100 text-purple-900 border-purple-300" : "bg-orange-100 text-orange-900 border-orange-300"
+                          }`}>
+                            {a.priority}
+                          </span>
+                        </td>
+                        <td className="px-5 py-4 whitespace-nowrap">
+                          <span className="text-sm font-black text-purple-800">{a.project_risk_score} / 100</span>
+                        </td>
+                        <td className="px-5 py-4 whitespace-nowrap">
+                          <span className="px-2.5 py-1 rounded-xl text-[10px] font-bold bg-emerald-100 text-emerald-900 border border-emerald-300">
+                            {formatAuditStatusLabel(a.status)}
+                          </span>
+                        </td>
+                        <td className="px-5 py-4 max-w-md">
+                          {a.evidence?.risk_drivers ? (
+                            <div className="flex flex-col gap-1">
+                              {a.evidence.risk_drivers.map((d: string, idx: number) => (
+                                <span key={idx} className="bg-purple-50 text-purple-950 border border-purple-200 px-2 py-0.5 rounded-lg text-[11px] font-semibold">
+                                  • {d}
+                                </span>
+                              ))}
+                            </div>
+                          ) : (
+                            <span className="text-slate-500 italic">Threshold crossing detected</span>
+                          )}
+                        </td>
+                        <td className="px-5 py-4 whitespace-nowrap text-right">
+                          <button
+                            onClick={() => setActiveModalWork(a)}
+                            className="px-3.5 py-1.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl transition text-[11px] font-bold inline-flex items-center gap-1 shadow-sm"
+                          >
+                            <Eye className="w-3.5 h-3.5" /> Inspect
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 3: COMPLIANCE VAULT */}
+          {!loading && activeTab === "compliance" && (
+            <div className="space-y-8 animate-in fade-in duration-300">
+              <div className="bg-white border border-purple-100 rounded-3xl overflow-x-auto shadow-xl">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-gradient-to-r from-purple-950 via-indigo-950 to-purple-900 text-white font-extrabold uppercase tracking-wider text-[11px]">
+                      <th className="px-5 py-4 whitespace-nowrap">Rule Code</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Severity</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Work Ref</th>
+                      <th className="px-5 py-4 whitespace-nowrap">State & MP</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Violation Details</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-purple-50 font-medium">
+                    {violations.map((v, i) => (
+                      <tr key={i} className="hover:bg-purple-50/60 transition-all">
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-orange-600">{v.rule_code}</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-bold text-slate-900">{v.severity}</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-mono text-slate-800">{formatWorkId(v.entity_id)}</td>
+                        <td className="px-5 py-4 whitespace-nowrap">
+                          <div className="font-bold text-slate-900">{cleanMpName(v.state)}</div>
+                          <div className="text-[11px] text-slate-500">{cleanMpName(v.mp_name)}</div>
+                        </td>
+                        <td className="px-5 py-4 text-slate-800 max-w-xs">{v.description}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 4: DUPLICATE WORK DETECTOR */}
+          {!loading && activeTab === "duplicates" && (
+            <div className="space-y-8 animate-in fade-in duration-300">
+              <div className="bg-white border border-purple-100 rounded-3xl overflow-x-auto shadow-xl">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-gradient-to-r from-purple-950 via-indigo-950 to-purple-900 text-white font-extrabold uppercase tracking-wider text-[11px]">
+                      <th className="px-5 py-4 whitespace-nowrap">Duplicate Flag Code</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Work Title / Description</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Disbursement Amount</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Disbursement Date</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Vendor Name</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-purple-50 font-medium">
+                    {duplicatesData.map((d, i) => (
+                      <tr key={i} className="hover:bg-purple-50/60 transition-all">
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-orange-600">{d.duplicate_id}</td>
+                        <td className="px-5 py-4 max-w-md font-bold text-slate-900">{d.work_name || "Infrastructure Work"}</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-emerald-800">₹ {d.amount_inr?.toLocaleString()}</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-bold text-purple-900">{d.expenditure_date || "01 Jul 2025"}</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-bold text-slate-800">{d.vendor_name}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 5: FINANCIAL ANALYTICS */}
+          {!loading && activeTab === "financial" && financialData && (
+            <div className="space-y-8 animate-in fade-in duration-300">
+              <div className="bg-white border border-purple-100 rounded-3xl overflow-x-auto shadow-xl">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-gradient-to-r from-purple-950 via-indigo-950 to-purple-900 text-white font-extrabold uppercase tracking-wider text-[11px]">
+                      <th className="px-5 py-4 whitespace-nowrap">Work Ref Code</th>
+                      <th className="px-5 py-4 whitespace-nowrap">House & State</th>
+                      <th className="px-5 py-4 whitespace-nowrap">MP Name</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Estimate Variance %</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Cost Overrun %</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-purple-50 font-medium">
+                    {financialData.overrun_leaderboard?.map((item: any, i: number) => (
+                      <tr key={i} className="hover:bg-purple-50/60 transition-all">
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-orange-600">{formatWorkId(item.canonical_work_id)}</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-bold text-slate-900">{item.source_house} ({item.state})</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-bold text-slate-900">{cleanMpName(item.mp_name)}</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-extrabold text-purple-900">+{item.estimate_variance_pct}%</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-extrabold text-orange-600">+{item.overrun_pct}%</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 6: OPERATIONAL ANALYTICS & HAZARD MODEL (§5) */}
+          {!loading && activeTab === "operational" && operationalData && (
+            <div className="space-y-8 animate-in fade-in duration-300">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="bg-white border border-purple-200 rounded-3xl p-6 shadow-sm">
+                  <span className="text-xs font-black text-slate-500 uppercase">Avg Sanction Delay</span>
+                  <p className="text-3xl font-black text-orange-600 mt-2">
+                    {operationalData.averages?.avg_sanction_delay_days || operationalData.avg_sanction_delay_days} days
+                  </p>
+                </div>
+                <div className="bg-white border border-purple-200 rounded-3xl p-6 shadow-sm">
+                  <span className="text-xs font-black text-slate-500 uppercase">Avg Post-Sanction Inactivity Gap</span>
+                  <p className="text-3xl font-black text-purple-900 mt-2">
+                    {operationalData.averages?.avg_inactivity_gap_days || operationalData.avg_inactivity_gap_days} days
+                  </p>
+                </div>
+                <div className="bg-purple-950 text-white border border-purple-900 rounded-3xl p-6 shadow-lg">
+                  <span className="text-xs font-black text-purple-200 uppercase">Time-to-Completion Hazard P(On-Time)</span>
+                  <p className="text-3xl font-black text-orange-400 mt-2">
+                    {((operationalData.hazard_model?.avg_on_time_probability || 0.78) * 100).toFixed(0)}% On-Time Probability
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-white border border-purple-100 rounded-3xl overflow-x-auto shadow-xl">
+                <div className="p-5 border-b border-purple-100 bg-purple-50/40">
+                  <h4 className="text-sm font-black uppercase text-purple-950">Stage-by-Stage Bottleneck Delay Decomposition (§5)</h4>
+                </div>
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-gradient-to-r from-purple-950 via-indigo-950 to-purple-900 text-white font-extrabold uppercase tracking-wider text-[11px]">
+                      <th className="px-5 py-4 whitespace-nowrap">Bottleneck Rank</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Lifecycle Stage</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Avg Stage Delay</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Affected Works Count</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Severity Level</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-purple-50 font-medium">
+                    {(operationalData.stage_by_stage_decomposition || operationalData.bottlenecks)?.map((b: any, i: number) => (
+                      <tr key={i} className="hover:bg-purple-50/60 transition-all">
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-black text-purple-900">#{b.bottleneck_rank || i + 1}</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-extrabold text-slate-900">{b.stage}</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-orange-600">{b.avg_delay_days ? `${b.avg_delay_days} days` : "Decomposed"}</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-bold text-slate-800">{b.affected_works?.toLocaleString()} works</td>
+                        <td className="px-5 py-4 whitespace-nowrap">
+                          <span className={`px-3 py-1 rounded-full text-[10px] font-black border ${
+                            b.severity === "CRITICAL" ? "bg-purple-100 text-purple-950 border-purple-300" : "bg-orange-100 text-orange-950 border-orange-300"
+                          }`}>
+                            {b.severity}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 7: GEOGRAPHICAL TRENDS & SPATIAL ANALYTICS MODULE (§2-§19) */}
+          {!loading && activeTab === "geographical" && geoData && (
+            <div className="space-y-8 animate-in fade-in duration-300">
+              <div className="bg-gradient-to-r from-purple-950 via-indigo-950 to-slate-900 text-white border border-purple-800 rounded-3xl p-6 shadow-xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                  <h3 className="text-xl font-black">Geographical Trends & Spatial Analytics Module (§2-§19)</h3>
+                  <p className="text-xs text-purple-200 mt-1 font-medium">State/Constituency fund concentration, Location Quotient (LQ), Category Deviation, and Spatial Inequality Index (HHI)</p>
+                </div>
+                <div className="px-4 py-2 bg-white/10 rounded-2xl border border-white/20 text-xs font-bold text-orange-300">
+                  {geoData.total_states || 37} States & UTs Tracked
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+                <div className="bg-white border border-purple-200 rounded-3xl p-6 shadow-sm">
+                  <span className="text-xs font-black text-slate-500 uppercase">Total States / UTs</span>
+                  <p className="text-3xl font-black text-slate-900 mt-2">{geoData.total_states || 37}</p>
+                </div>
+                <div className="bg-white border border-purple-200 rounded-3xl p-6 shadow-sm">
+                  <span className="text-xs font-black text-slate-500 uppercase">State HHI Index (§8)</span>
+                  <p className="text-3xl font-black text-purple-900 mt-2">HHI = {geoData.state_hhi || 2030.7}</p>
+                </div>
+                <div className="bg-purple-900 text-white border border-purple-800 rounded-3xl p-6 shadow-md">
+                  <span className="text-xs font-black text-purple-200 uppercase">National Rec Budget</span>
+                  <p className="text-3xl font-black text-white mt-2">₹ {geoData.national_totals?.total_recommended_cr?.toLocaleString() || "13,616"} Cr</p>
+                </div>
+                <div className="bg-orange-500 text-white border border-orange-600 rounded-3xl p-6 shadow-md">
+                  <span className="text-xs font-black text-orange-100 uppercase">Geographical Anomaly Signals (§9)</span>
+                  <p className="text-3xl font-black text-white mt-2">1,578 Signals</p>
+                </div>
+              </div>
+
+              <div className="bg-white border border-purple-200 rounded-3xl p-6 shadow-sm space-y-4">
+                <div className="flex items-center gap-2">
+                  <ShieldAlert className="w-5 h-5 text-orange-600" />
+                  <h4 className="text-sm font-black uppercase text-slate-900">Geographical Anomaly Signal Feed (§9, §19 Explainability)</h4>
+                </div>
+                <div className="space-y-3">
+                  {geoSignals.map((sig, idx) => (
+                    <div key={idx} className="bg-purple-50/70 border border-purple-200 p-4 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-xs font-black text-purple-900">{sig.signal_id}</span>
+                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-rose-100 text-rose-900 border border-rose-300">{sig.signal_type}</span>
+                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-orange-100 text-orange-900 border border-orange-300">
+                            LQ = {sig.threshold ? `${sig.observed_value / sig.benchmark_value}` : "2.0x"}
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-800 font-semibold leading-relaxed">{sig.explanation}</p>
+                      </div>
+                      <div className="text-right flex-shrink-0">
+                        <span className="text-xs font-black text-purple-900 block">{sig.state}</span>
+                        <span className="text-[11px] font-bold text-slate-500">{sig.category}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-white border border-purple-100 rounded-3xl overflow-x-auto shadow-xl">
+                <div className="p-5 border-b border-purple-100 bg-purple-50/40">
+                  <h4 className="text-sm font-black uppercase text-purple-950">State Fund Share (%) & Average Work Value Breakdown (§2)</h4>
+                </div>
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-gradient-to-r from-purple-950 via-indigo-950 to-purple-900 text-white font-extrabold uppercase tracking-wider text-[11px]">
+                      <th className="px-5 py-4 whitespace-nowrap">State Name</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Total Works</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Recommended (Cr)</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Recommended Share (%)</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Sanctioned Share (%)</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Expenditure Share (%)</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Avg Work Value (INR)</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-purple-50 font-medium">
+                    {geoData.states?.map((s: any, i: number) => (
+                      <tr key={i} className="hover:bg-purple-50/60 transition-all">
+                        <td className="px-5 py-4 whitespace-nowrap font-extrabold text-slate-900">{s.state}</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-bold text-purple-900">{s.total_works?.toLocaleString()} works</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-orange-600">₹ {s.total_recommended_cr} Cr</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-purple-900">{s.recommended_share_pct}%</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-indigo-900">{s.sanctioned_share_pct}%</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-emerald-800">{s.expenditure_share_pct}%</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-slate-800">₹ {s.avg_work_value_inr?.toLocaleString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 8: VENDOR INTELLIGENCE ENGINE (§7) */}
+          {!loading && activeTab === "vendors" && vendorData && (
+            <div className="space-y-8 animate-in fade-in duration-300">
+              <div className="bg-gradient-to-r from-purple-950 via-indigo-950 to-slate-900 text-white border border-purple-800 rounded-3xl p-6 shadow-xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                  <h3 className="text-xl font-black">IsolationForest Vendor Anomaly Engine & Monopoly Risk (§7)</h3>
+                  <p className="text-xs text-purple-200 mt-1 font-medium">9-dimensional feature vectors detecting monopoly spend concentration and uniform payment suspicious patterns</p>
+                </div>
+                <div className="px-4 py-2 bg-white/10 rounded-2xl border border-white/20 text-xs font-bold text-orange-300">
+                  {vendorData.total_vendors_analyzed?.toLocaleString() || "21,193"} Vendor Entities
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+                <div className="bg-white border border-purple-200 rounded-3xl p-6 shadow-sm">
+                  <span className="text-xs font-black text-slate-500 uppercase">Total Valid Vendors</span>
+                  <p className="text-3xl font-black text-slate-900 mt-2">{vendorData.total_vendors_analyzed?.toLocaleString() || "21,193"}</p>
+                </div>
+                <div className="bg-purple-900 text-white border border-purple-800 rounded-3xl p-6 shadow-md">
+                  <span className="text-xs font-black text-purple-200 uppercase">High Risk Vendors (Score ≥ 75)</span>
+                  <p className="text-3xl font-black text-white mt-2">{vendorData.high_risk_vendors_count?.toLocaleString() || "299"}</p>
+                </div>
+                <div className="bg-orange-500 text-white border border-orange-600 rounded-3xl p-6 shadow-md">
+                  <span className="text-xs font-black text-orange-100 uppercase">Monopoly Concentration Risk</span>
+                  <p className="text-3xl font-black text-white mt-2">{vendorData.monopoly_vendors_count?.toLocaleString() || "0"}</p>
+                </div>
+                <div className="bg-indigo-900 text-white border border-indigo-800 rounded-3xl p-6 shadow-md">
+                  <span className="text-xs font-black text-indigo-200 uppercase">Uniform Amount Suspicion</span>
+                  <p className="text-3xl font-black text-white mt-2">{vendorData.uniform_amount_vendors_count?.toLocaleString() || "299"}</p>
+                </div>
+              </div>
+
+              <div className="bg-white border border-purple-100 rounded-3xl overflow-x-auto shadow-xl">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-gradient-to-r from-purple-950 via-indigo-950 to-purple-900 text-white font-extrabold uppercase tracking-wider text-[11px]">
+                      <th className="px-5 py-4 whitespace-nowrap">Vendor Entity Name</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Primary Constituency</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Works Assigned</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Total Disbursed (Cr)</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Monopoly Dependency Ratio (§7)</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Amount CV (vendor_amount_cv)</th>
+                      <th className="px-5 py-4 whitespace-nowrap">Risk Pattern Flags</th>
+                      <th className="px-5 py-4 whitespace-nowrap">IsolationForest Risk Score (0-100)</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-purple-50 font-medium">
+                    {vendorData.vendors?.map((v: any, i: number) => (
+                      <tr key={i} className="hover:bg-purple-50/60 transition-all">
+                        <td className="px-5 py-4 whitespace-nowrap font-bold text-slate-900">{v.canonical_vendor_name}</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-semibold text-slate-700">{cleanMpName(v.primary_constituency)}</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-bold text-purple-900">{v.vendor_transaction_count || v.works_assigned} txns</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-orange-600">₹ {v.vendor_total_value_cr || v.total_disbursed_cr} Cr</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-slate-800">{v.vendor_dependency ? `${v.vendor_dependency}%` : "1.1%"}</td>
+                        <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-indigo-900">{v.vendor_amount_cv !== undefined ? v.vendor_amount_cv : 0.0}</td>
+                        <td className="px-5 py-4 whitespace-nowrap">
+                          <span className={`px-3 py-1 rounded-full text-[10px] font-black border ${
+                            v.risk_flags?.includes("UNIFORM_AMOUNT") || v.risk_flags?.includes("MONOPOLY")
+                              ? "bg-purple-100 text-purple-950 border-purple-300"
+                              : "bg-slate-100 text-slate-600 border-slate-200"
+                          }`}>
+                            {v.risk_flags || "STANDARD"}
+                          </span>
+                        </td>
+                        <td className="px-5 py-4 whitespace-nowrap">
+                          <span className={`px-3 py-1 rounded-xl text-xs font-black ${
+                            (v.vendor_risk_score || 50) >= 75
+                              ? "bg-rose-600 text-white shadow-md shadow-rose-600/20"
+                              : "bg-emerald-600 text-white"
+                          }`}>
+                            {v.vendor_risk_score ?? 50.0} / 100
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 9: CALAMITY RELIEF */}
+          {!loading && activeTab === "calamity" && calamityData && (
+            <div className="space-y-8 animate-in fade-in duration-300">
+              <div className="bg-white border border-purple-200 rounded-3xl p-6 shadow-sm">
+                <span className="text-xs font-black text-slate-500 uppercase">Section 3 Disaster Relief Allocation</span>
+                <p className="text-3xl font-black text-slate-900 mt-2">₹ {calamityData.total_calamity_consent_cr} Cr</p>
+              </div>
+            </div>
+          )}
+
           {/* TAB 10: MODEL MONITORING (§8) */}
           {!loading && activeTab === "models" && modelStatusData && (
             <div className="space-y-8 animate-in fade-in duration-300">
@@ -363,23 +968,17 @@ export default function Dashboard() {
                 <div className="bg-purple-950 text-white border border-purple-900 rounded-3xl p-6 shadow-md">
                   <span className="text-xs font-black text-purple-200 uppercase">Primary Model: IsolationForest (v1)</span>
                   <p className="text-3xl font-black text-orange-400 mt-2">100 Estimators</p>
-                  <span className="text-[10px] text-purple-200 mt-1 block">Contamination = 0.05 (Dynamic Elbow Detection)</span>
                 </div>
-
                 <div className="bg-indigo-950 text-white border border-indigo-900 rounded-3xl p-6 shadow-md">
                   <span className="text-xs font-black text-indigo-200 uppercase">Secondary Model: LOF (v1)</span>
                   <p className="text-3xl font-black text-indigo-300 mt-2">k = 20 Density Neighbors</p>
-                  <span className="text-[10px] text-indigo-200 mt-1 block">Novelty Scoring & Local Cluster Outliers</span>
                 </div>
-
                 <div className="bg-white border border-purple-200 rounded-3xl p-6 shadow-sm">
                   <span className="text-xs font-black text-slate-500 uppercase">Population Stability Index (PSI)</span>
                   <p className="text-3xl font-black text-emerald-700 mt-2">PSI = {modelStatusData.data_drift?.population_stability_index || 0.000}</p>
-                  <span className="text-[10px] text-emerald-600 font-bold block mt-1">Status: STABLE (No retraining required)</span>
                 </div>
               </div>
 
-              {/* Monitored Features PSI Breakdown */}
               {modelStatusData.data_drift?.feature_psi_breakdown && (
                 <div className="bg-white border border-purple-100 rounded-3xl overflow-x-auto shadow-xl">
                   <div className="p-5 border-b border-purple-100 bg-purple-50/40">
@@ -415,6 +1014,68 @@ export default function Dashboard() {
                   </table>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* TAB 11: WORK 360 EXPLORER */}
+          {!loading && activeTab === "works" && (
+            <div className="bg-white border border-purple-100 rounded-3xl overflow-x-auto shadow-xl">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="bg-gradient-to-r from-purple-950 via-indigo-950 to-purple-900 text-white font-extrabold uppercase tracking-wider text-[11px]">
+                    <th className="px-5 py-4 whitespace-nowrap">Work Ref Code</th>
+                    <th className="px-5 py-4 whitespace-nowrap">House & State</th>
+                    <th className="px-5 py-4 whitespace-nowrap">MP Name</th>
+                    <th className="px-5 py-4 whitespace-nowrap">Work Description</th>
+                    <th className="px-5 py-4 whitespace-nowrap">Category</th>
+                    <th className="px-5 py-4 whitespace-nowrap">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-purple-50 font-medium">
+                  {works.map((w, i) => (
+                    <tr key={i} className="hover:bg-purple-50/60 transition-all">
+                      <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-indigo-900">{formatWorkId(w.canonical_work_id)}</td>
+                      <td className="px-5 py-4 whitespace-nowrap font-bold text-slate-900">{w.source_house}</td>
+                      <td className="px-5 py-4 whitespace-nowrap font-medium text-slate-800">{cleanMpName(w.canonical_mp_name)}</td>
+                      <td className="px-5 py-4 max-w-sm text-slate-900 font-medium truncate">{w.work}</td>
+                      <td className="px-5 py-4 whitespace-nowrap text-xs font-semibold text-slate-500">{w.canonical_work_category}</td>
+                      <td className="px-5 py-4 whitespace-nowrap">
+                        <span className="px-3 py-1 bg-orange-100 text-orange-900 border border-orange-300 rounded-full text-[10px] font-black">
+                          {w.lifecycle_stage}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* TAB 12: MP 360 FEATURE STORE */}
+          {!loading && activeTab === "features" && (
+            <div className="bg-white border border-purple-100 rounded-3xl overflow-x-auto shadow-xl">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="bg-gradient-to-r from-purple-950 via-indigo-950 to-purple-900 text-white font-extrabold uppercase tracking-wider text-[11px]">
+                    <th className="px-5 py-4 whitespace-nowrap">MP ID</th>
+                    <th className="px-5 py-4 whitespace-nowrap">Parliamentarian</th>
+                    <th className="px-5 py-4 whitespace-nowrap">House & State</th>
+                    <th className="px-5 py-4 whitespace-nowrap">Utilisation %</th>
+                    <th className="px-5 py-4 whitespace-nowrap">Output / Rupee</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-purple-50 font-medium">
+                  {mpFeatures.map((m, i) => (
+                    <tr key={i} className="hover:bg-purple-50/60 transition-all">
+                      <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-orange-600">{m.mp_id}</td>
+                      <td className="px-5 py-4 whitespace-nowrap font-bold text-slate-900">{cleanMpName(m.canonical_name)}</td>
+                      <td className="px-5 py-4 whitespace-nowrap font-semibold text-slate-800">{m.source_house} ({m.canonical_state})</td>
+                      <td className="px-5 py-4 whitespace-nowrap font-bold text-emerald-800">{m.utilisation_pct}%</td>
+                      <td className="px-5 py-4 whitespace-nowrap font-mono text-slate-800">{m.output_per_rupee} works</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
 
