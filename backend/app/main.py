@@ -13,7 +13,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api.v1 import (
     dashboard, data_quality, entity_resolution, standardization, 
-    compliance, features, predictive, early_warning, trends, vendors, calamity, models, duplicates
+    compliance, features, predictive, early_warning, trends, vendors, calamity, models, duplicates, geography
 )
 from core.config import get_cors_origins, settings
 from db.bootstrap import ensure_demo_database
@@ -38,6 +38,7 @@ app.include_router(predictive.router, prefix="/api/v1", tags=["Predictive Modeli
 app.include_router(early_warning.router, prefix="/api/v1", tags=["Early Warning Engine"])
 app.include_router(trends.router, prefix="/api/v1", tags=["Trends & Analytics Layer (§22)"])
 app.include_router(vendors.router, prefix="/api/v1", tags=["Vendor Intelligence Layer (§22)"])
+app.include_router(geography.router, prefix="/api/v1", tags=["Geographical Trends & Spatial Analytics (§2-§19)"])
 app.include_router(calamity.router, prefix="/api/v1", tags=["Calamity Relief Module (§22)"])
 app.include_router(models.router, prefix="/api/v1", tags=["Model Monitoring Layer (§22)"])
 app.include_router(duplicates.router, prefix="/api/v1", tags=["Duplicate Payment Detector (§10, §11)"])
