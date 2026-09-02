@@ -69,6 +69,25 @@ function formatAlertId(rawId: string) {
   return rawId;
 }
 
+function formatNlpDuplicateId(rawId: string, idx: number) {
+  if (!rawId) return `NLP-SEM-${String(idx + 1).padStart(4, "0")}`;
+  if (rawId.startsWith("NLP_DUP_")) {
+    return `NLP-SEM-${String(idx + 1).padStart(4, "0")}`;
+  }
+  return rawId;
+}
+
+function formatDuplicatePaymentId(rawId: string, idx: number) {
+  if (!rawId) return `DUP-PAY-${String(idx + 1).padStart(4, "0")}`;
+  if (rawId.startsWith("DUP_EXACT_")) {
+    return `DUP-EXACT-${String(idx + 1).padStart(4, "0")}`;
+  }
+  if (rawId.startsWith("DUP_SAMEDAY_")) {
+    return `DUP-SAMEDAY-${String(idx + 1).padStart(4, "0")}`;
+  }
+  return rawId;
+}
+
 function formatAuditStatusLabel(status: string) {
   if (!status) return "Pending Review";
   if (status === "LEGITIMATE_RATE_CARD") return "Statutory Rate-Card";
@@ -527,7 +546,7 @@ export default function Dashboard() {
                       <tbody className="divide-y divide-purple-50 font-medium">
                         {nlpDuplicatesData.map((d: any, i: number) => (
                           <tr key={i} className="hover:bg-purple-50/60 transition-all">
-                            <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-orange-600">{d.duplicate_id}</td>
+                            <td className="px-5 py-4 whitespace-nowrap font-mono font-black text-orange-600">{formatNlpDuplicateId(d.duplicate_id, i)}</td>
                             <td className="px-5 py-4 max-w-sm font-bold text-slate-900">
                               <div>{d.work_title_a || "Construction of roads, link roads, pathways"}</div>
                               <div className="text-[11px] font-semibold text-purple-900 mt-0.5">{cleanMpName(d.mp_name_a)}</div>
@@ -563,7 +582,7 @@ export default function Dashboard() {
                   <table className="w-full text-left text-xs border-collapse">
                     <thead>
                       <tr className="bg-gradient-to-r from-purple-950 via-indigo-950 to-purple-900 text-white font-extrabold uppercase tracking-wider text-[11px]">
-                        <th className="px-5 py-4 whitespace-nowrap">Duplicate Flag Code</th>
+                        <th className="px-5 py-4 whitespace-nowrap">Duplicate Flag Ref</th>
                         <th className="px-5 py-4 whitespace-nowrap">Work Title / Description</th>
                         <th className="px-5 py-4 whitespace-nowrap">Disbursement Amount</th>
                         <th className="px-5 py-4 whitespace-nowrap">Disbursement Date</th>
@@ -571,9 +590,9 @@ export default function Dashboard() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-purple-50 font-medium">
-                      {duplicatesData.map((d, i) => (
+                      {duplicatesData.map((d: any, i: number) => (
                         <tr key={i} className="hover:bg-purple-50/60 transition-all">
-                          <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-orange-600">{d.duplicate_id}</td>
+                          <td className="px-5 py-4 whitespace-nowrap font-mono font-black text-orange-600">{formatDuplicatePaymentId(d.duplicate_id, i)}</td>
                           <td className="px-5 py-4 max-w-md font-bold text-slate-900">{d.work_name || "Infrastructure Work"}</td>
                           <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-emerald-800">₹ {d.amount_inr?.toLocaleString()}</td>
                           <td className="px-5 py-4 whitespace-nowrap font-bold text-purple-900">{d.expenditure_date || "01 Jul 2025"}</td>
