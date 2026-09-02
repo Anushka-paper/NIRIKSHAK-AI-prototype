@@ -1,0 +1,13 @@
+{
+  "status": "SUCCESS",
+  "total_works_evaluated": 243886,
+  "total_alerts_generated": 243886,
+  "priority_breakdown": {
+    "CRITICAL": 131218,
+    "MEDIUM": 112618,
+    "HIGH": 50
+  },
+  "status_breakdown": {
+    "NEW": 243886
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "status": "SUCCESS",
+  "total_candidate_duplicates": 2630,
+  "layer_breakdown": {
+    "EXACT": 2630
+  },
+  "status_breakdown": {
+    "LEGITIMATE_RATE_CARD": 1951,
+    "NEW": 679
+  }
+}

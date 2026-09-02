@@ -8,11 +8,40 @@ router = APIRouter(prefix="/compliance", tags=["Compliance Engine"])
 
 DATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "data"))
 
+_VIOLATIONS_CACHE = None
+_VIOLATIONS_MTIME = 0
+
 def load_violations_df():
+    global _VIOLATIONS_CACHE, _VIOLATIONS_MTIME
     path = os.path.join(DATA_DIR, "compliance", "compliance_violations.csv")
     if not os.path.exists(path):
         return pd.DataFrame()
-    return pd.read_csv(path, low_memory=False)
+        
+    mtime = os.path.getmtime(path)
+    if _VIOLATIONS_CACHE is not None and _VIOLATIONS_MTIME == mtime:
+        return _VIOLATIONS_CACHE
+
+    df = pd.read_csv(path, low_memory=False)
+    
+    # Enrich UNKNOWN state and mp_name from unified_work_lifecycle.csv if available
+    master_path = os.path.join(DATA_DIR, "integrated", "master", "unified_work_lifecycle.csv")
+    if os.path.exists(master_path) and not df.empty:
+        try:
+            df_master = pd.read_csv(master_path, usecols=["canonical_work_id", "canonical_state", "canonical_mp_name"], low_memory=False)
+            df_master = df_master.drop_duplicates(subset=["canonical_work_id"])
+            
+            # Extract clean work ID from entity_id e.g. "WS/ MP005/2024-2025/145074" or "WORK_HASH_..."
+            merged = df.merge(df_master, left_on="entity_id", right_on="canonical_work_id", how="left", suffixes=("", "_master"))
+            if "canonical_state" in merged.columns:
+                df["state"] = df["state"].replace(["UNKNOWN", "", None], pd.NA).fillna(merged["canonical_state"]).fillna("ALL INDIA")
+            if "canonical_mp_name" in merged.columns:
+                df["mp_name"] = df["mp_name"].replace(["UNKNOWN", "", None], pd.NA).fillna(merged["canonical_mp_name"]).fillna("MINISTRY / IDA AUDIT")
+        except Exception as e:
+            print("[COMPLIANCE API] Master enrichment warning:", e)
+            
+    _VIOLATIONS_CACHE = df
+    _VIOLATIONS_MTIME = mtime
+    return df
 
 @router.get("/summary")
 def get_compliance_summary():
@@ -60,6 +89,20 @@ def query_compliance_violations(
         df = df[id_match | desc_match | mp_match]
 
     total_count = len(df)
+
+    # When no specific rule filter or search is active, interleave rules so the feed shows diverse rule codes
+    if not rule_code and not search and not severity and not df.empty:
+        groups = [group for _, group in df.groupby("rule_code")]
+        groups.sort(key=lambda g: len(g))  # rarer rules (R007, R008, R001, R002) first
+        interleaved = []
+        max_len = max(len(g) for g in groups) if groups else 0
+        for i in range(max_len):
+            for g in groups:
+                if i < len(g):
+                    interleaved.append(g.iloc[i])
+        if interleaved:
+            df = pd.DataFrame(interleaved)
+
     page_df = df.iloc[offset:offset+limit]
     res = page_df.fillna("").to_dict(orient="records")
 
@@ -70,4 +113,3 @@ def query_compliance_violations(
         "returned": len(res),
         "violations": res
     }
-

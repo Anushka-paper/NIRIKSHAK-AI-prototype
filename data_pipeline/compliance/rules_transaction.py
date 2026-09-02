@@ -10,6 +10,7 @@ def evaluate_transaction_rules(df_txn):
         txn_id = str(row.get("transaction_id", f"TXN_{idx+1:08d}"))
         work_id = str(row.get("canonical_work_id", "UNKNOWN"))
         vendor_name = str(row.get("canonical_vendor_name", "UNKNOWN"))
+        house = str(row.get("source_house", "LOK_SABHA"))
 
         # R001: EXP_BEFORE_SANCTION
         days_sanc = row.get("days_since_sanction", None)
@@ -21,7 +22,7 @@ def evaluate_transaction_rules(df_txn):
                 "weight": COMPLIANCE_RULES["R001"]["weight"],
                 "entity_type": "TRANSACTION",
                 "entity_id": txn_id,
-                "source_house": "UNKNOWN",
+                "source_house": house,
                 "state": "UNKNOWN",
                 "mp_name": "UNKNOWN",
                 "description": f"Disbursement date precedes sanction date by {abs(float(days_sanc)):.0f} days",
@@ -37,6 +38,7 @@ def evaluate_transaction_rules(df_txn):
                 txn_id = str(row.get("transaction_id", f"TXN_{idx+1:08d}"))
                 work_id = str(row.get("canonical_work_id", "UNKNOWN"))
                 amt = float(row.get("expenditure_amount_inr", 0.0) or 0.0)
+                house = str(row.get("source_house", "LOK_SABHA"))
                 violations.append({
                     "rule_code": "R007",
                     "rule_name": COMPLIANCE_RULES["R007"]["name"],
@@ -44,7 +46,7 @@ def evaluate_transaction_rules(df_txn):
                     "weight": COMPLIANCE_RULES["R007"]["weight"],
                     "entity_type": "TRANSACTION",
                     "entity_id": txn_id,
-                    "source_house": "UNKNOWN",
+                    "source_house": house,
                     "state": "UNKNOWN",
                     "mp_name": "UNKNOWN",
                     "description": f"Exact duplicate payment transaction key detected for amount ₹{amt:,.2f}",
