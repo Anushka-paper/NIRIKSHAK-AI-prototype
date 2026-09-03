@@ -1,0 +1,13 @@
+{
+  "parliament": "lok_sabha",
+  "total_works_processed": 59653,
+  "total_features_generated": 118,
+  "total_transactions": 83016,
+  "total_mps": 539,
+  "total_constituencies": 539,
+  "total_states": 37,
+  "total_vendors": 2,
+  "elapsed_seconds": 29.77,
+  "feature_schema_version": "v1.0",
+  "timestamp": "2026-09-03T12:45:57Z"
+}

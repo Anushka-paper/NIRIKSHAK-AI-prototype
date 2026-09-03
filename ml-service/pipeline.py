@@ -6,6 +6,7 @@ import json
 import logging
 from pathlib import Path
 from datetime import datetime
+from typing import Optional
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE_DIR))
@@ -25,12 +26,15 @@ class NirikshakPipeline:
     """
 
     def __init__(self, raw_dir: str | Path = None, profiling_dir: str | Path = None, 
-                 standardized_dir: str | Path = None, enable_er: bool = False, er_sample_limit: int = 1500):
+                 standardized_dir: str | Path = None, enable_er: bool = False, er_sample_limit: int = 1500,
+                 enable_features: bool = False, fe_sample_limit: Optional[int] = None):
         self.raw_dir = Path(raw_dir) if raw_dir else (BASE_DIR / "data" / "raw")
         self.profiling_dir = Path(profiling_dir) if profiling_dir else (BASE_DIR / "data" / "profiling")
         self.standardized_dir = Path(standardized_dir) if standardized_dir else (BASE_DIR / "data" / "standardized")
         self.enable_er = enable_er
         self.er_sample_limit = er_sample_limit
+        self.enable_features = enable_features
+        self.fe_sample_limit = fe_sample_limit
 
     def run(self, parliament: str = "all") -> dict:
         """
@@ -108,6 +112,18 @@ class NirikshakPipeline:
                 except Exception as e:
                     logger.error(f"Error during entity resolution for [{par}]: {e}")
 
+            fe_report = None
+            if self.enable_features:
+                logger.info(f"5. Running Dynamic Feature Engineering for [{par}]...")
+                try:
+                    from features.feature_engineer import FeatureEngineer
+                    fe_report = FeatureEngineer().engineer_parliament(
+                        parliament=par,
+                        sample_limit=self.fe_sample_limit
+                    )
+                except Exception as e:
+                    logger.error(f"Error during feature engineering for [{par}]: {e}")
+
             par_time = round(time.time() - par_start, 2)
             pipeline_summary["parliaments_processed"][par] = {
                 "datasets_discovered": len(file_list),
@@ -116,6 +132,7 @@ class NirikshakPipeline:
                 "profiling_status": "success" if profile_reports else "failed",
                 "standardization_status": "success" if std_reports else "failed",
                 "entity_resolution_status": "success" if er_report else ("disabled" if not self.enable_er else "failed"),
+                "feature_engineering_status": "success" if fe_report else ("disabled" if not self.enable_features else "failed"),
                 "processing_time_seconds": par_time
             }
 
@@ -143,6 +160,8 @@ def main():
     parser.add_argument("--standardized-dir", help="Custom standardized output directory")
     parser.add_argument("--resolve-entities", "-r", action="store_true", help="Execute entity resolution stage")
     parser.add_argument("--er-limit", type=int, default=1500, help="Candidate sample limit for entity resolution")
+    parser.add_argument("--generate-features", "-f", action="store_true", help="Execute feature engineering stage")
+    parser.add_argument("--fe-limit", type=int, default=None, help="Sample limit for feature engineering")
 
     args = parser.parse_args()
 
@@ -151,9 +170,12 @@ def main():
         profiling_dir=args.profiling_dir,
         standardized_dir=args.standardized_dir,
         enable_er=args.resolve_entities,
-        er_sample_limit=args.er_limit
+        er_sample_limit=args.er_limit,
+        enable_features=args.generate_features,
+        fe_sample_limit=args.fe_limit
     )
     pipeline.run(parliament=args.parliament)
 
 if __name__ == "__main__":
     main()
+

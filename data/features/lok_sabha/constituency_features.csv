@@ -1,0 +1,540 @@
+parliament,state,constituency,work_count,sanctioned_work_count,completed_work_count,total_sanctioned_amount,total_expenditure,completion_rate,utilization_rate
+lok_sabha,Andaman and Nicobar Islands,ANDAMAN AND NICOBAR ISLANDS,27,13,0,36232528.0,0.0,0.0,0.0
+lok_sabha,Andhra Pradesh,AMALAPURAM(SC),71,70,35,66655023.0,0.0,0.493,0.0
+lok_sabha,Andhra Pradesh,ANAKAPALLE,39,39,14,43734763.0,0.0,0.359,0.0
+lok_sabha,Andhra Pradesh,ANANTAPUR,107,107,35,78430434.0,0.0,0.327,0.0
+lok_sabha,Andhra Pradesh,ARAKU(ST),105,98,24,72200615.0,0.0,0.229,0.0
+lok_sabha,Andhra Pradesh,BAPATLA,60,51,6,54182500.0,0.0,0.1,0.0
+lok_sabha,Andhra Pradesh,CHITTOOR,187,113,87,79906420.0,0.0,0.465,0.0
+lok_sabha,Andhra Pradesh,ELURU,100,72,7,73231616.0,0.0,0.07,0.0
+lok_sabha,Andhra Pradesh,GUNTUR,58,56,6,70349906.0,0.0,0.103,0.0
+lok_sabha,Andhra Pradesh,HINDUPUR,63,59,40,44123960.0,0.0,0.635,0.0
+lok_sabha,Andhra Pradesh,KADAPA,226,158,49,68730351.0,0.0,0.217,0.0
+lok_sabha,Andhra Pradesh,KAKINADA,15,15,5,32589800.0,0.0,0.333,0.0
+lok_sabha,Andhra Pradesh,KURNOOL,25,23,18,19241704.0,0.0,0.72,0.0
+lok_sabha,Andhra Pradesh,MACHILIPATNAM,48,41,7,26120859.0,0.0,0.146,0.0
+lok_sabha,Andhra Pradesh,NANDYAL,106,103,39,53620493.0,0.0,0.368,0.0
+lok_sabha,Andhra Pradesh,NARASAPURAM,1,1,0,12000000.0,0.0,0.0,0.0
+lok_sabha,Andhra Pradesh,NARASARAOPET,62,7,1,6638128.0,0.0,0.016,0.0
+lok_sabha,Andhra Pradesh,NELLORE(SC),96,96,76,68226987.0,0.0,0.792,0.0
+lok_sabha,Andhra Pradesh,ONGOLE,12,11,1,15460400.0,0.0,0.083,0.0
+lok_sabha,Andhra Pradesh,RAJAHMUNDRY,20,15,3,43000000.0,0.0,0.15,0.0
+lok_sabha,Andhra Pradesh,RAJAMPET,376,356,136,109304588.0,0.0,0.362,0.0
+lok_sabha,Andhra Pradesh,SRIKAKULAM,100,92,34,60962462.0,0.0,0.34,0.0
+lok_sabha,Andhra Pradesh,TIRUPATI(SC),131,103,70,54942716.0,0.0,0.534,0.0
+lok_sabha,Andhra Pradesh,VIJAYAWADA,24,12,1,33642032.0,0.0,0.042,0.0
+lok_sabha,Andhra Pradesh,VISAKHAPATNAM,28,25,0,52015000.0,0.0,0.0,0.0
+lok_sabha,Andhra Pradesh,VIZIANAGARAM,82,67,26,36452251.0,0.0,0.317,0.0
+lok_sabha,Arunachal Pradesh,ARUNACHAL EAST,152,105,98,93493352.0,0.0,0.645,0.0
+lok_sabha,Arunachal Pradesh,ARUNACHAL WEST,93,92,85,67482837.0,0.0,0.914,0.0
+lok_sabha,Assam,BARPETA,61,45,3,42808000.0,0.0,0.049,0.0
+lok_sabha,Assam,DHUBRI,76,60,7,30547919.0,0.0,0.092,0.0
+lok_sabha,Assam,DIBRUGARH,66,49,2,52900000.0,0.0,0.03,0.0
+lok_sabha,Assam,Darrang-Udalguri,117,79,5,26050000.0,0.0,0.043,0.0
+lok_sabha,Assam,Diphu (ST),66,56,32,64683742.0,0.0,0.485,0.0
+lok_sabha,Assam,GUWAHATI,88,61,5,61900000.0,0.0,0.057,0.0
+lok_sabha,Assam,JORHAT,383,279,31,61745782.0,0.0,0.081,0.0
+lok_sabha,Assam,KARIMGANJ (SC),31,12,0,18650000.0,0.0,0.0,0.0
+lok_sabha,Assam,KOKRAJHAR (ST),81,44,12,47174156.0,0.0,0.148,0.0
+lok_sabha,Assam,Kaziranga,75,57,0,60574000.0,0.0,0.0,0.0
+lok_sabha,Assam,LAKHIMPUR,62,48,16,36399800.0,0.0,0.258,0.0
+lok_sabha,Assam,NOWGONG,110,96,13,42774000.0,0.0,0.118,0.0
+lok_sabha,Assam,SILCHAR,82,30,0,21600000.0,0.0,0.0,0.0
+lok_sabha,Assam,Sonitpur,98,89,18,80029518.0,0.0,0.184,0.0
+lok_sabha,Bihar,ARARIA,49,49,2,41036427.0,0.0,0.041,0.0
+lok_sabha,Bihar,ARRAH,188,95,63,66865411.0,0.0,0.335,0.0
+lok_sabha,Bihar,AURANGABAD_BR,75,59,21,35019273.0,0.0,0.28,0.0
+lok_sabha,Bihar,BANKA,57,48,41,59930111.0,0.0,0.719,0.0
+lok_sabha,Bihar,BEGUSARAI,46,36,16,47915360.0,0.0,0.348,0.0
+lok_sabha,Bihar,BHAGALPUR,20,19,12,21504101.0,0.0,0.6,0.0
+lok_sabha,Bihar,BUXAR,169,109,70,96968125.0,0.0,0.414,0.0
+lok_sabha,Bihar,DARBHANGA,76,74,33,35604372.0,0.0,0.434,0.0
+lok_sabha,Bihar,GAYA (SC),68,65,43,43981660.0,0.0,0.632,0.0
+lok_sabha,Bihar,GOPALGANJ (SC),31,26,9,19477571.0,0.0,0.29,0.0
+lok_sabha,Bihar,HAJIPUR(SC),79,65,40,63927324.0,0.0,0.506,0.0
+lok_sabha,Bihar,JAHANABAD,127,100,44,53583182.0,0.0,0.346,0.0
+lok_sabha,Bihar,JAMUI(SC),36,36,30,25598044.0,0.0,0.833,0.0
+lok_sabha,Bihar,JHANJHARPUR,183,117,85,120451146.0,0.0,0.464,0.0
+lok_sabha,Bihar,KARAKAT,227,196,90,87153871.0,0.0,0.396,0.0
+lok_sabha,Bihar,KATIHAR,6,6,2,5815000.0,0.0,0.333,0.0
+lok_sabha,Bihar,KHAGARIA,52,52,43,58126888.0,0.0,0.827,0.0
+lok_sabha,Bihar,KISHANGANJ,121,97,62,62566800.0,0.0,0.512,0.0
+lok_sabha,Bihar,MADHEPURA,95,90,61,74969440.0,0.0,0.642,0.0
+lok_sabha,Bihar,MADHUBANI,152,127,52,69633602.0,0.0,0.342,0.0
+lok_sabha,Bihar,MAHARAJGANJ_BR,66,61,17,73262951.0,0.0,0.258,0.0
+lok_sabha,Bihar,MUNGER,1,0,0,0.0,0.0,0.0,0.0
+lok_sabha,Bihar,MUZAFFARPUR,45,33,23,38679800.0,0.0,0.511,0.0
+lok_sabha,Bihar,NALANDA,164,138,88,59475927.0,0.0,0.537,0.0
+lok_sabha,Bihar,NAWADA,71,33,1,33796909.0,0.0,0.014,0.0
+lok_sabha,Bihar,PATNA SAHIB,60,48,41,42686666.0,0.0,0.683,0.0
+lok_sabha,Bihar,PURNEA,44,36,6,33237118.0,0.0,0.136,0.0
+lok_sabha,Bihar,PURVI CHAMPARAN,103,72,52,66375830.0,0.0,0.505,0.0
+lok_sabha,Bihar,SAMASTIPUR(SC),38,31,7,24362885.0,0.0,0.184,0.0
+lok_sabha,Bihar,SARAN,6,5,0,7200000.0,0.0,0.0,0.0
+lok_sabha,Bihar,SASARAM(SC),159,131,80,114170545.0,0.0,0.503,0.0
+lok_sabha,Bihar,SHEOHAR,57,32,15,37633653.0,0.0,0.263,0.0
+lok_sabha,Bihar,SITAMARHI,71,50,33,29721476.0,0.0,0.465,0.0
+lok_sabha,Bihar,SIWAN,24,15,14,15823631.0,0.0,0.583,0.0
+lok_sabha,Bihar,SUPAUL,31,22,15,34500530.0,0.0,0.484,0.0
+lok_sabha,Bihar,UJJARPUR,36,28,17,16266056.0,0.0,0.472,0.0
+lok_sabha,Bihar,VAISHALI,39,33,13,81611689.0,0.0,0.333,0.0
+lok_sabha,Bihar,VALMIKI NAGAR,253,95,77,76482873.0,0.0,0.304,0.0
+lok_sabha,Chandigarh,CHANDIGARH,63,54,16,41324398.0,0.0,0.254,0.0
+lok_sabha,Chhattisgarh,BASTAR(ST),172,156,38,97246668.0,0.0,0.221,0.0
+lok_sabha,Chhattisgarh,BILASPUR,118,115,40,86556819.0,0.0,0.339,0.0
+lok_sabha,Chhattisgarh,DURG,82,65,21,41831727.0,0.0,0.256,0.0
+lok_sabha,Chhattisgarh,JANJGIR CHAMPA(SC),226,217,198,78659202.0,0.0,0.876,0.0
+lok_sabha,Chhattisgarh,KANKER(ST),73,60,22,42788933.0,0.0,0.301,0.0
+lok_sabha,Chhattisgarh,KORBA,214,204,101,79962195.0,0.0,0.472,0.0
+lok_sabha,Chhattisgarh,MAHASAMUND,108,100,49,68144882.0,0.0,0.454,0.0
+lok_sabha,Chhattisgarh,RAIGARH(ST),86,85,47,64698438.0,0.0,0.547,0.0
+lok_sabha,Chhattisgarh,RAIPUR,147,115,34,83291167.0,0.0,0.231,0.0
+lok_sabha,Chhattisgarh,RAJNANDGAON,157,152,62,72124587.0,0.0,0.395,0.0
+lok_sabha,Chhattisgarh,SARGUJA(ST),273,267,65,77703043.0,0.0,0.238,0.0
+lok_sabha,Delhi,CHANDINI CHOWK,37,31,18,27804687.0,0.0,0.486,0.0
+lok_sabha,Delhi,EAST DELHI,29,27,6,29657497.0,0.0,0.207,0.0
+lok_sabha,Delhi,NEW DELHI,51,36,24,21805847.0,0.0,0.471,0.0
+lok_sabha,Delhi,NORTH EAST DELHI,18,13,6,41979890.0,0.0,0.333,0.0
+lok_sabha,Delhi,NORTH WEST DELHI(SC),31,27,8,18415744.0,0.0,0.258,0.0
+lok_sabha,Delhi,SOUTH DELHI,64,43,15,44693009.0,0.0,0.234,0.0
+lok_sabha,Delhi,WEST DELHI,36,29,18,38243392.0,0.0,0.5,0.0
+lok_sabha,Goa,NORTH GOA,112,25,1,16573355.3,0.0,0.009,0.0
+lok_sabha,Goa,SOUTH GOA,94,36,31,31253731.0,0.0,0.33,0.0
+lok_sabha,Gujarat,AHMEDABAD EAST,176,97,19,62121371.0,0.0,0.108,0.0
+lok_sabha,Gujarat,AHMEDABAD WEST(SC),179,118,2,71352198.0,0.0,0.011,0.0
+lok_sabha,Gujarat,AMRELI,284,261,138,94111654.0,0.0,0.486,0.0
+lok_sabha,Gujarat,ANAND,525,494,248,107187313.0,0.0,0.472,0.0
+lok_sabha,Gujarat,BANASKANTHA,146,110,37,48416737.0,0.0,0.253,0.0
+lok_sabha,Gujarat,BARDOLI(ST),137,119,38,47548927.0,0.0,0.277,0.0
+lok_sabha,Gujarat,BHARUCH,396,353,208,95979284.0,0.0,0.525,0.0
+lok_sabha,Gujarat,BHAVNAGAR,49,32,21,53769166.0,0.0,0.429,0.0
+lok_sabha,Gujarat,CHHOTA UDAIPUR(ST),116,83,23,33311565.0,0.0,0.198,0.0
+lok_sabha,Gujarat,DAHOD(ST),428,274,71,87499259.0,0.0,0.166,0.0
+lok_sabha,Gujarat,GANDHINAGAR,81,42,8,29578204.0,0.0,0.099,0.0
+lok_sabha,Gujarat,JAMNAGAR,113,75,35,34071882.0,0.0,0.31,0.0
+lok_sabha,Gujarat,JUNAGADH,16,15,14,5524417.0,0.0,0.875,0.0
+lok_sabha,Gujarat,KACHCHH(SC),347,213,91,85891240.0,0.0,0.262,0.0
+lok_sabha,Gujarat,KHEDA,328,159,68,36903485.0,0.0,0.207,0.0
+lok_sabha,Gujarat,MAHESANA,283,245,114,51527971.0,0.0,0.403,0.0
+lok_sabha,Gujarat,NAVSARI,232,205,124,86799800.0,0.0,0.534,0.0
+lok_sabha,Gujarat,PANCHMAHAL,508,373,88,77267478.0,0.0,0.173,0.0
+lok_sabha,Gujarat,PATAN,325,267,156,98545538.0,0.0,0.48,0.0
+lok_sabha,Gujarat,PORBANDAR,189,130,63,51002353.0,0.0,0.333,0.0
+lok_sabha,Gujarat,RAJKOT,262,165,82,78423535.0,0.0,0.313,0.0
+lok_sabha,Gujarat,SABARKANTHA,253,233,124,87526464.0,0.0,0.49,0.0
+lok_sabha,Gujarat,SURAT,94,59,40,29087728.0,0.0,0.426,0.0
+lok_sabha,Gujarat,SURENDRANAGAR,200,190,96,81030752.0,0.0,0.48,0.0
+lok_sabha,Gujarat,VADODARA,204,166,71,101237489.0,0.0,0.348,0.0
+lok_sabha,Gujarat,VALSAD(ST),142,118,42,48194875.0,0.0,0.296,0.0
+lok_sabha,Haryana,AMBALA (SC),79,64,3,51770091.0,0.0,0.038,0.0
+lok_sabha,Haryana,BHIWANI MAHENDRAGARH,116,103,45,52053960.0,0.0,0.388,0.0
+lok_sabha,Haryana,FARIDABAD,74,55,6,42775608.0,0.0,0.081,0.0
+lok_sabha,Haryana,GURGAON,46,44,14,45329028.0,0.0,0.304,0.0
+lok_sabha,Haryana,HISAR,216,161,19,73273173.0,0.0,0.088,0.0
+lok_sabha,Haryana,KARNAL,17,17,1,29171470.0,0.0,0.059,0.0
+lok_sabha,Haryana,KURUKSHETRA,151,145,82,65593837.0,0.0,0.543,0.0
+lok_sabha,Haryana,ROHTAK,188,134,68,90593825.0,0.0,0.362,0.0
+lok_sabha,Haryana,SIRSA(SC),143,109,12,47853332.0,0.0,0.084,0.0
+lok_sabha,Haryana,SONEPAT,169,115,19,76916878.0,0.0,0.112,0.0
+lok_sabha,Himachal Pradesh,HAMIRPUR_HP,112,107,32,17714880.0,0.0,0.286,0.0
+lok_sabha,Himachal Pradesh,KANGRA,506,398,175,103361994.0,0.0,0.346,0.0
+lok_sabha,Himachal Pradesh,MANDI,245,241,58,72233349.0,0.0,0.237,0.0
+lok_sabha,Himachal Pradesh,SHIMLA (SC),373,357,71,71965358.0,0.0,0.19,0.0
+lok_sabha,Jammu and Kashmir,ANANTNAG,92,74,14,98026276.0,0.0,0.152,0.0
+lok_sabha,Jammu and Kashmir,BARAMULLAH,119,95,30,42928837.46,0.0,0.252,0.0
+lok_sabha,Jammu and Kashmir,JAMMU,118,108,38,57881673.0,0.0,0.322,0.0
+lok_sabha,Jammu and Kashmir,SRINAGAR,148,119,49,52250064.1,0.0,0.331,0.0
+lok_sabha,Jammu and Kashmir,UDHAMPUR,106,99,69,40711180.0,0.0,0.651,0.0
+lok_sabha,Jharkhand,CHATRA,335,298,46,62796212.0,0.0,0.137,0.0
+lok_sabha,Jharkhand,DHANBAD,256,157,13,52820645.0,0.0,0.051,0.0
+lok_sabha,Jharkhand,DUMKA(ST),87,79,43,26450000.0,0.0,0.494,0.0
+lok_sabha,Jharkhand,GIRIDIH,170,141,25,39445095.0,0.0,0.147,0.0
+lok_sabha,Jharkhand,GODDA,1,1,0,1785510.0,0.0,0.0,0.0
+lok_sabha,Jharkhand,HAZARIBAGH,98,72,0,35627500.0,0.0,0.0,0.0
+lok_sabha,Jharkhand,JAMSHEDPUR,92,88,2,48656197.0,0.0,0.022,0.0
+lok_sabha,Jharkhand,KHUNTI(ST),95,72,24,41316000.0,0.0,0.253,0.0
+lok_sabha,Jharkhand,KODARMA,137,103,32,32828198.0,0.0,0.234,0.0
+lok_sabha,Jharkhand,LOHARDAGA(ST),99,98,36,62084673.0,0.0,0.364,0.0
+lok_sabha,Jharkhand,PALAMU(SC),62,58,35,34007411.0,0.0,0.565,0.0
+lok_sabha,Jharkhand,RAJMAHAL(ST),117,90,0,17660000.0,0.0,0.0,0.0
+lok_sabha,Jharkhand,RANCHI,77,77,27,53923440.0,0.0,0.351,0.0
+lok_sabha,Jharkhand,SINGHBHUM(ST),49,48,0,33741715.0,0.0,0.0,0.0
+lok_sabha,Karnataka,BAGALKOT,14,10,5,7500000.0,0.0,0.357,0.0
+lok_sabha,Karnataka,BANGALORE CENTRAL,10,4,2,7039505.0,0.0,0.2,0.0
+lok_sabha,Karnataka,BANGALORE NORTH,73,48,19,56471317.0,0.0,0.26,0.0
+lok_sabha,Karnataka,BANGALORE RURAL,126,76,42,38798995.0,0.0,0.333,0.0
+lok_sabha,Karnataka,BANGALORE SOUTH,75,48,24,53879400.0,0.0,0.32,0.0
+lok_sabha,Karnataka,BELGAUM,20,4,1,2000000.0,0.0,0.05,0.0
+lok_sabha,Karnataka,BELLARY(ST),68,17,3,20400000.0,0.0,0.044,0.0
+lok_sabha,Karnataka,BIDAR,67,31,2,16010000.0,0.0,0.03,0.0
+lok_sabha,Karnataka,BIJAPUR(SC),33,16,0,5975000.0,0.0,0.0,0.0
+lok_sabha,Karnataka,CHAMARAJANAGAR(SC),92,61,19,49350000.0,0.0,0.207,0.0
+lok_sabha,Karnataka,CHIKBALLAPUR,50,36,8,25196804.0,0.0,0.16,0.0
+lok_sabha,Karnataka,CHIKKODI,96,24,16,17310772.0,0.0,0.167,0.0
+lok_sabha,Karnataka,CHITRADURGA(SC),82,58,10,33900000.0,0.0,0.122,0.0
+lok_sabha,Karnataka,DAKSHINA KANNADA,199,162,74,75629203.0,0.0,0.372,0.0
+lok_sabha,Karnataka,DAVANAGERE,77,59,5,63500000.0,0.0,0.065,0.0
+lok_sabha,Karnataka,DHARWAD,44,36,11,18063307.0,0.0,0.25,0.0
+lok_sabha,Karnataka,GULBARGA(SC),13,7,0,31900000.0,0.0,0.0,0.0
+lok_sabha,Karnataka,HASSAN,136,103,24,54034709.0,0.0,0.176,0.0
+lok_sabha,Karnataka,HAVERI,148,116,19,70650000.0,0.0,0.128,0.0
+lok_sabha,Karnataka,KOLAR(SC),52,50,3,35871000.0,0.0,0.058,0.0
+lok_sabha,Karnataka,KOPPAL,109,79,49,51820139.0,0.0,0.45,0.0
+lok_sabha,Karnataka,MANDYA,112,75,7,48700000.0,0.0,0.062,0.0
+lok_sabha,Karnataka,MYSORE,160,105,33,62625000.0,0.0,0.206,0.0
+lok_sabha,Karnataka,RAICHUR(ST),89,45,7,33995820.0,0.0,0.079,0.0
+lok_sabha,Karnataka,SHIMOGA,195,152,41,68921505.0,0.0,0.21,0.0
+lok_sabha,Karnataka,TUMKUR,41,16,4,29130000.0,0.0,0.098,0.0
+lok_sabha,Karnataka,UDUPI CHIKMAGALUR,184,88,36,32165003.0,0.0,0.196,0.0
+lok_sabha,Karnataka,UTTARA KANNADA,129,53,30,36700000.0,0.0,0.233,0.0
+lok_sabha,Kerala,ALAPPUZHA,53,40,19,51727533.0,0.0,0.358,0.0
+lok_sabha,Kerala,ALATHUR(SC),72,43,15,72353135.0,0.0,0.208,0.0
+lok_sabha,Kerala,ATTINGAL,412,350,107,90866484.0,0.0,0.26,0.0
+lok_sabha,Kerala,CHALAKUDY,142,69,12,51016598.0,0.0,0.085,0.0
+lok_sabha,Kerala,ERNAKULAM,70,44,16,60348844.0,0.0,0.229,0.0
+lok_sabha,Kerala,IDUKKI,74,52,23,56139599.0,0.0,0.311,0.0
+lok_sabha,Kerala,KANNUR,87,54,21,33234906.0,0.0,0.241,0.0
+lok_sabha,Kerala,KASARAGOD,92,84,35,40585092.0,0.0,0.38,0.0
+lok_sabha,Kerala,KOLLAM,143,131,42,107077179.34,0.0,0.294,0.0
+lok_sabha,Kerala,KOTTAYAM,267,152,52,71066138.0,0.0,0.195,0.0
+lok_sabha,Kerala,KOZHIKODE,240,77,14,31750837.0,0.0,0.058,0.0
+lok_sabha,Kerala,MALAPPURAM,138,106,36,67265546.0,0.0,0.261,0.0
+lok_sabha,Kerala,MAVELIKKARA(SC),175,130,57,85350982.0,0.0,0.326,0.0
+lok_sabha,Kerala,PALAKKAD,197,161,98,63717747.0,0.0,0.497,0.0
+lok_sabha,Kerala,PATHANAMTHITTA,112,70,17,34609768.0,0.0,0.152,0.0
+lok_sabha,Kerala,PONNANI,286,141,31,71241853.0,0.0,0.108,0.0
+lok_sabha,Kerala,THIRUVANANTHAPURAM,79,78,37,76888056.0,0.0,0.468,0.0
+lok_sabha,Kerala,THRISSUR,77,54,14,67214066.0,0.0,0.182,0.0
+lok_sabha,Kerala,VADAKARA,86,42,2,28218000.0,0.0,0.023,0.0
+lok_sabha,Kerala,WAYANAD,77,43,9,58738026.0,0.0,0.117,0.0
+lok_sabha,Ladakh,LADAKH,54,18,0,15128000.0,0.0,0.0,0.0
+lok_sabha,Lakshadweep,LAKSHADWEEP(ST),28,26,2,59447173.0,0.0,0.071,0.0
+lok_sabha,Madhya Pradesh,BALAGHAT,112,102,24,82863935.0,0.0,0.214,0.0
+lok_sabha,Madhya Pradesh,BETUL(ST),92,73,27,30657557.0,0.0,0.293,0.0
+lok_sabha,Madhya Pradesh,BHIND(SC),7,5,4,1570706.0,0.0,0.571,0.0
+lok_sabha,Madhya Pradesh,BHOPAL,64,56,9,93094028.0,0.0,0.141,0.0
+lok_sabha,Madhya Pradesh,CHHINDWARA,295,234,84,55999130.0,0.0,0.285,0.0
+lok_sabha,Madhya Pradesh,DAMOH,281,262,171,79984486.0,0.0,0.609,0.0
+lok_sabha,Madhya Pradesh,DEWAS(SC),140,88,9,67206613.0,0.0,0.064,0.0
+lok_sabha,Madhya Pradesh,DHAR(ST),175,141,88,76633629.0,0.0,0.503,0.0
+lok_sabha,Madhya Pradesh,GUNA,24,23,15,25653163.0,0.0,0.625,0.0
+lok_sabha,Madhya Pradesh,GWALIOR,115,53,4,40840458.0,0.0,0.035,0.0
+lok_sabha,Madhya Pradesh,HOSHANGABAD,338,250,48,40484611.0,0.0,0.142,0.0
+lok_sabha,Madhya Pradesh,INDORE,36,35,15,21798777.0,0.0,0.417,0.0
+lok_sabha,Madhya Pradesh,JABALPUR,110,58,12,18373328.0,0.0,0.109,0.0
+lok_sabha,Madhya Pradesh,KHAJURAHO,104,34,3,29342762.0,0.0,0.029,0.0
+lok_sabha,Madhya Pradesh,KHANDWA,156,127,41,48742923.0,0.0,0.263,0.0
+lok_sabha,Madhya Pradesh,KHARGONE(ST),42,39,11,19043266.0,0.0,0.262,0.0
+lok_sabha,Madhya Pradesh,MANDLA(ST),215,193,30,67078040.0,0.0,0.14,0.0
+lok_sabha,Madhya Pradesh,MANDSOUR,83,59,39,13644092.0,0.0,0.47,0.0
+lok_sabha,Madhya Pradesh,MORENA,65,53,28,25472294.0,0.0,0.431,0.0
+lok_sabha,Madhya Pradesh,RAJGARH,41,29,7,18743430.0,0.0,0.171,0.0
+lok_sabha,Madhya Pradesh,RATLAM(ST),120,119,41,57276172.0,0.0,0.342,0.0
+lok_sabha,Madhya Pradesh,REWA,48,33,1,32442993.0,0.0,0.021,0.0
+lok_sabha,Madhya Pradesh,SAGAR,204,145,87,71666133.0,0.0,0.426,0.0
+lok_sabha,Madhya Pradesh,SATNA,231,214,14,43773640.0,0.0,0.061,0.0
+lok_sabha,Madhya Pradesh,SHAHDOL (ST),54,38,16,40622835.0,0.0,0.296,0.0
+lok_sabha,Madhya Pradesh,SIDHI,263,185,105,125431595.0,0.0,0.399,0.0
+lok_sabha,Madhya Pradesh,TIKAMGARH(SC),98,47,8,27599315.0,0.0,0.082,0.0
+lok_sabha,Madhya Pradesh,UJJAIN(SC),179,175,88,80769524.0,0.0,0.492,0.0
+lok_sabha,Madhya Pradesh,VIDISHA,57,29,6,20743125.0,0.0,0.105,0.0
+lok_sabha,Maharashtra,AHMEDNAGAR,24,13,6,13465280.0,0.0,0.25,0.0
+lok_sabha,Maharashtra,AKOLA,22,20,11,18682932.0,0.0,0.5,0.0
+lok_sabha,Maharashtra,AMRAVATI(SC),120,94,40,81805000.0,0.0,0.333,0.0
+lok_sabha,Maharashtra,AURANGABAD_MH,81,36,27,50879317.0,0.0,0.333,0.0
+lok_sabha,Maharashtra,BARAMATI,72,27,10,21071177.0,0.0,0.139,0.0
+lok_sabha,Maharashtra,BEED,10,6,3,5794718.0,0.0,0.3,0.0
+lok_sabha,Maharashtra,BHANDARA-GONDIYA,50,19,7,14789658.0,0.0,0.14,0.0
+lok_sabha,Maharashtra,BHIWANDI,144,90,9,78595506.0,0.0,0.062,0.0
+lok_sabha,Maharashtra,BULDHANA,11,2,0,1500000.0,0.0,0.0,0.0
+lok_sabha,Maharashtra,CHANDRAPUR,46,8,7,10115160.0,0.0,0.152,0.0
+lok_sabha,Maharashtra,DHULE,68,47,13,49830794.0,0.0,0.191,0.0
+lok_sabha,Maharashtra,DINDORI(ST),71,52,14,48417900.0,0.0,0.197,0.0
+lok_sabha,Maharashtra,GADCHIROLI-CHIMUR(ST),74,36,15,31643977.0,0.0,0.203,0.0
+lok_sabha,Maharashtra,HATKANANGLE,17,9,4,12901717.0,0.0,0.235,0.0
+lok_sabha,Maharashtra,HINGOLI,32,20,12,37244860.0,0.0,0.375,0.0
+lok_sabha,Maharashtra,JALGAON,9,9,8,15332266.0,0.0,0.889,0.0
+lok_sabha,Maharashtra,JALNA,43,28,9,26181187.0,0.0,0.209,0.0
+lok_sabha,Maharashtra,KALYAN,2,1,0,325000.0,0.0,0.0,0.0
+lok_sabha,Maharashtra,KOLHAPUR,70,27,20,28324291.0,0.0,0.286,0.0
+lok_sabha,Maharashtra,LATUR(SC),56,17,12,15295325.0,0.0,0.214,0.0
+lok_sabha,Maharashtra,MADHA,40,18,6,7700000.0,0.0,0.15,0.0
+lok_sabha,Maharashtra,MAVAL,89,41,23,36446842.0,0.0,0.258,0.0
+lok_sabha,Maharashtra,MUMBAI NORTH,42,42,0,85900000.0,0.0,0.0,0.0
+lok_sabha,Maharashtra,MUMBAI NORTH EAST,31,22,0,40100000.0,0.0,0.0,0.0
+lok_sabha,Maharashtra,MUMBAI NORTH WEST,58,42,0,84500000.0,0.0,0.0,0.0
+lok_sabha,Maharashtra,MUMBAI NORTH-CENTRAL,21,21,0,33050000.0,0.0,0.0,0.0
+lok_sabha,Maharashtra,MUMBAI SOUTH,43,18,14,28874739.0,0.0,0.326,0.0
+lok_sabha,Maharashtra,MUMBAI SOUTH CENTRAL,29,20,0,51300000.0,0.0,0.0,0.0
+lok_sabha,Maharashtra,NAGPUR,56,28,18,48203843.0,0.0,0.321,0.0
+lok_sabha,Maharashtra,NANDED,91,44,24,34100947.0,0.0,0.264,0.0
+lok_sabha,Maharashtra,NANDURBAR(ST),23,18,7,10586000.0,0.0,0.304,0.0
+lok_sabha,Maharashtra,NASHIK,75,51,17,46036364.0,0.0,0.227,0.0
+lok_sabha,Maharashtra,OSMANABAD,81,28,19,19022319.0,0.0,0.235,0.0
+lok_sabha,Maharashtra,PALGHAR(ST),45,12,1,10999000.0,0.0,0.022,0.0
+lok_sabha,Maharashtra,PARBHANI,58,46,12,43976457.0,0.0,0.207,0.0
+lok_sabha,Maharashtra,PUNE,74,16,10,15997473.0,0.0,0.135,0.0
+lok_sabha,Maharashtra,RAIGAD,22,19,7,28489820.0,0.0,0.318,0.0
+lok_sabha,Maharashtra,RAMTEK(SC),23,6,1,5200000.0,0.0,0.043,0.0
+lok_sabha,Maharashtra,RATNAGIRI-SINDHUDURG,90,63,25,62682293.0,0.0,0.278,0.0
+lok_sabha,Maharashtra,RAVER,8,7,3,12044664.0,0.0,0.375,0.0
+lok_sabha,Maharashtra,SANGLI,21,19,7,20664869.0,0.0,0.333,0.0
+lok_sabha,Maharashtra,SATARA,74,69,14,48699000.0,0.0,0.189,0.0
+lok_sabha,Maharashtra,SHIRDI(SC),81,63,11,45372904.0,0.0,0.136,0.0
+lok_sabha,Maharashtra,SHIRUR,81,25,15,21880568.0,0.0,0.185,0.0
+lok_sabha,Maharashtra,SOLAPUR(SC),84,9,2,8498955.0,0.0,0.024,0.0
+lok_sabha,Maharashtra,WARDHA,65,37,23,31627416.0,0.0,0.354,0.0
+lok_sabha,Maharashtra,YAVATMAL-WASHIM,124,46,23,27331444.87,0.0,0.185,0.0
+lok_sabha,Manipur,INNER MANIPUR,43,41,17,92847302.0,0.0,0.395,0.0
+lok_sabha,Manipur,OUTER MANIPUR(ST),29,26,14,87892943.0,0.0,0.483,0.0
+lok_sabha,Meghalaya,SHILLONG,153,148,67,62901000.0,0.0,0.438,0.0
+lok_sabha,Meghalaya,TURA,150,121,63,67920000.0,0.0,0.42,0.0
+lok_sabha,Mizoram,MIZORAM (ST),212,121,92,78665672.0,0.0,0.434,0.0
+lok_sabha,Nagaland,NAGALAND,42,40,25,122137620.0,0.0,0.595,0.0
+lok_sabha,Odisha,ASKA,83,83,15,31700000.0,0.0,0.181,0.0
+lok_sabha,Odisha,BALASORE,106,8,3,3365000.0,0.0,0.028,0.0
+lok_sabha,Odisha,BARGARH,198,193,40,76871100.0,0.0,0.202,0.0
+lok_sabha,Odisha,BERHAMPUR,89,15,0,6000000.0,0.0,0.0,0.0
+lok_sabha,Odisha,BHADRAK(SC),121,94,23,39026000.0,0.0,0.19,0.0
+lok_sabha,Odisha,BHUBANESWAR,58,49,16,23500000.0,0.0,0.276,0.0
+lok_sabha,Odisha,BOLANGIR,125,100,3,35550000.0,0.0,0.024,0.0
+lok_sabha,Odisha,CUTTACK,172,102,46,36317999.0,0.0,0.267,0.0
+lok_sabha,Odisha,DHENKANAL,54,23,0,19927000.0,0.0,0.0,0.0
+lok_sabha,Odisha,JAGATSINGHPUR(SC),120,69,13,28240000.0,0.0,0.108,0.0
+lok_sabha,Odisha,JAJPUR(SC),161,64,3,27900000.0,0.0,0.019,0.0
+lok_sabha,Odisha,KALAHANDI,156,142,72,53005500.0,0.0,0.462,0.0
+lok_sabha,Odisha,KANDHAMAL,133,104,41,34529569.0,0.0,0.308,0.0
+lok_sabha,Odisha,KENDRAPARA,26,18,3,32420000.0,0.0,0.115,0.0
+lok_sabha,Odisha,KEONJHAR(ST),163,124,16,42750000.0,0.0,0.098,0.0
+lok_sabha,Odisha,KORAPUT(ST),346,225,100,69390548.0,0.0,0.289,0.0
+lok_sabha,Odisha,MAYURBHANJ (ST),182,100,26,61200000.0,0.0,0.143,0.0
+lok_sabha,Odisha,NABARANGPUR(ST),48,43,10,19700000.0,0.0,0.208,0.0
+lok_sabha,Odisha,PURI,113,95,24,44248525.0,0.0,0.212,0.0
+lok_sabha,Odisha,SAMBALPUR,63,61,1,49076500.0,0.0,0.016,0.0
+lok_sabha,Odisha,SUNDARGARH (ST),101,85,33,51898256.0,0.0,0.327,0.0
+lok_sabha,Puducherry,Puducherry,63,24,11,50086900.0,0.0,0.175,0.0
+lok_sabha,Punjab,AMRITSAR,168,155,73,60748967.0,0.0,0.435,0.0
+lok_sabha,Punjab,ANANDPUR SAHIB,130,123,54,49468541.0,0.0,0.415,0.0
+lok_sabha,Punjab,BHATINDA,231,214,90,78831807.0,0.0,0.39,0.0
+lok_sabha,Punjab,FARIDKOT(SC),207,165,115,49841382.0,150000.0,0.556,0.003
+lok_sabha,Punjab,FATEHGARH SAHIB(SC),176,129,43,51491145.0,0.0,0.244,0.0
+lok_sabha,Punjab,FIROZPUR,104,87,70,25311720.0,1443979.0,0.673,0.057
+lok_sabha,Punjab,GURDASPUR,162,149,39,71018216.0,0.0,0.241,0.0
+lok_sabha,Punjab,HOSHIARPUR(SC),153,142,55,68025900.0,0.0,0.359,0.0
+lok_sabha,Punjab,JALANDHAR(SC),152,102,38,30271899.0,0.0,0.25,0.0
+lok_sabha,Punjab,LUDHIANA,133,125,33,42103588.0,0.0,0.248,0.0
+lok_sabha,Punjab,PATIALA,230,188,48,57315118.0,0.0,0.209,0.0
+lok_sabha,Punjab,SANGRUR,139,102,51,34678770.0,0.0,0.367,0.0
+lok_sabha,Rajasthan,AJMER,124,97,56,58001994.0,0.0,0.452,0.0
+lok_sabha,Rajasthan,ALWAR,55,49,20,73037965.0,0.0,0.364,0.0
+lok_sabha,Rajasthan,BANSWARA(ST),111,91,23,99758417.0,0.0,0.207,0.0
+lok_sabha,Rajasthan,BARMER,68,64,40,38887782.0,0.0,0.588,0.0
+lok_sabha,Rajasthan,BHARATPUR(SC),194,128,52,69260639.1,0.0,0.268,0.0
+lok_sabha,Rajasthan,BHILWARA,171,157,71,77776128.0,0.0,0.415,0.0
+lok_sabha,Rajasthan,BIKANER(SC),73,55,18,67211888.0,0.0,0.247,0.0
+lok_sabha,Rajasthan,CHITTORGARH,192,17,10,10077214.0,0.0,0.052,0.0
+lok_sabha,Rajasthan,CHURU,141,73,28,62751795.0,0.0,0.199,0.0
+lok_sabha,Rajasthan,DAUSA(ST),96,56,15,41291319.0,0.0,0.156,0.0
+lok_sabha,Rajasthan,GANGANAGAR(SC),80,61,2,45545330.0,0.0,0.025,0.0
+lok_sabha,Rajasthan,JAIPUR,63,35,15,49617769.0,0.0,0.238,0.0
+lok_sabha,Rajasthan,JAIPUR RURAL,49,26,8,21736174.0,0.0,0.163,0.0
+lok_sabha,Rajasthan,JALORE,121,101,48,53062487.0,0.0,0.397,0.0
+lok_sabha,Rajasthan,JHALAWAR-BARAN,40,5,0,8076880.0,0.0,0.0,0.0
+lok_sabha,Rajasthan,JHUNJHUNU,110,106,62,51962937.0,0.0,0.564,0.0
+lok_sabha,Rajasthan,JODHPUR,19,3,0,6440000.0,0.0,0.0,0.0
+lok_sabha,Rajasthan,KARAULI-DHOLPUR(SC),46,26,11,18119027.0,0.0,0.239,0.0
+lok_sabha,Rajasthan,KOTA,60,46,15,38763952.0,0.0,0.25,0.0
+lok_sabha,Rajasthan,NAGAUR,191,182,137,60287384.0,0.0,0.717,0.0
+lok_sabha,Rajasthan,PALI,19,16,5,15254289.0,0.0,0.263,0.0
+lok_sabha,Rajasthan,RAJSAMAND,105,70,25,62235559.0,0.0,0.238,0.0
+lok_sabha,Rajasthan,SIKAR,129,114,43,59594305.0,0.0,0.333,0.0
+lok_sabha,Rajasthan,UDAIPUR(ST),201,130,24,55914895.0,0.0,0.119,0.0
+lok_sabha,Sikkim,SIKKIM,46,28,23,45764618.0,0.0,0.5,0.0
+lok_sabha,Tamil Nadu,ARAKKONAM,94,51,32,49786710.0,0.0,0.34,0.0
+lok_sabha,Tamil Nadu,ARANI,102,76,46,51127845.0,0.0,0.451,0.0
+lok_sabha,Tamil Nadu,CHENNAI CENTRAL,12,5,4,31000000.0,0.0,0.333,0.0
+lok_sabha,Tamil Nadu,CHENNAI NORTH,46,34,20,81003404.0,0.0,0.435,0.0
+lok_sabha,Tamil Nadu,CHENNAI SOUTH,20,13,5,47365616.0,0.0,0.25,0.0
+lok_sabha,Tamil Nadu,CHIDAMBARAM(SC),48,46,35,54282702.0,0.0,0.729,0.0
+lok_sabha,Tamil Nadu,COIMBATORE,44,28,6,51121965.0,0.0,0.136,0.0
+lok_sabha,Tamil Nadu,CUDDALORE,73,67,55,65642106.0,0.0,0.753,0.0
+lok_sabha,Tamil Nadu,DHARAMAPURI,35,31,20,27304602.0,0.0,0.571,0.0
+lok_sabha,Tamil Nadu,DINDIGUL,130,78,49,96363339.0,0.0,0.377,0.0
+lok_sabha,Tamil Nadu,ERODE,139,92,82,69516067.0,0.0,0.59,0.0
+lok_sabha,Tamil Nadu,KALLAKURICHI,94,47,45,31584460.0,0.0,0.479,0.0
+lok_sabha,Tamil Nadu,KANCHEEPURAM(SC),174,136,130,43837417.0,0.0,0.747,0.0
+lok_sabha,Tamil Nadu,KANNIYAKUMARI,103,61,39,64392266.0,0.0,0.379,0.0
+lok_sabha,Tamil Nadu,KARUR,98,59,42,50852918.0,0.0,0.429,0.0
+lok_sabha,Tamil Nadu,KRISHNAGIRI,66,64,29,65995542.0,0.0,0.439,0.0
+lok_sabha,Tamil Nadu,MADURAI,85,75,42,50965740.0,0.0,0.494,0.0
+lok_sabha,Tamil Nadu,MAYILADUTHURAI,30,20,9,14675000.0,0.0,0.3,0.0
+lok_sabha,Tamil Nadu,NAGAPATTINAM(SC),50,44,32,47095221.0,0.0,0.64,0.0
+lok_sabha,Tamil Nadu,NAMAKKAL,108,106,75,88820641.0,0.0,0.694,0.0
+lok_sabha,Tamil Nadu,NILGIRIS(SC),71,56,50,47541597.0,0.0,0.704,0.0
+lok_sabha,Tamil Nadu,PERAMBALUR,59,41,37,53759659.0,0.0,0.627,0.0
+lok_sabha,Tamil Nadu,POLLACHI,43,37,31,45660992.0,0.0,0.721,0.0
+lok_sabha,Tamil Nadu,RAMANATHAPURAM,38,31,20,23332718.0,0.0,0.526,0.0
+lok_sabha,Tamil Nadu,SALEM,13,2,0,4300000.0,0.0,0.0,0.0
+lok_sabha,Tamil Nadu,SIVAGANGA,77,68,62,52969519.0,0.0,0.805,0.0
+lok_sabha,Tamil Nadu,SRIPERUMBUDUR,39,28,13,57516222.0,0.0,0.333,0.0
+lok_sabha,Tamil Nadu,TENKASI(SC),43,38,32,39689733.0,0.0,0.744,0.0
+lok_sabha,Tamil Nadu,THANJAVUR,49,43,28,71580197.0,0.0,0.571,0.0
+lok_sabha,Tamil Nadu,THENI,55,36,19,38150000.0,0.0,0.345,0.0
+lok_sabha,Tamil Nadu,THOOTHUKKUDI,24,14,9,33783541.0,0.0,0.375,0.0
+lok_sabha,Tamil Nadu,TIRUCHIRAPPALLI,62,54,39,60719352.0,0.0,0.629,0.0
+lok_sabha,Tamil Nadu,TIRUNELVELI,74,41,30,43416751.0,0.0,0.405,0.0
+lok_sabha,Tamil Nadu,TIRUPPUR,80,59,48,75252492.0,0.0,0.6,0.0
+lok_sabha,Tamil Nadu,TIRUVALLUR(SC),117,101,61,76454585.0,0.0,0.521,0.0
+lok_sabha,Tamil Nadu,TIRUVANNAMALAI,149,143,121,69945931.0,0.0,0.812,0.0
+lok_sabha,Tamil Nadu,VELLORE,15,12,3,12664000.0,0.0,0.2,0.0
+lok_sabha,Tamil Nadu,VILUPPURAM(SC),114,96,74,81634830.0,0.0,0.649,0.0
+lok_sabha,Tamil Nadu,VIRUDHUNAGAR,63,56,46,65710281.0,0.0,0.73,0.0
+lok_sabha,Telangana,ADILABAD(ST),220,99,29,28730000.0,0.0,0.132,0.0
+lok_sabha,Telangana,BHONGIR,111,89,54,29260077.0,0.0,0.486,0.0
+lok_sabha,Telangana,CHELVELLA,295,284,144,95211618.0,0.0,0.488,0.0
+lok_sabha,Telangana,HYDERABAD,14,8,1,19285072.0,0.0,0.071,0.0
+lok_sabha,Telangana,KARIMNAGAR,195,108,44,35542182.0,0.0,0.226,0.0
+lok_sabha,Telangana,KHAMMAM,125,120,19,38449146.0,0.0,0.152,0.0
+lok_sabha,Telangana,MAHABUBABAD,132,112,99,33781899.0,0.0,0.75,0.0
+lok_sabha,Telangana,MAHABUBNAGAR,43,38,18,19725433.0,0.0,0.419,0.0
+lok_sabha,Telangana,MALKAJGIRI,109,67,20,61832233.0,0.0,0.183,0.0
+lok_sabha,Telangana,MEDAK,123,51,34,36197616.0,0.0,0.276,0.0
+lok_sabha,Telangana,NAGARKURNOOL(SC),104,85,61,49201642.0,0.0,0.587,0.0
+lok_sabha,Telangana,NALGONDA,26,24,6,19168401.0,0.0,0.231,0.0
+lok_sabha,Telangana,NIZAMABAD,179,123,115,45148786.0,0.0,0.642,0.0
+lok_sabha,Telangana,PEDDAPALLE,58,34,9,25209997.0,0.0,0.155,0.0
+lok_sabha,Telangana,SECUNDERABAD,20,12,0,27620000.0,0.0,0.0,0.0
+lok_sabha,Telangana,WARANGEL(SC),100,70,41,28954452.0,0.0,0.41,0.0
+lok_sabha,Telangana,ZAHIRABAD,196,93,32,26694939.0,0.0,0.163,0.0
+lok_sabha,The Dadra And Nagar Haveli And Daman And Diu,DADRA & NAGAR HAVELI (ST),1,0,0,0.0,0.0,0.0,0.0
+lok_sabha,The Dadra And Nagar Haveli And Daman And Diu,DAMAN and DIU,54,1,0,1000000.0,0.0,0.0,0.0
+lok_sabha,Tripura,TRIPURA EAST(ST),14,10,3,23979250.0,0.0,0.214,0.0
+lok_sabha,Tripura,TRIPURA WEST,30,19,7,81343545.0,0.0,0.233,0.0
+lok_sabha,Uttar Pradesh,AGRA(SC),81,63,55,91740438.0,0.0,0.679,0.0
+lok_sabha,Uttar Pradesh,AKBARPUR,23,23,12,36837193.0,0.0,0.522,0.0
+lok_sabha,Uttar Pradesh,ALIGARH,76,76,21,97816769.0,0.0,0.276,0.0
+lok_sabha,Uttar Pradesh,ALLAHABAD,25,25,3,91488733.0,0.0,0.12,0.0
+lok_sabha,Uttar Pradesh,AMBEDKAR NAGAR,292,231,61,120052344.0,0.0,0.209,0.0
+lok_sabha,Uttar Pradesh,AMETHI,39,37,16,78553613.0,0.0,0.41,0.0
+lok_sabha,Uttar Pradesh,AMROHA,99,85,55,98770305.0,0.0,0.556,0.0
+lok_sabha,Uttar Pradesh,AONLA,27,15,13,44988238.0,0.0,0.481,0.0
+lok_sabha,Uttar Pradesh,AZAMGARH,63,62,15,86253239.0,0.0,0.238,0.0
+lok_sabha,Uttar Pradesh,BADAUN,133,99,41,96732339.0,0.0,0.308,0.0
+lok_sabha,Uttar Pradesh,BAGHPAT,90,47,5,43924898.0,0.0,0.056,0.0
+lok_sabha,Uttar Pradesh,BAHRAICH(SC),81,54,26,73141677.0,0.0,0.321,0.0
+lok_sabha,Uttar Pradesh,BALLIA,40,34,16,23908959.0,0.0,0.4,0.0
+lok_sabha,Uttar Pradesh,BANDA,146,126,109,35562240.12,0.0,0.747,0.0
+lok_sabha,Uttar Pradesh,BANSGAON(SC),77,74,0,70752414.0,0.0,0.0,0.0
+lok_sabha,Uttar Pradesh,BARABANKI(SC),23,18,11,73877908.0,0.0,0.478,0.0
+lok_sabha,Uttar Pradesh,BAREILLY,99,96,93,72487119.0,0.0,0.939,0.0
+lok_sabha,Uttar Pradesh,BASTI,90,76,22,92608280.0,0.0,0.244,0.0
+lok_sabha,Uttar Pradesh,BHADOHI,542,541,405,90213597.0,0.0,0.747,0.0
+lok_sabha,Uttar Pradesh,BIJNOR,33,27,9,21499316.0,0.0,0.273,0.0
+lok_sabha,Uttar Pradesh,BULANDSHAHR(SC),249,248,114,93301259.0,0.0,0.458,0.0
+lok_sabha,Uttar Pradesh,CHANDAULI,26,23,9,78343139.0,0.0,0.346,0.0
+lok_sabha,Uttar Pradesh,DEORIA,113,70,41,75518656.0,0.0,0.363,0.0
+lok_sabha,Uttar Pradesh,DHAURAHRA,71,69,31,68082964.0,0.0,0.437,0.0
+lok_sabha,Uttar Pradesh,DOMARIYAGANJ,75,68,0,93108500.0,0.0,0.0,0.0
+lok_sabha,Uttar Pradesh,ETAH,334,302,217,87928460.0,0.0,0.65,0.0
+lok_sabha,Uttar Pradesh,ETAWAH(SC),514,470,192,154592005.0,0.0,0.374,0.0
+lok_sabha,Uttar Pradesh,FAIZABAD,201,156,108,104159313.0,0.0,0.537,0.0
+lok_sabha,Uttar Pradesh,FARRUKHABAD,49,48,44,26958998.0,0.0,0.898,0.0
+lok_sabha,Uttar Pradesh,FATEHPUR,79,72,13,69528995.0,0.0,0.165,0.0
+lok_sabha,Uttar Pradesh,FATEHPUR SIKRI,38,38,34,77104078.0,0.0,0.895,0.0
+lok_sabha,Uttar Pradesh,FIROZABAD,43,42,37,96154158.0,0.0,0.86,0.0
+lok_sabha,Uttar Pradesh,GAUTAM BUDDHA NAGAR,172,111,68,96545121.28,0.0,0.395,0.0
+lok_sabha,Uttar Pradesh,GHAZIABAD,69,63,35,59710189.0,0.0,0.507,0.0
+lok_sabha,Uttar Pradesh,GHAZIPUR,91,64,9,42196125.0,0.0,0.099,0.0
+lok_sabha,Uttar Pradesh,GHOSI,205,191,105,76964325.0,0.0,0.512,0.0
+lok_sabha,Uttar Pradesh,GONDA,138,138,35,94077413.0,0.0,0.254,0.0
+lok_sabha,Uttar Pradesh,GORAKHPUR,9,9,0,21318500.0,0.0,0.0,0.0
+lok_sabha,Uttar Pradesh,HAMIRPUR_UP,200,106,18,78438000.0,0.0,0.09,0.0
+lok_sabha,Uttar Pradesh,HARDOI (SC),14,13,3,41366203.0,0.0,0.214,0.0
+lok_sabha,Uttar Pradesh,HATHRAS (SC),102,102,66,142527022.0,0.0,0.647,0.0
+lok_sabha,Uttar Pradesh,JALAUN(SC),18,15,2,10213471.64,0.0,0.111,0.0
+lok_sabha,Uttar Pradesh,JAUNPUR,665,658,507,93473025.0,0.0,0.762,0.0
+lok_sabha,Uttar Pradesh,JHANSI,54,53,30,41625431.0,0.0,0.556,0.0
+lok_sabha,Uttar Pradesh,KAIRANA,92,64,45,52683632.0,0.0,0.489,0.0
+lok_sabha,Uttar Pradesh,KAISERGANJ,88,63,33,81376675.0,0.0,0.375,0.0
+lok_sabha,Uttar Pradesh,KANNAUJ,157,87,27,79434648.0,0.0,0.172,0.0
+lok_sabha,Uttar Pradesh,KANPUR,63,63,42,48385838.0,0.0,0.667,0.0
+lok_sabha,Uttar Pradesh,KAUSHAMBI(SC),747,715,608,69456045.0,0.0,0.814,0.0
+lok_sabha,Uttar Pradesh,KHERI,91,84,79,32518398.0,0.0,0.868,0.0
+lok_sabha,Uttar Pradesh,KUSHI NAGAR,270,179,129,88589109.0,0.0,0.478,0.0
+lok_sabha,Uttar Pradesh,LALGANJ (SC),288,283,58,90903399.0,0.0,0.201,0.0
+lok_sabha,Uttar Pradesh,LUCKNOW,102,100,31,102408976.0,0.0,0.304,0.0
+lok_sabha,Uttar Pradesh,MACHHLISHAHR(SC),1348,1317,705,83537532.0,0.0,0.523,0.0
+lok_sabha,Uttar Pradesh,MAHARAJGANJ_UP,49,49,35,97560284.0,0.0,0.714,0.0
+lok_sabha,Uttar Pradesh,MAINPURI,102,95,40,83207634.0,0.0,0.392,0.0
+lok_sabha,Uttar Pradesh,MATHURA,60,43,17,45515779.0,0.0,0.283,0.0
+lok_sabha,Uttar Pradesh,MEERUT,229,114,33,82962350.0,0.0,0.144,0.0
+lok_sabha,Uttar Pradesh,MIRZAPUR,6,6,0,56690200.0,0.0,0.0,0.0
+lok_sabha,Uttar Pradesh,MISRIKH(SC),4,3,1,117516085.0,0.0,0.25,0.0
+lok_sabha,Uttar Pradesh,MOHANLALGANJ(SC),92,76,14,57677630.0,0.0,0.152,0.0
+lok_sabha,Uttar Pradesh,MORADABAD,175,174,117,42715367.0,0.0,0.669,0.0
+lok_sabha,Uttar Pradesh,MUZAFFARNAGAR,217,117,31,74188226.0,0.0,0.143,0.0
+lok_sabha,Uttar Pradesh,NAGINA(SC),107,106,102,37663620.0,0.0,0.953,0.0
+lok_sabha,Uttar Pradesh,PHULPUR,24,24,14,98136533.0,0.0,0.583,0.0
+lok_sabha,Uttar Pradesh,PILIBHIT,15,15,1,23751490.0,0.0,0.067,0.0
+lok_sabha,Uttar Pradesh,PRATAPGARH,391,289,72,55238181.0,0.0,0.184,0.0
+lok_sabha,Uttar Pradesh,RAE BARELI,55,50,7,42992942.0,0.0,0.127,0.0
+lok_sabha,Uttar Pradesh,RAMPUR,9,8,6,5933093.0,0.0,0.667,0.0
+lok_sabha,Uttar Pradesh,ROBERTSGANJ(SC),176,163,76,61338093.0,0.0,0.432,0.0
+lok_sabha,Uttar Pradesh,SAHARANPUR,114,101,51,85785107.0,0.0,0.447,0.0
+lok_sabha,Uttar Pradesh,SALEMPUR,161,129,58,67648807.0,0.0,0.36,0.0
+lok_sabha,Uttar Pradesh,SAMBHAL,296,288,0,81937800.0,0.0,0.0,0.0
+lok_sabha,Uttar Pradesh,SANT KABIR NAGAR,414,279,1,35694600.0,0.0,0.002,0.0
+lok_sabha,Uttar Pradesh,SHAHJAHANPUR(SC),7,7,4,145876200.0,0.0,0.571,0.0
+lok_sabha,Uttar Pradesh,SHRAWASTI,246,193,0,24701850.0,0.0,0.0,0.0
+lok_sabha,Uttar Pradesh,SITAPUR,68,50,21,106826349.0,0.0,0.309,0.0
+lok_sabha,Uttar Pradesh,SULTANPUR,18,14,5,78704831.0,0.0,0.278,0.0
+lok_sabha,Uttar Pradesh,UNNAO,81,68,12,79585036.0,0.0,0.148,0.0
+lok_sabha,Uttar Pradesh,VARANASI,169,169,155,81692804.0,0.0,0.917,0.0
+lok_sabha,Uttarakhand,ALMORA(SC),143,85,3,17421406.0,0.0,0.021,0.0
+lok_sabha,Uttarakhand,GARHWAL,11,9,1,10195000.0,0.0,0.091,0.0
+lok_sabha,Uttarakhand,HARDWAR,43,28,3,19374910.0,0.0,0.07,0.0
+lok_sabha,Uttarakhand,NAINITAL UDHAM SINGH NAG.,88,74,22,20268185.0,0.0,0.25,0.0
+lok_sabha,Uttarakhand,TEHRI GARHWAL,212,191,79,78908541.0,0.0,0.373,0.0
+lok_sabha,West Bengal,ALIPURDUARS(ST),26,14,0,26597456.7,0.0,0.0,0.0
+lok_sabha,West Bengal,ARAMBAG(SC),43,42,29,32103666.0,0.0,0.674,0.0
+lok_sabha,West Bengal,ASANSOL,25,21,5,71037025.0,0.0,0.2,0.0
+lok_sabha,West Bengal,BAHARAMPUR,43,33,2,39363677.0,0.0,0.047,0.0
+lok_sabha,West Bengal,BALURGHAT,124,117,22,63599877.9,0.0,0.177,0.0
+lok_sabha,West Bengal,BANGAON(SC),22,3,3,2056249.0,0.0,0.136,0.0
+lok_sabha,West Bengal,BANKURA,50,50,27,83496667.0,0.0,0.54,0.0
+lok_sabha,West Bengal,BARASAT,93,53,33,60172753.0,0.0,0.355,0.0
+lok_sabha,West Bengal,BARDHAMAN PURBA(SC),110,54,17,45895695.0,0.0,0.155,0.0
+lok_sabha,West Bengal,BARDHAMAN-DURGAPUR,68,55,6,65043112.0,0.0,0.088,0.0
+lok_sabha,West Bengal,BARRACKPUR,29,10,4,57015000.0,0.0,0.138,0.0
+lok_sabha,West Bengal,BASIRHAT,26,13,7,24693148.0,0.0,0.269,0.0
+lok_sabha,West Bengal,BIRBHUM,79,71,48,63579304.0,0.0,0.608,0.0
+lok_sabha,West Bengal,BISHNUPUR(SC),46,42,14,50205584.0,0.0,0.304,0.0
+lok_sabha,West Bengal,BOLPUR(SC),172,146,105,193767254.0,0.0,0.61,0.0
+lok_sabha,West Bengal,COOCHBEHAR(SC),63,40,1,36933495.0,0.0,0.016,0.0
+lok_sabha,West Bengal,DARJEELING,171,113,42,62207467.0,0.0,0.246,0.0
+lok_sabha,West Bengal,DIAMOND HARBOUR,168,147,94,47986591.0,0.0,0.56,0.0
+lok_sabha,West Bengal,DUM DUM,49,20,10,22535682.0,0.0,0.204,0.0
+lok_sabha,West Bengal,GHATAL,26,16,14,33956704.0,0.0,0.538,0.0
+lok_sabha,West Bengal,HOOGHLY,39,27,10,49733134.0,0.0,0.256,0.0
+lok_sabha,West Bengal,HOWRAH,48,47,25,48090168.0,0.0,0.521,0.0
+lok_sabha,West Bengal,JADAVPUR,68,65,32,37577280.0,0.0,0.471,0.0
+lok_sabha,West Bengal,JALPAIGURI(SC),15,14,1,22204482.0,0.0,0.067,0.0
+lok_sabha,West Bengal,JANGIPUR,41,29,11,38411791.0,0.0,0.268,0.0
+lok_sabha,West Bengal,JHARGRAM(ST),39,29,25,58546605.0,0.0,0.641,0.0
+lok_sabha,West Bengal,JOYNAGAR(SC),143,130,70,63576927.0,0.0,0.49,0.0
+lok_sabha,West Bengal,KANTHI,21,19,13,28885084.0,0.0,0.619,0.0
+lok_sabha,West Bengal,KOLKATA DAKSHIN,51,50,18,74370386.0,0.0,0.353,0.0
+lok_sabha,West Bengal,KOLKATA UTTAR,33,31,9,62627830.0,0.0,0.273,0.0
+lok_sabha,West Bengal,KRISHNANAGAR,52,44,20,96526606.0,0.0,0.385,0.0
+lok_sabha,West Bengal,MALDAHA DAKSHIN,61,55,12,33026511.0,0.0,0.197,0.0
+lok_sabha,West Bengal,MALDAHA UTTAR,31,11,6,10982755.0,0.0,0.194,0.0
+lok_sabha,West Bengal,MATHURAPUR(SC),105,85,57,36503383.0,0.0,0.543,0.0
+lok_sabha,West Bengal,MEDINIPUR,22,18,6,63783694.0,0.0,0.273,0.0
+lok_sabha,West Bengal,MURSHIDABAD,72,65,23,46378883.0,0.0,0.319,0.0
+lok_sabha,West Bengal,PURULIA,38,17,5,10218085.0,0.0,0.132,0.0
+lok_sabha,West Bengal,RAIGANJ,29,24,5,26078137.0,0.0,0.172,0.0
+lok_sabha,West Bengal,RANAGHAT(SC),160,115,56,57417589.0,0.0,0.35,0.0
+lok_sabha,West Bengal,SREERAMPUR,76,74,46,67797647.0,0.0,0.605,0.0
+lok_sabha,West Bengal,TAMLUK,56,41,13,15331987.0,0.0,0.232,0.0
+lok_sabha,West Bengal,ULUBERIA,112,88,61,55947695.0,0.0,0.545,0.0
+lok_sabha,nan,nan,1,1,1,0.0,0.0,1.0,0.0

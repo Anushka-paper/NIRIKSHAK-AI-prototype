@@ -1,0 +1,38 @@
+parliament,state,work_count,sanctioned_work_count,completed_work_count,total_sanctioned_amount,total_expenditure,completion_rate,utilization_rate
+lok_sabha,Andaman and Nicobar Islands,27,13,0,36232528.0,0.0,0.0,0.0
+lok_sabha,Andhra Pradesh,2142,1790,720,1275763008.0,0.0,0.336,0.0
+lok_sabha,Arunachal Pradesh,245,197,183,160976189.0,0.0,0.747,0.0
+lok_sabha,Assam,1396,1005,144,647836917.0,0.0,0.103,0.0
+lok_sabha,Bihar,3125,2329,1318,1875416247.0,0.0,0.422,0.0
+lok_sabha,Chandigarh,63,54,16,41324398.0,0.0,0.254,0.0
+lok_sabha,Chhattisgarh,1656,1536,677,793007661.0,0.0,0.409,0.0
+lok_sabha,Delhi,266,206,95,222600066.0,0.0,0.357,0.0
+lok_sabha,Goa,206,61,32,47827086.3,0.0,0.155,0.0
+lok_sabha,Gujarat,6013,4596,2021,1683910685.0,0.0,0.336,0.0
+lok_sabha,Haryana,1199,947,269,575331202.0,0.0,0.224,0.0
+lok_sabha,Himachal Pradesh,1236,1103,336,265275581.0,0.0,0.272,0.0
+lok_sabha,Jammu and Kashmir,583,495,200,291798030.56,0.0,0.343,0.0
+lok_sabha,Jharkhand,1675,1382,283,543142596.0,0.0,0.169,0.0
+lok_sabha,Karnataka,2494,1579,494,1047537479.0,0.0,0.198,0.0
+lok_sabha,Kerala,2879,1921,657,1219410389.34,0.0,0.228,0.0
+lok_sabha,Ladakh,54,18,0,15128000.0,0.0,0.0,0.0
+lok_sabha,Lakshadweep,28,26,2,59447173.0,0.0,0.071,0.0
+lok_sabha,Madhya Pradesh,3749,2899,1035,1357552560.0,0.0,0.276,0.0
+lok_sabha,Maharashtra,2551,1391,509,1471481982.87,0.0,0.2,0.0
+lok_sabha,Manipur,72,67,31,180740245.0,0.0,0.431,0.0
+lok_sabha,Meghalaya,303,269,130,130821000.0,0.0,0.429,0.0
+lok_sabha,Mizoram,212,121,92,78665672.0,0.0,0.434,0.0
+lok_sabha,Nagaland,42,40,25,122137620.0,0.0,0.595,0.0
+lok_sabha,Odisha,2618,1797,488,786615997.0,0.0,0.186,0.0
+lok_sabha,Puducherry,63,24,11,50086900.0,0.0,0.175,0.0
+lok_sabha,Punjab,1985,1681,709,619107053.0,1593979.0,0.357,0.003
+lok_sabha,Rajasthan,2458,1708,728,1144666129.1,0.0,0.296,0.0
+lok_sabha,Sikkim,46,28,23,45764618.0,0.0,0.5,0.0
+lok_sabha,Tamil Nadu,2736,2089,1520,2036815961.0,0.0,0.556,0.0
+lok_sabha,Telangana,2050,1417,726,620013493.0,0.0,0.354,0.0
+lok_sabha,The Dadra And Nagar Haveli And Daman And Diu,55,1,0,1000000.0,0.0,0.0,0.0
+lok_sabha,Tripura,44,29,10,105322795.0,0.0,0.227,0.0
+lok_sabha,Uttar Pradesh,12139,10523,5336,5765280113.04,0.0,0.44,0.0
+lok_sabha,Uttarakhand,497,387,108,146168042.0,0.0,0.217,0.0
+lok_sabha,West Bengal,2745,2138,1007,2086263066.6,0.0,0.367,0.0
+lok_sabha,nan,1,1,1,0.0,0.0,1.0,0.0

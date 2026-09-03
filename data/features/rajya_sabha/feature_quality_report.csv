@@ -1,0 +1,119 @@
+feature_name,quality_status,missing_percentage,unique_count,is_constant,has_infinite,near_zero_variance,audit_notes
+canonical_work_id,HEALTHY,0.0,15848,0,0,0,All checks passed
+official_work_id,WARNING,100.0,0,1,0,0,High missingness (100.0%); Constant feature (zero variance)
+parliament,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+state,HEALTHY,0.0,30,0,0,0,All checks passed
+constituency,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+mp_name,HEALTHY,0.0,190,0,0,0,All checks passed
+work_category,HEALTHY,0.0,6,0,0,0,All checks passed
+work_description,HEALTHY,0.0,14263,0,0,0,All checks passed
+recommended_date,HEALTHY,10.28,956,0,0,0,All checks passed
+recommended_amount,HEALTHY,10.28,3409,0,0,0,All checks passed
+sanction_date,HEALTHY,32.01,792,0,0,0,All checks passed
+sanctioned_amount,HEALTHY,32.01,3220,0,0,0,All checks passed
+completion_date,WARNING,100.0,0,1,0,0,High missingness (100.0%); Constant feature (zero variance)
+completion_amount,WARNING,89.11,1272,0,0,0,High missingness (89.1%)
+expenditure_amount,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+expenditure_transaction_count,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+first_expenditure_date,WARNING,100.0,0,1,0,0,High missingness (100.0%); Constant feature (zero variance)
+last_expenditure_date,WARNING,100.0,0,1,0,0,High missingness (100.0%); Constant feature (zero variance)
+vendor_name,WARNING,100.0,0,1,0,0,High missingness (100.0%); Constant feature (zero variance)
+ida_agency,HEALTHY,32.01,552,0,0,0,All checks passed
+work_status,HEALTHY,32.0,7,0,0,0,All checks passed
+er_match_score,WARNING,100.0,0,1,0,0,High missingness (100.0%); Constant feature (zero variance)
+er_confidence,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+er_method,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+has_recommendation,HEALTHY,0.0,2,0,0,0,All checks passed
+has_sanction,HEALTHY,0.0,2,0,0,0,All checks passed
+has_expenditure,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+has_completion,HEALTHY,0.0,2,0,0,0,All checks passed
+has_official_work_id,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+has_canonical_work_id,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+entity_resolution_score,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+entity_resolution_confidence,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+entity_resolution_method,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+entity_resolution_uncertain,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+entity_resolution_review_required,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+recommendation_sanction_amount_difference,HEALTHY,32.01,124,0,0,0,All checks passed
+sanction_expenditure_amount_difference,HEALTHY,32.01,3220,0,0,0,All checks passed
+sanction_completion_amount_difference,WARNING,99.48,68,0,0,0,High missingness (99.5%)
+recommended_expenditure_difference,HEALTHY,10.28,3409,0,0,0,All checks passed
+recommendation_to_sanction_amount_change_pct,HEALTHY,0.0,132,0,0,0,All checks passed
+sanction_to_expenditure_amount_change_pct,HEALTHY,0.0,2,0,0,0,All checks passed
+sanction_to_completion_amount_change_pct,HEALTHY,0.0,68,0,0,0,All checks passed
+expenditure_to_sanction_ratio,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+expenditure_utilization_percentage,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+completion_to_sanction_ratio,HEALTHY,0.0,69,0,0,0,All checks passed
+completion_amount_percentage,HEALTHY,0.0,69,0,0,0,All checks passed
+recommended_to_sanction_ratio,HEALTHY,0.0,133,0,0,0,All checks passed
+unspent_amount,HEALTHY,32.01,3220,0,0,0,All checks passed
+remaining_sanctioned_amount,HEALTHY,32.01,3220,0,0,0,All checks passed
+expenditure_gap,HEALTHY,32.01,3220,0,0,0,All checks passed
+completion_financial_gap,WARNING,99.48,54,0,0,0,High missingness (99.5%)
+expenditure_exceeds_sanction_flag,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+negative_expenditure_flag,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+negative_sanction_flag,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+zero_sanction_flag,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+zero_expenditure_flag,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+large_amount_change_flag,HEALTHY,0.0,2,0,0,0,All checks passed
+unusually_high_expenditure_ratio,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+sanction_year,HEALTHY,32.01,4,0,0,0,All checks passed
+sanction_month,HEALTHY,32.01,12,0,0,0,All checks passed
+sanction_quarter,HEALTHY,32.01,4,0,0,0,All checks passed
+sanction_financial_year,HEALTHY,32.01,4,0,0,0,All checks passed
+sanction_day_of_week,HEALTHY,32.01,7,0,0,0,All checks passed
+recommendation_year,HEALTHY,10.28,4,0,0,0,All checks passed
+recommendation_month,HEALTHY,10.28,12,0,0,0,All checks passed
+recommendation_quarter,HEALTHY,10.28,4,0,0,0,All checks passed
+completion_year,WARNING,100.0,0,1,0,0,High missingness (100.0%); Constant feature (zero variance)
+completion_month,WARNING,100.0,0,1,0,0,High missingness (100.0%); Constant feature (zero variance)
+completion_quarter,WARNING,100.0,0,1,0,0,High missingness (100.0%); Constant feature (zero variance)
+recommendation_to_sanction_days,HEALTHY,32.01,689,0,0,0,All checks passed
+sanction_to_first_expenditure_days,WARNING,100.0,0,1,0,0,High missingness (100.0%); Constant feature (zero variance)
+sanction_to_last_expenditure_days,WARNING,100.0,0,1,0,0,High missingness (100.0%); Constant feature (zero variance)
+sanction_to_completion_days,WARNING,100.0,0,1,0,0,High missingness (100.0%); Constant feature (zero variance)
+first_expenditure_to_completion_days,WARNING,100.0,0,1,0,0,High missingness (100.0%); Constant feature (zero variance)
+recommendation_to_completion_days,WARNING,100.0,0,1,0,0,High missingness (100.0%); Constant feature (zero variance)
+expenditure_span_days,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+total_execution_days,WARNING,100.0,0,1,0,0,High missingness (100.0%); Constant feature (zero variance)
+recommendation_before_sanction,HEALTHY,0.0,2,0,0,0,All checks passed
+sanction_before_expenditure,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+expenditure_before_completion,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+sanction_before_completion,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+recommendation_sanction_chronology_issue,HEALTHY,0.0,2,0,0,0,All checks passed
+sanction_expenditure_chronology_issue,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+sanction_completion_chronology_issue,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+expenditure_completion_chronology_issue,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+valid_lifecycle_sequence,HEALTHY,0.0,2,0,0,0,All checks passed
+lifecycle_stage_count,HEALTHY,0.0,3,0,0,0,All checks passed
+lifecycle_completion_percentage,HEALTHY,0.0,3,0,0,0,All checks passed
+lifecycle_missing_stage_count,HEALTHY,0.0,3,0,0,0,All checks passed
+lifecycle_status,HEALTHY,0.0,3,0,0,0,All checks passed
+work_description_length,HEALTHY,0.0,359,0,0,0,All checks passed
+work_description_word_count,HEALTHY,0.0,82,0,0,0,All checks passed
+has_work_description,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+work_description_missing,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+unique_word_count,HEALTHY,0.0,67,0,0,0,All checks passed
+average_word_length,HEALTHY,0.0,513,0,0,0,All checks passed
+uppercase_ratio,HEALTHY,0.0,549,0,0,0,All checks passed
+digit_ratio,HEALTHY,0.0,174,0,0,0,All checks passed
+punctuation_ratio,HEALTHY,0.0,203,0,0,0,All checks passed
+very_short_text_flag,HEALTHY,0.0,2,0,0,0,All checks passed
+very_long_text_flag,HEALTHY,0.0,2,0,0,0,All checks passed
+mp_historical_work_count,HEALTHY,0.0,440,0,0,0,All checks passed
+mp_historical_completed_count,HEALTHY,0.0,40,0,0,0,All checks passed
+mp_historical_completion_rate,HEALTHY,0.0,653,0,0,0,All checks passed
+state_historical_work_count,HEALTHY,0.0,3102,0,0,0,All checks passed
+state_historical_completion_rate,HEALTHY,0.0,753,0,0,0,All checks passed
+constituency_historical_work_count,HEALTHY,0.0,15848,0,0,0,All checks passed
+constituency_historical_completion_rate,HEALTHY,0.0,325,0,0,0,All checks passed
+vendor_historical_work_count,HEALTHY,0.0,15848,0,0,0,All checks passed
+vendor_historical_completion_rate,HEALTHY,0.0,325,0,0,0,All checks passed
+log_sanctioned_amount,HEALTHY,0.0,3221,0,0,0,All checks passed
+log_execution_days,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+amount_percentile,HEALTHY,32.01,497,0,0,0,All checks passed
+amount_z_score,HEALTHY,32.01,309,0,0,0,All checks passed
+amount_iqr_outlier_flag,HEALTHY,0.0,2,0,0,0,All checks passed
+execution_duration_percentile,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+duration_z_score,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
+duration_iqr_outlier_flag,WARNING,0.0,1,1,0,0,Constant feature (zero variance)
