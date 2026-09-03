@@ -1,0 +1,78 @@
+{
+  "rows_processed": 33976,
+  "columns_processed": 11,
+  "transformations": {
+    "sr_no": {
+      "original_column": "Sr. No.",
+      "rule_applied": "identifier",
+      "values_changed": 0,
+      "values_unchanged": 33976,
+      "invalid_values_count": 0
+    },
+    "work_category": {
+      "original_column": "Work Category",
+      "rule_applied": "category",
+      "values_changed": 483,
+      "values_unchanged": 33493,
+      "invalid_values_count": 0
+    },
+    "work_description": {
+      "original_column": "Work Description",
+      "rule_applied": "text",
+      "values_changed": 3645,
+      "values_unchanged": 30331,
+      "invalid_values_count": 0
+    },
+    "state": {
+      "original_column": "State",
+      "rule_applied": "state",
+      "values_changed": 357,
+      "values_unchanged": 33619,
+      "invalid_values_count": 0
+    },
+    "ida_agency": {
+      "original_column": "IDA",
+      "rule_applied": "identifier",
+      "values_changed": 0,
+      "values_unchanged": 33976,
+      "invalid_values_count": 0
+    },
+    "mp_name": {
+      "original_column": "Hon'ble Members of Parliament",
+      "rule_applied": "person_name",
+      "values_changed": 23984,
+      "values_unchanged": 9992,
+      "invalid_values_count": 0
+    },
+    "constituency": {
+      "original_column": "Constituency",
+      "rule_applied": "text",
+      "values_changed": 0,
+      "values_unchanged": 33976,
+      "invalid_values_count": 0
+    },
+    "image": {
+      "original_column": "Image",
+      "rule_applied": "text",
+      "values_changed": 0,
+      "values_unchanged": 33976,
+      "invalid_values_count": 0
+    },
+    "completion_date": {
+      "original_column": "Completion Date",
+      "rule_applied": "date",
+      "values_changed": 33975,
+      "values_unchanged": 1,
+      "invalid_values_count": 0
+    },
+    "expenditure_amount": {
+      "original_column": "Amount Disbursed ( \u20b9 )",
+      "rule_applied": "currency",
+      "values_changed": 33898,
+      "values_unchanged": 78,
+      "invalid_values_count": 0
+    }
+  },
+  "invalid_values": [],
+  "warnings": []
+}

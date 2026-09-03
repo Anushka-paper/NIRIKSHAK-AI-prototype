@@ -1,0 +1,91 @@
+{
+  "parliament": "rajya_sabha",
+  "rows_processed": 24967,
+  "columns_processed": 11,
+  "transformations": {
+    "sr_no": {
+      "original_column": "Sr. No.",
+      "rule_applied": "identifier",
+      "values_changed": 0,
+      "values_unchanged": 24967,
+      "invalid_values_count": 0
+    },
+    "state": {
+      "original_column": "State",
+      "rule_applied": "state",
+      "values_changed": 192,
+      "values_unchanged": 24775,
+      "invalid_values_count": 0
+    },
+    "work_description": {
+      "original_column": "Work",
+      "rule_applied": "text",
+      "values_changed": 0,
+      "values_unchanged": 24967,
+      "invalid_values_count": 0
+    },
+    "work_id": {
+      "original_column": "Work ID",
+      "rule_applied": "identifier",
+      "values_changed": 0,
+      "values_unchanged": 24967,
+      "invalid_values_count": 0
+    },
+    "ida_agency": {
+      "original_column": "IDA",
+      "rule_applied": "identifier",
+      "values_changed": 0,
+      "values_unchanged": 24967,
+      "invalid_values_count": 0
+    },
+    "mp_name": {
+      "original_column": "Hon'ble Members of Parliament",
+      "rule_applied": "person_name",
+      "values_changed": 24966,
+      "values_unchanged": 1,
+      "invalid_values_count": 0
+    },
+    "electednominated": {
+      "original_column": "Elected/Nominated",
+      "rule_applied": "identifier",
+      "values_changed": 0,
+      "values_unchanged": 24967,
+      "invalid_values_count": 0
+    },
+    "expenditure_amount": {
+      "original_column": "Fund Disbursed Amount ( \u20b9 )",
+      "rule_applied": "currency",
+      "values_changed": 24967,
+      "values_unchanged": 0,
+      "invalid_values_count": 0
+    },
+    "vendor_name": {
+      "original_column": "Vendor Name",
+      "rule_applied": "person_name",
+      "values_changed": 19954,
+      "values_unchanged": 5013,
+      "invalid_values_count": 0
+    },
+    "work_status": {
+      "original_column": "Payment Status",
+      "rule_applied": "status",
+      "values_changed": 0,
+      "values_unchanged": 24967,
+      "invalid_values_count": 0
+    }
+  },
+  "invalid_values": [],
+  "validation": {
+    "is_valid": false,
+    "validation_errors": [
+      "Column 'expenditure_amount' contains non-numeric monetary values",
+      "Column 'expenditure_amount' contains non-numeric monetary values"
+    ],
+    "validation_warnings": []
+  },
+  "warnings": [],
+  "errors": [
+    "Column 'expenditure_amount' contains non-numeric monetary values",
+    "Column 'expenditure_amount' contains non-numeric monetary values"
+  ]
+}

@@ -1,0 +1,10 @@
+dataset_name,relationship,parent_entities,child_entities,conflicts_count
+allocation,State -> Constituency,36,542,0
+allocation_standardized,state -> constituency,36,542,0
+allocation_standardized,mp_name -> constituency,543,542,1
+completed,State -> Constituency,33,501,0
+completed,Completion Date -> Constituency,594,501,480
+expenditure,State -> Constituency,35,531,0
+expenditure,Work ID -> State,55855,35,35
+recommended,State -> Constituency,36,538,0
+sanctioned,State -> Constituency,36,536,0

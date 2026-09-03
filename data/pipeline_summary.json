@@ -1,0 +1,25 @@
+{
+  "execution_timestamp": "2026-09-03T15:24:05.613248",
+  "target_parliament_scope": "all",
+  "parliaments_processed": {
+    "lok_sabha": {
+      "datasets_discovered": 7,
+      "datasets_loaded_success": 7,
+      "datasets_loaded_failed": 0,
+      "profiling_status": "success",
+      "standardization_status": "success",
+      "entity_resolution_status": "success",
+      "processing_time_seconds": 117.09
+    },
+    "rajya_sabha": {
+      "datasets_discovered": 6,
+      "datasets_loaded_success": 6,
+      "datasets_loaded_failed": 0,
+      "profiling_status": "success",
+      "standardization_status": "success",
+      "entity_resolution_status": "success",
+      "processing_time_seconds": 134.62
+    }
+  },
+  "total_processing_time_seconds": 251.71
+}

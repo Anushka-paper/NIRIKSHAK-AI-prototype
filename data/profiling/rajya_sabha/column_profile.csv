@@ -1,0 +1,57 @@
+dataset_name,column_name,original_dtype,detected_type
+allocated limit for honble mps (4),Sr. No.,object,identifier
+allocated limit for honble mps (4),State,object,categorical
+allocated limit for honble mps (4),Hon'ble Members of Parliament,object,text
+allocated limit for honble mps (4),Elected/Nominated,object,categorical
+allocated limit for honble mps (4),Allocated AMOUNT ( ₹ ),object,currency
+amount consented for calamity (3),Sr. No.,object,identifier
+amount consented for calamity (3),Calamity Type,object,categorical
+amount consented for calamity (3),Calamity Name,object,categorical
+amount consented for calamity (3),Hon'ble Members of Parliament,object,text
+amount consented for calamity (3),Date of Consent,object,date
+amount consented for calamity (3),Consent Amount ( ₹ ),object,currency
+expenditure on completed and on-going works as on date (2),Sr. No.,object,identifier
+expenditure on completed and on-going works as on date (2),State,object,categorical
+expenditure on completed and on-going works as on date (2),Work,object,text
+expenditure on completed and on-going works as on date (2),Work ID,object,identifier
+expenditure on completed and on-going works as on date (2),IDA,object,identifier
+expenditure on completed and on-going works as on date (2),Hon'ble Members of Parliament,object,text
+expenditure on completed and on-going works as on date (2),Elected/Nominated,object,categorical
+expenditure on completed and on-going works as on date (2),Expenditure Date,object,date
+expenditure on completed and on-going works as on date (2),Vendor Name,object,categorical
+expenditure on completed and on-going works as on date (2),Payment Status,object,categorical
+expenditure on completed and on-going works as on date (2),Fund Disbursed Amount ( ₹ ),object,currency
+works completed (8),Sr. No.,object,identifier
+works completed (8),Work Category,object,categorical
+works completed (8),Work,object,text
+works completed (8),State,object,categorical
+works completed (8),IDA,object,identifier
+works completed (8),Work Description,object,text
+works completed (8),Hon'ble Members of Parliament,object,text
+works completed (8),Elected/Nominated,object,categorical
+works completed (8),Image,object,categorical
+works completed (8),Completion Date,object,date
+works completed (8),Amount Disbursed ( ₹ ),object,currency
+works recommended (2),Sr. No.,object,identifier
+works recommended (2),Work category,object,categorical
+works recommended (2),WORK,object,text
+works recommended (2),State,object,categorical
+works recommended (2),IDA,object,identifier
+works recommended (2),Hon'ble Members of Parliament,object,text
+works recommended (2),Elected/Nominated,object,categorical
+works recommended (2),Work description,object,text
+works recommended (2),Recommended date,object,date
+works recommended (2),RECOMMENDED AMOUNT   ( ₹ ),object,currency
+works recommended (2),Sanction Date,object,date
+works sanctioned (7),Sr. No.,object,identifier
+works sanctioned (7),Work category,object,categorical
+works sanctioned (7),Work,object,text
+works sanctioned (7),State,object,categorical
+works sanctioned (7),IDA,object,identifier
+works sanctioned (7),Hon'ble Members of Parliament,object,text
+works sanctioned (7),Elected/Nominated,object,categorical
+works sanctioned (7),Work description,object,text
+works sanctioned (7),Recommended date,object,date
+works sanctioned (7),Sanction Date,object,date
+works sanctioned (7),Sanction Amount ( ₹ ),object,currency
+works sanctioned (7),Work Status,object,categorical
