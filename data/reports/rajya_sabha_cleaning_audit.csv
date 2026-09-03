@@ -1,7 +1,0 @@
-source_house,source_file,source_row_number,column_name,original_value,cleaned_value,cleaning_action,reason,pipeline_version,timestamp
-RAJYA_SABHA,Allocated Limit for Honble MPs (4).csv,0,DATASET,232,231,VECTORIZED_CLEAN,Processed allocated_limit dataset,1.0.0,2026-09-01T19:19:14.901848+00:00
-RAJYA_SABHA,Amount consented for Calamity (3).csv,0,DATASET,21,20,VECTORIZED_CLEAN,Processed calamity_consent dataset,1.0.0,2026-09-01T19:19:14.910779+00:00
-RAJYA_SABHA,Works Recommended (2).csv,0,DATASET,24948,24947,VECTORIZED_CLEAN,Processed works_recommended dataset,1.0.0,2026-09-01T19:19:15.336554+00:00
-RAJYA_SABHA,Works Sanctioned (7).csv,0,DATASET,19312,19311,VECTORIZED_CLEAN,Processed works_sanctioned dataset,1.0.0,2026-09-01T19:19:15.694718+00:00
-RAJYA_SABHA,Works Completed (8).csv,0,DATASET,9912,9911,VECTORIZED_CLEAN,Processed works_completed dataset,1.0.0,2026-09-01T19:19:15.898671+00:00
-RAJYA_SABHA,Expenditure on Completed and On-going Works as on Date (2).csv,0,DATASET,24967,24966,VECTORIZED_CLEAN,Processed expenditure dataset,1.0.0,2026-09-01T19:19:16.317697+00:00

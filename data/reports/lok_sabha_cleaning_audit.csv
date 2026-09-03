@@ -1,7 +1,0 @@
-source_house,source_file,source_row_number,column_name,original_value,cleaned_value,cleaning_action,reason,pipeline_version,timestamp
-LOK_SABHA,Allocated Limit for Honble MPs (2).csv,0,DATASET,544,543,VECTORIZED_CLEAN,Processed allocated_limit dataset,1.0.0,2026-09-01T19:19:09.691361+00:00
-LOK_SABHA,Amount consented for Calamity (2).csv,0,DATASET,13,12,VECTORIZED_CLEAN,Processed calamity_consent dataset,1.0.0,2026-09-01T19:19:09.703423+00:00
-LOK_SABHA,Works Recommended (4).csv,0,DATASET,103393,103392,VECTORIZED_CLEAN,Processed works_recommended dataset,1.0.0,2026-09-01T19:19:11.576082+00:00
-LOK_SABHA,Works Sanctioned (1).csv,0,DATASET,78287,78286,VECTORIZED_CLEAN,Processed works_sanctioned dataset,1.0.0,2026-09-01T19:19:13.034059+00:00
-LOK_SABHA,Works Completed (7).csv,0,DATASET,33976,33975,VECTORIZED_CLEAN,Processed works_completed dataset,1.0.0,2026-09-01T19:19:13.626942+00:00
-LOK_SABHA,Expenditure on Completed and On-going Works as on Date (3).csv,0,DATASET,83016,83015,VECTORIZED_CLEAN,Processed expenditure dataset,1.0.0,2026-09-01T19:19:14.879353+00:00
