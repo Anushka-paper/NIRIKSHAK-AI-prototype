@@ -13,6 +13,7 @@ export async function callMLService<T = any>(
 
   try {
     const res = await fetch(url, {
+      cache: "no-store",
       ...options,
       headers: {
         "Content-Type": "application/json",
