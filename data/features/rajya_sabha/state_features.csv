@@ -1,0 +1,31 @@
+parliament,state,work_count,sanctioned_work_count,completed_work_count,total_sanctioned_amount,total_expenditure,completion_rate,utilization_rate
+rajya_sabha,Andhra Pradesh,647,491,68,514756187.0,0.0,0.105,0.0
+rajya_sabha,Assam,453,238,42,295547926.54,0.0,0.093,0.0
+rajya_sabha,Bihar,784,631,61,595517366.0,0.0,0.078,0.0
+rajya_sabha,Chandigarh,28,10,5,10799970.0,0.0,0.179,0.0
+rajya_sabha,Chhattisgarh,254,187,45,196645112.0,0.0,0.177,0.0
+rajya_sabha,Delhi,117,62,10,94620834.0,0.0,0.085,0.0
+rajya_sabha,Goa,43,15,3,43929925.99,0.0,0.07,0.0
+rajya_sabha,Gujarat,967,685,89,397422609.0,0.0,0.092,0.0
+rajya_sabha,Haryana,173,129,22,119229895.0,0.0,0.127,0.0
+rajya_sabha,Himachal Pradesh,637,538,68,161161941.0,0.0,0.107,0.0
+rajya_sabha,Jammu and Kashmir,108,63,12,71210447.0,0.0,0.111,0.0
+rajya_sabha,Jharkhand,553,349,65,236731395.0,0.0,0.118,0.0
+rajya_sabha,Karnataka,607,377,87,625390251.0,0.0,0.143,0.0
+rajya_sabha,Kerala,1281,737,103,829316229.0,0.0,0.08,0.0
+rajya_sabha,Madhya Pradesh,1056,767,120,589982928.0,0.0,0.114,0.0
+rajya_sabha,Maharashtra,735,389,97,581597814.0,0.0,0.132,0.0
+rajya_sabha,Manipur,10,1,1,3000000.0,0.0,0.1,0.0
+rajya_sabha,Nagaland,101,69,29,186607000.0,0.0,0.287,0.0
+rajya_sabha,Odisha,802,503,46,352499260.0,0.0,0.057,0.0
+rajya_sabha,Puducherry,113,57,18,172863022.0,0.0,0.159,0.0
+rajya_sabha,Punjab,638,451,131,590967409.26,0.0,0.205,0.0
+rajya_sabha,Rajasthan,794,567,110,558629578.0,0.0,0.139,0.0
+rajya_sabha,Sikkim,85,56,16,54400000.0,0.0,0.188,0.0
+rajya_sabha,Tamil Nadu,476,304,109,608652098.0,0.0,0.229,0.0
+rajya_sabha,Telangana,506,357,47,267009173.0,0.0,0.093,0.0
+rajya_sabha,Tripura,61,33,12,50358673.0,0.0,0.197,0.0
+rajya_sabha,Uttar Pradesh,3102,2239,231,2660738452.1,0.0,0.074,0.0
+rajya_sabha,Uttarakhand,502,364,48,321876416.0,0.0,0.096,0.0
+rajya_sabha,West Bengal,214,106,30,555337443.0,0.0,0.14,0.0
+rajya_sabha,nan,1,1,1,0.0,0.0,1.0,0.0

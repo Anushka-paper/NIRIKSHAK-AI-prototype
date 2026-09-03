@@ -1,0 +1,13 @@
+{
+  "parliament": "rajya_sabha",
+  "total_works_processed": 15848,
+  "total_features_generated": 118,
+  "total_transactions": 24967,
+  "total_mps": 190,
+  "total_constituencies": 30,
+  "total_states": 30,
+  "total_vendors": 0,
+  "elapsed_seconds": 9.61,
+  "feature_schema_version": "v1.0",
+  "timestamp": "2026-09-03T12:46:07Z"
+}

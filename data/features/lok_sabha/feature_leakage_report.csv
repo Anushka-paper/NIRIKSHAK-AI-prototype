@@ -1,0 +1,119 @@
+feature_name,prediction_milestone,leakage_status,rationale
+canonical_work_id,sanction_date,IDENTIFIER,Entity identification and dimensional routing
+official_work_id,sanction_date,IDENTIFIER,Entity identification and dimensional routing
+parliament,sanction_date,IDENTIFIER,Entity identification and dimensional routing
+state,sanction_date,IDENTIFIER,Entity identification and dimensional routing
+constituency,sanction_date,IDENTIFIER,Entity identification and dimensional routing
+mp_name,sanction_date,IDENTIFIER,Entity identification and dimensional routing
+work_category,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+work_description,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+recommended_date,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+recommended_amount,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+sanction_date,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+sanctioned_amount,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+completion_date,sanction_date,POST_PREDICTION,Reflects post-sanction or final lifecycle milestone. Exclude from pre-execution prediction feature matrices.
+completion_amount,sanction_date,POST_PREDICTION,Reflects post-sanction or final lifecycle milestone. Exclude from pre-execution prediction feature matrices.
+expenditure_amount,sanction_date,POST_PREDICTION,Reflects post-sanction or final lifecycle milestone. Exclude from pre-execution prediction feature matrices.
+expenditure_transaction_count,sanction_date,POST_PREDICTION,Reflects post-sanction or final lifecycle milestone. Exclude from pre-execution prediction feature matrices.
+first_expenditure_date,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+last_expenditure_date,sanction_date,POST_PREDICTION,Reflects post-sanction or final lifecycle milestone. Exclude from pre-execution prediction feature matrices.
+vendor_name,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+ida_agency,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+work_status,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+er_match_score,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+er_confidence,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+er_method,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+has_recommendation,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+has_sanction,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+has_expenditure,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+has_completion,sanction_date,POST_PREDICTION,Reflects post-sanction or final lifecycle milestone. Exclude from pre-execution prediction feature matrices.
+has_official_work_id,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+has_canonical_work_id,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+entity_resolution_score,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+entity_resolution_confidence,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+entity_resolution_method,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+entity_resolution_uncertain,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+entity_resolution_review_required,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+recommendation_sanction_amount_difference,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+sanction_expenditure_amount_difference,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+sanction_completion_amount_difference,sanction_date,POST_PREDICTION,Reflects post-sanction or final lifecycle milestone. Exclude from pre-execution prediction feature matrices.
+recommended_expenditure_difference,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+recommendation_to_sanction_amount_change_pct,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+sanction_to_expenditure_amount_change_pct,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+sanction_to_completion_amount_change_pct,sanction_date,POST_PREDICTION,Reflects post-sanction or final lifecycle milestone. Exclude from pre-execution prediction feature matrices.
+expenditure_to_sanction_ratio,sanction_date,POST_PREDICTION,Reflects post-sanction or final lifecycle milestone. Exclude from pre-execution prediction feature matrices.
+expenditure_utilization_percentage,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+completion_to_sanction_ratio,sanction_date,POST_PREDICTION,Reflects post-sanction or final lifecycle milestone. Exclude from pre-execution prediction feature matrices.
+completion_amount_percentage,sanction_date,POST_PREDICTION,Reflects post-sanction or final lifecycle milestone. Exclude from pre-execution prediction feature matrices.
+recommended_to_sanction_ratio,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+unspent_amount,sanction_date,POST_PREDICTION,Reflects post-sanction or final lifecycle milestone. Exclude from pre-execution prediction feature matrices.
+remaining_sanctioned_amount,sanction_date,POST_PREDICTION,Reflects post-sanction or final lifecycle milestone. Exclude from pre-execution prediction feature matrices.
+expenditure_gap,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+completion_financial_gap,sanction_date,POST_PREDICTION,Reflects post-sanction or final lifecycle milestone. Exclude from pre-execution prediction feature matrices.
+expenditure_exceeds_sanction_flag,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+negative_expenditure_flag,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+negative_sanction_flag,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+zero_sanction_flag,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+zero_expenditure_flag,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+large_amount_change_flag,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+unusually_high_expenditure_ratio,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+sanction_year,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+sanction_month,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+sanction_quarter,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+sanction_financial_year,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+sanction_day_of_week,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+recommendation_year,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+recommendation_month,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+recommendation_quarter,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+completion_year,sanction_date,POST_PREDICTION,Reflects post-sanction or final lifecycle milestone. Exclude from pre-execution prediction feature matrices.
+completion_month,sanction_date,POST_PREDICTION,Reflects post-sanction or final lifecycle milestone. Exclude from pre-execution prediction feature matrices.
+completion_quarter,sanction_date,POST_PREDICTION,Reflects post-sanction or final lifecycle milestone. Exclude from pre-execution prediction feature matrices.
+recommendation_to_sanction_days,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+sanction_to_first_expenditure_days,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+sanction_to_last_expenditure_days,sanction_date,POST_PREDICTION,Reflects post-sanction or final lifecycle milestone. Exclude from pre-execution prediction feature matrices.
+sanction_to_completion_days,sanction_date,POST_PREDICTION,Reflects post-sanction or final lifecycle milestone. Exclude from pre-execution prediction feature matrices.
+first_expenditure_to_completion_days,sanction_date,POST_PREDICTION,Reflects post-sanction or final lifecycle milestone. Exclude from pre-execution prediction feature matrices.
+recommendation_to_completion_days,sanction_date,POST_PREDICTION,Reflects post-sanction or final lifecycle milestone. Exclude from pre-execution prediction feature matrices.
+expenditure_span_days,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+total_execution_days,sanction_date,POST_PREDICTION,Reflects post-sanction or final lifecycle milestone. Exclude from pre-execution prediction feature matrices.
+recommendation_before_sanction,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+sanction_before_expenditure,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+expenditure_before_completion,sanction_date,POST_PREDICTION,Reflects post-sanction or final lifecycle milestone. Exclude from pre-execution prediction feature matrices.
+sanction_before_completion,sanction_date,POST_PREDICTION,Reflects post-sanction or final lifecycle milestone. Exclude from pre-execution prediction feature matrices.
+recommendation_sanction_chronology_issue,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+sanction_expenditure_chronology_issue,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+sanction_completion_chronology_issue,sanction_date,POST_PREDICTION,Reflects post-sanction or final lifecycle milestone. Exclude from pre-execution prediction feature matrices.
+expenditure_completion_chronology_issue,sanction_date,POST_PREDICTION,Reflects post-sanction or final lifecycle milestone. Exclude from pre-execution prediction feature matrices.
+valid_lifecycle_sequence,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+lifecycle_stage_count,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+lifecycle_completion_percentage,sanction_date,POST_PREDICTION,Reflects post-sanction or final lifecycle milestone. Exclude from pre-execution prediction feature matrices.
+lifecycle_missing_stage_count,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+lifecycle_status,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+work_description_length,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+work_description_word_count,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+has_work_description,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+work_description_missing,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+unique_word_count,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+average_word_length,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+uppercase_ratio,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+digit_ratio,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+punctuation_ratio,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+very_short_text_flag,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+very_long_text_flag,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+mp_historical_work_count,sanction_date,AVAILABLE_AT_PREDICTION,Time-aware historical metric strictly computed using prior works. Safe for pre-sanction predictive models.
+mp_historical_completed_count,sanction_date,AVAILABLE_AT_PREDICTION,Time-aware historical metric strictly computed using prior works. Safe for pre-sanction predictive models.
+mp_historical_completion_rate,sanction_date,AVAILABLE_AT_PREDICTION,Time-aware historical metric strictly computed using prior works. Safe for pre-sanction predictive models.
+state_historical_work_count,sanction_date,AVAILABLE_AT_PREDICTION,Time-aware historical metric strictly computed using prior works. Safe for pre-sanction predictive models.
+state_historical_completion_rate,sanction_date,AVAILABLE_AT_PREDICTION,Time-aware historical metric strictly computed using prior works. Safe for pre-sanction predictive models.
+constituency_historical_work_count,sanction_date,AVAILABLE_AT_PREDICTION,Time-aware historical metric strictly computed using prior works. Safe for pre-sanction predictive models.
+constituency_historical_completion_rate,sanction_date,AVAILABLE_AT_PREDICTION,Time-aware historical metric strictly computed using prior works. Safe for pre-sanction predictive models.
+vendor_historical_work_count,sanction_date,AVAILABLE_AT_PREDICTION,Time-aware historical metric strictly computed using prior works. Safe for pre-sanction predictive models.
+vendor_historical_completion_rate,sanction_date,AVAILABLE_AT_PREDICTION,Time-aware historical metric strictly computed using prior works. Safe for pre-sanction predictive models.
+log_sanctioned_amount,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+log_execution_days,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+amount_percentile,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+amount_z_score,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+amount_iqr_outlier_flag,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+execution_duration_percentile,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+duration_z_score,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.
+duration_iqr_outlier_flag,sanction_date,AVAILABLE_AT_PREDICTION,Available at or prior to sanction decision timestamp. Safe for delay/cost risk prediction.

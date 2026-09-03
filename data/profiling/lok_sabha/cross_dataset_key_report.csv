@@ -1,17 +1,17 @@
 dataset_a,dataset_b,common_key
 allocation,calamity,Sr. No.
-allocation,completed,State
 allocation,completed,Sr. No.
 allocation,completed,Constituency
-allocation,expenditure,State
+allocation,completed,State
 allocation,expenditure,Sr. No.
 allocation,expenditure,Constituency
-allocation,recommended,State
+allocation,expenditure,State
 allocation,recommended,Sr. No.
 allocation,recommended,Constituency
-allocation,sanctioned,State
+allocation,recommended,State
 allocation,sanctioned,Sr. No.
 allocation,sanctioned,Constituency
+allocation,sanctioned,State
 calamity,completed,Sr. No.
 calamity,completed,Hon'ble Members of Parliament
 calamity,expenditure,Sr. No.
@@ -20,40 +20,40 @@ calamity,recommended,Sr. No.
 calamity,recommended,Hon'ble Members of Parliament
 calamity,sanctioned,Sr. No.
 calamity,sanctioned,Hon'ble Members of Parliament
+completed,expenditure,Constituency
 completed,expenditure,Hon'ble Members of Parliament
 completed,expenditure,Sr. No.
-completed,expenditure,IDA
-completed,expenditure,State
 completed,expenditure,Work
-completed,expenditure,Constituency
+completed,expenditure,State
+completed,expenditure,IDA
+completed,recommended,Constituency
 completed,recommended,Hon'ble Members of Parliament
 completed,recommended,Sr. No.
-completed,recommended,IDA
 completed,recommended,State
-completed,recommended,Constituency
+completed,recommended,IDA
+completed,sanctioned,Constituency
 completed,sanctioned,Hon'ble Members of Parliament
 completed,sanctioned,Sr. No.
-completed,sanctioned,IDA
-completed,sanctioned,State
 completed,sanctioned,Work
-completed,sanctioned,Constituency
+completed,sanctioned,State
+completed,sanctioned,IDA
+expenditure,recommended,Constituency
 expenditure,recommended,Hon'ble Members of Parliament
 expenditure,recommended,Sr. No.
-expenditure,recommended,IDA
 expenditure,recommended,State
-expenditure,recommended,Constituency
+expenditure,recommended,IDA
+expenditure,sanctioned,Constituency
 expenditure,sanctioned,Hon'ble Members of Parliament
 expenditure,sanctioned,Sr. No.
-expenditure,sanctioned,IDA
-expenditure,sanctioned,State
 expenditure,sanctioned,Work
-expenditure,sanctioned,Constituency
-recommended,sanctioned,Work description
-recommended,sanctioned,Hon'ble Members of Parliament
+expenditure,sanctioned,State
+expenditure,sanctioned,IDA
 recommended,sanctioned,Sanction Date
-recommended,sanctioned,Work category
-recommended,sanctioned,Sr. No.
-recommended,sanctioned,IDA
-recommended,sanctioned,State
-recommended,sanctioned,Recommended date
 recommended,sanctioned,Constituency
+recommended,sanctioned,Recommended date
+recommended,sanctioned,Hon'ble Members of Parliament
+recommended,sanctioned,Work category
+recommended,sanctioned,Work description
+recommended,sanctioned,Sr. No.
+recommended,sanctioned,State
+recommended,sanctioned,IDA
