@@ -56,7 +56,7 @@ def get_pipeline_status():
         return json.load(f)
 
 @app.get("/api/v1/dashboard/overview")
-def get_dashboard_overview(parliament: str = Query("all", regex="^(lok_sabha|rajya_sabha|all)$")):
+def get_dashboard_overview(parliament: str = Query("all", pattern="^(lok_sabha|rajya_sabha|all)$")):
     """
     Returns consolidated, dynamically calculated intelligence across all 6 standardized datasets:
     Allocation, Calamity, Recommended, Sanctioned, Expenditure, and Completed.
@@ -77,7 +77,7 @@ def get_dashboard_overview(parliament: str = Query("all", regex="^(lok_sabha|raj
         raise HTTPException(status_code=500, detail=f"Failed to calculate six-dataset overview: {str(e)}")
 
 @app.get("/api/v1/overview/states")
-def get_overview_states(parliament: str = Query("all", regex="^(lok_sabha|rajya_sabha|all)$")):
+def get_overview_states(parliament: str = Query("all", pattern="^(lok_sabha|rajya_sabha|all)$")):
     """
     Returns dynamically aggregated project counts, completion metrics, and budgets for all States and Union Territories.
     """
@@ -97,7 +97,7 @@ def get_overview_states(parliament: str = Query("all", regex="^(lok_sabha|rajya_
         raise HTTPException(status_code=500, detail=f"Failed to aggregate states: {str(e)}")
 
 @app.get("/api/v1/overview/states/{state_id}")
-def get_overview_single_state(state_id: str, parliament: str = Query("all", regex="^(lok_sabha|rajya_sabha|all)$")):
+def get_overview_single_state(state_id: str, parliament: str = Query("all", pattern="^(lok_sabha|rajya_sabha|all)$")):
     """
     Returns dynamically calculated metrics for a specific State or Union Territory by ID/slug.
     """
@@ -121,7 +121,7 @@ def get_overview_single_state(state_id: str, parliament: str = Query("all", rege
         raise HTTPException(status_code=500, detail=f"Failed to retrieve state details: {str(e)}")
 
 @app.get("/api/v1/data/profiling")
-def get_profiling_summary(parliament: str = Query("lok_sabha", regex="^(lok_sabha|rajya_sabha)$")):
+def get_profiling_summary(parliament: str = Query("lok_sabha", pattern="^(lok_sabha|rajya_sabha)$")):
     summary_csv = BASE_DIR / "data" / "profiling" / parliament / "dataset_summary.csv"
     if not summary_csv.exists():
         raise HTTPException(status_code=404, detail=f"Profiling not found for {parliament}")
@@ -129,7 +129,7 @@ def get_profiling_summary(parliament: str = Query("lok_sabha", regex="^(lok_sabh
     return df.to_dict(orient="records")
 
 @app.get("/api/v1/entities/matches")
-def get_entity_matches(parliament: str = Query("lok_sabha", regex="^(lok_sabha|rajya_sabha)$"),
+def get_entity_matches(parliament: str = Query("lok_sabha", pattern="^(lok_sabha|rajya_sabha)$"),
                        limit: int = 100, offset: int = 0):
     matches_csv = BASE_DIR / "data" / "entity_resolution" / parliament / "entity_resolution_matches.csv"
     if not matches_csv.exists():
@@ -145,7 +145,7 @@ def get_entity_matches(parliament: str = Query("lok_sabha", regex="^(lok_sabha|r
     }
 
 @app.get("/api/v1/entities/review-queue")
-def get_review_queue(parliament: str = Query("lok_sabha", regex="^(lok_sabha|rajya_sabha)$"),
+def get_review_queue(parliament: str = Query("lok_sabha", pattern="^(lok_sabha|rajya_sabha)$"),
                      limit: int = 100, offset: int = 0):
     queue_csv = BASE_DIR / "data" / "entity_resolution" / parliament / "review_queue.csv"
     if not queue_csv.exists():
@@ -165,7 +165,7 @@ def get_review_queue(parliament: str = Query("lok_sabha", regex="^(lok_sabha|raj
 # ==========================================================
 
 @app.get("/api/v1/standardization/reports")
-def get_standardization_reports(parliament: str = Query("lok_sabha", regex="^(lok_sabha|rajya_sabha)$")):
+def get_standardization_reports(parliament: str = Query("lok_sabha", pattern="^(lok_sabha|rajya_sabha)$")):
     """
     Returns audit transformation reports for all standardized datasets in the parliament.
     """
@@ -187,7 +187,7 @@ def get_standardization_reports(parliament: str = Query("lok_sabha", regex="^(lo
 
 @app.get("/api/v1/standardization/dataset/{dataset_name}")
 def get_standardized_dataset(dataset_name: str,
-                             parliament: str = Query("lok_sabha", regex="^(lok_sabha|rajya_sabha)$"),
+                             parliament: str = Query("lok_sabha", pattern="^(lok_sabha|rajya_sabha)$"),
                              limit: int = 100, offset: int = 0):
     """
     Returns paginated rows from a standardized clean dataset.
@@ -213,7 +213,7 @@ def get_standardized_dataset(dataset_name: str,
     }
 
 @app.post("/api/v1/standardization/run")
-def trigger_standardization(parliament: str = Query("all", regex="^(lok_sabha|rajya_sabha|all)$")):
+def trigger_standardization(parliament: str = Query("all", pattern="^(lok_sabha|rajya_sabha|all)$")):
     """
     Triggers dynamic data standardisation on raw datasets.
     """
@@ -392,7 +392,7 @@ def predict_project_risk(payload: PredictionRequest):
 # ==========================================================
 
 @app.get("/api/v1/features/catalog")
-def get_feature_catalog(parliament: str = Query("lok_sabha", regex="^(lok_sabha|rajya_sabha)$")):
+def get_feature_catalog(parliament: str = Query("lok_sabha", pattern="^(lok_sabha|rajya_sabha)$")):
     """
     Returns the feature catalog / dictionary with metadata, formula, aggregation level, and leakage status.
     """
@@ -409,7 +409,7 @@ def get_feature_catalog(parliament: str = Query("lok_sabha", regex="^(lok_sabha|
 
 @app.get("/api/v1/features/works")
 def get_work_features(
-    parliament: str = Query("lok_sabha", regex="^(lok_sabha|rajya_sabha|all)$"),
+    parliament: str = Query("lok_sabha", pattern="^(lok_sabha|rajya_sabha|all)$"),
     state: Optional[str] = None,
     mp_name: Optional[str] = None,
     lifecycle_status: Optional[str] = None,
@@ -463,7 +463,7 @@ def get_work_features(
     }
 
 @app.get("/api/v1/features/works/{canonical_work_id}")
-def get_single_work_feature(canonical_work_id: str, parliament: str = Query("lok_sabha", regex="^(lok_sabha|rajya_sabha|all)$")):
+def get_single_work_feature(canonical_work_id: str, parliament: str = Query("lok_sabha", pattern="^(lok_sabha|rajya_sabha|all)$")):
     """
     Fetches the complete 118-feature profile for a specific canonical work ID.
     """
@@ -484,7 +484,7 @@ def get_single_work_feature(canonical_work_id: str, parliament: str = Query("lok
     raise HTTPException(status_code=404, detail=f"Work with ID '{canonical_work_id}' not found.")
 
 @app.get("/api/v1/features/aggregations")
-def get_feature_aggregations(parliament: str = Query("lok_sabha", regex="^(lok_sabha|rajya_sabha)$")):
+def get_feature_aggregations(parliament: str = Query("lok_sabha", pattern="^(lok_sabha|rajya_sabha)$")):
     """
     Returns dimension aggregates for MPs, Constituencies, States, and Vendors.
     """
@@ -503,7 +503,7 @@ def get_feature_aggregations(parliament: str = Query("lok_sabha", regex="^(lok_s
     }
 
 @app.get("/api/v1/features/quality")
-def get_feature_quality(parliament: str = Query("lok_sabha", regex="^(lok_sabha|rajya_sabha)$")):
+def get_feature_quality(parliament: str = Query("lok_sabha", pattern="^(lok_sabha|rajya_sabha)$")):
     """
     Returns feature quality audit and leakage classifications.
     """
