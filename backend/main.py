@@ -120,6 +120,26 @@ def get_overview_single_state(state_id: str, parliament: str = Query("all", rege
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Failed to retrieve state details: {str(e)}")
 
+@app.get("/api/v1/overview/states/{state_id}/mps")
+def get_state_mps_performance(state_id: str, parliament: str = Query("all", pattern="^(lok_sabha|rajya_sabha|all)$")):
+    """
+    Returns performance metrics (works count, completion rate, expenditures) for all MPs in the state for graph visualization.
+    """
+    try:
+        from .state_aggregator import get_state_mp_performance
+    except ImportError:
+        from state_aggregator import get_state_mp_performance
+
+    try:
+        mps = get_state_mp_performance(state_id=state_id, parliament=parliament)
+        payload = json.dumps(mps, ensure_ascii=False)
+        from fastapi import Response
+        return Response(content=payload, media_type="application/json")
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Failed to aggregate MP performance: {str(e)}")
+
 @app.get("/api/v1/data/profiling")
 def get_profiling_summary(parliament: str = Query("lok_sabha", regex="^(lok_sabha|rajya_sabha)$")):
     summary_csv = BASE_DIR / "data" / "profiling" / parliament / "dataset_summary.csv"
@@ -460,6 +480,71 @@ def get_work_features(
         "offset": offset,
         "limit": limit,
         "records": subset.to_dict(orient="records")
+    }
+
+@app.get("/api/v1/raw/completed")
+def get_raw_completed_projects(
+    parliament: str = Query("all", pattern="^(lok_sabha|rajya_sabha|all)$"),
+    state: Optional[str] = None,
+    limit: int = 20,
+    offset: int = 0
+):
+    """
+    Fetches completed projects directly from raw completed datasets (completed.csv / Works Completed (8).csv).
+    """
+    parliaments = ["lok_sabha", "rajya_sabha"] if parliament == "all" else [parliament]
+    rows = []
+
+    for p in parliaments:
+        if p == "lok_sabha":
+            fpath = BASE_DIR / "data" / "raw" / "lok_sabha" / "completed.csv"
+        else:
+            fpath = BASE_DIR / "data" / "raw" / "rajya_sabha" / "Works Completed (8).csv"
+
+        if fpath.exists():
+            df = pd.read_csv(fpath, low_memory=False)
+            df["parliament"] = p
+
+            amt_col = next((c for c in df.columns if "disbursed" in c.lower() or "amount" in c.lower()), None)
+            if amt_col:
+                df["amount_clean"] = pd.to_numeric(
+                    df[amt_col].astype(str).str.replace(",", "").str.replace("₹", "").str.replace("Rs.", "").str.replace("?", ""),
+                    errors="coerce"
+                ).fillna(0.0)
+            else:
+                df["amount_clean"] = 0.0
+
+            if state:
+                st_clean = state.lower().replace("-", " ").strip()
+                df = df[
+                    (df["State"].astype(str).str.lower().str.strip() == state.lower().strip()) |
+                    (df["State"].astype(str).str.lower().str.replace("-", " ").str.strip() == st_clean)
+                ]
+
+            for _, r in df.iterrows():
+                rows.append({
+                    "work_id": str(r.get("Work", "") or r.get("Sr. No.", "")),
+                    "description": str(r.get("Work Description", "") or r.get("Work", "")),
+                    "state": str(r.get("State", "")),
+                    "constituency": str(r.get("Constituency", "") or r.get("Elected/Nominated", "")),
+                    "mp_name": str(r.get("Hon'ble Members of Parliament", "")),
+                    "amount": float(r.get("amount_clean", 0.0)),
+                    "completion_date": str(r.get("Completion Date", "")),
+                    "ida_agency": str(r.get("IDA", "")),
+                    "category": str(r.get("Work Category", "")),
+                    "parliament": p
+                })
+
+    total_count = len(rows)
+    total_amount = sum(r["amount"] for r in rows)
+    subset = rows[offset:offset+limit]
+
+    return {
+        "total_count": total_count,
+        "total_amount": total_amount,
+        "offset": offset,
+        "limit": limit,
+        "records": subset
     }
 
 @app.get("/api/v1/features/works/{canonical_work_id}")

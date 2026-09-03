@@ -48,6 +48,7 @@ def get_aggregated_states(parliament: str = "all") -> List[Dict[str, Any]]:
     
     # Filter valid states
     df["state_clean"] = df["state"].astype(str).str.strip()
+    df["mp_clean"] = df["mp_name"].astype(str).str.strip()
     df = df[(df["state_clean"] != "") & (df["state_clean"].str.lower() != "nan")]
 
     state_results = []
@@ -77,6 +78,11 @@ def get_aggregated_states(parliament: str = "all") -> List[Dict[str, Any]]:
         utilization_rate = round((exp_amt / sanc_amt * 100.0) if sanc_amt > 0 else 0.0, 2)
         completion_rate = round((completed_count / total_projects * 100.0) if total_projects > 0 else 0.0, 2)
 
+        # Count unique MPs in this state
+        mp_count = int(g["mp_clean"].nunique()) if "mp_clean" in g.columns else 1
+        if mp_count == 0:
+            mp_count = 1
+
         slug = clean_state_id(state_name)
         state_type = "UT" if state_name.lower() in UNION_TERRITORIES else "STATE"
 
@@ -84,20 +90,31 @@ def get_aggregated_states(parliament: str = "all") -> List[Dict[str, Any]]:
             "id": slug,
             "name": state_name,
             "type": state_type,
+            "mpCount": mp_count,
             "totalProjects": total_projects,
             "completedProjects": completed_count,
+            "worksCompleted": completed_count,
             "ongoingProjects": ongoing_count,
             "pendingProjects": pending_count,
             "recommendedAmount": rec_amt,
             "sanctionedAmount": sanc_amt,
+            "allocated": sanc_amt,
             "expenditureAmount": exp_amt,
+            "recordedExpenditure": exp_amt,
             "completedAmount": comp_amt,
             "utilizationRate": utilization_rate,
+            "expenditureRate": utilization_rate,
             "completionRate": completion_rate
         })
 
-    # Sort descending by total projects
-    state_results.sort(key=lambda x: x["totalProjects"], reverse=True)
+    # Sort descending by expenditureRate/utilizationRate to compute performance ranking dynamically
+    state_results.sort(key=lambda x: (x["expenditureRate"], x["totalProjects"]), reverse=True)
+    total_states_count = len(state_results)
+
+    for rank_idx, s_obj in enumerate(state_results, start=1):
+        s_obj["rank"] = rank_idx
+        s_obj["totalStates"] = total_states_count
+
     return state_results
 
 def get_single_state_details(state_id: str, parliament: str = "all") -> Optional[Dict[str, Any]]:

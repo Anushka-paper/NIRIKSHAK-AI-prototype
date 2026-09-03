@@ -30,15 +30,22 @@ export interface StateSummary {
   id: string;
   name: string;
   type: "STATE" | "UT";
+  mpCount?: number;
+  rank?: number;
+  totalStates?: number;
   totalProjects: number;
   completedProjects: number;
+  worksCompleted?: number;
   ongoingProjects: number;
   pendingProjects: number;
   recommendedAmount: number;
   sanctionedAmount: number;
+  allocated?: number;
   expenditureAmount: number;
+  recordedExpenditure?: number;
   completedAmount: number;
   utilizationRate: number;
+  expenditureRate?: number;
   completionRate: number;
 }
 
