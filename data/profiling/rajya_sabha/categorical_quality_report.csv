@@ -1,0 +1,20 @@
+dataset_name,column_name,unique_values,missing_values,rare_categories_count,category_variations_found
+allocated limit for honble mps (4),State,32,0,10,0
+allocated limit for honble mps (4),Elected/Nominated,2,0,0,0
+amount consented for calamity (3),Calamity Type,2,0,0,0
+amount consented for calamity (3),Calamity Name,4,0,0,0
+expenditure on completed and on-going works as on date (2),State,29,0,10,0
+expenditure on completed and on-going works as on date (2),Elected/Nominated,2,0,0,0
+expenditure on completed and on-going works as on date (2),Vendor Name,6060,0,6056,123
+expenditure on completed and on-going works as on date (2),Payment Status,2,0,0,0
+works completed (8),Work Category,4,5,3,0
+works completed (8),State,28,0,10,0
+works completed (8),Elected/Nominated,1,0,0,0
+works completed (8),Image,1,3458,0,0
+works recommended (2),Work category,4,5,1,0
+works recommended (2),State,29,0,9,0
+works recommended (2),Elected/Nominated,2,0,0,0
+works sanctioned (7),Work category,4,7,1,0
+works sanctioned (7),State,29,0,11,0
+works sanctioned (7),Elected/Nominated,2,0,0,0
+works sanctioned (7),Work Status,6,0,1,0

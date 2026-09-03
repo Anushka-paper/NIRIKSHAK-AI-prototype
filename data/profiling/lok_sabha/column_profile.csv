@@ -1,0 +1,62 @@
+dataset_name,column_name,original_dtype,detected_type
+allocation,Sr. No.,object,identifier
+allocation,State,object,categorical
+allocation,Hon'ble Members of Parliaments,object,identifier
+allocation,Constituency,object,identifier
+allocation,Allocated AMOUNT ( ₹ ),object,currency
+allocation_standardized,sr_no,object,identifier
+allocation_standardized,state,object,categorical
+allocation_standardized,mp_name,object,identifier
+allocation_standardized,constituency,object,identifier
+allocation_standardized,allocated_amount,float64,numeric
+calamity,Sr. No.,object,identifier
+calamity,Calamity Type,object,categorical
+calamity,Calamity Name,object,categorical
+calamity,Hon'ble Members of Parliament,object,categorical
+calamity,Date of Consent,object,date
+calamity,Consent Amount ( ₹ ),object,currency
+completed,Sr. No.,object,identifier
+completed,Work Category,object,categorical
+completed,Work,object,text
+completed,State,object,categorical
+completed,IDA,object,identifier
+completed,Work Description,object,text
+completed,Hon'ble Members of Parliament,object,categorical
+completed,Constituency,object,categorical
+completed,Image,object,categorical
+completed,Completion Date,object,date
+completed,Amount Disbursed ( ₹ ),object,currency
+expenditure,Sr. No.,object,identifier
+expenditure,State,object,categorical
+expenditure,Work,object,text
+expenditure,Work ID,object,identifier
+expenditure,IDA,object,identifier
+expenditure,Hon'ble Members of Parliament,object,categorical
+expenditure,Constituency,object,categorical
+expenditure,Expenditure Date,object,date
+expenditure,Vendor Name,object,categorical
+expenditure,Payment Status,object,categorical
+expenditure,Fund Disbursed Amount ( ₹ ),object,currency
+recommended,Sr. No.,object,identifier
+recommended,Work category,object,categorical
+recommended,WORK,object,text
+recommended,State,object,categorical
+recommended,IDA,object,identifier
+recommended,Hon'ble Members of Parliament,object,categorical
+recommended,Constituency,object,categorical
+recommended,Work description,object,text
+recommended,Recommended date,object,date
+recommended,RECOMMENDED AMOUNT   ( ₹ ),object,currency
+recommended,Sanction Date,object,date
+sanctioned,Sr. No.,object,identifier
+sanctioned,Work category,object,categorical
+sanctioned,Work,object,text
+sanctioned,State,object,categorical
+sanctioned,IDA,object,identifier
+sanctioned,Hon'ble Members of Parliament,object,categorical
+sanctioned,Constituency,object,categorical
+sanctioned,Work description,object,text
+sanctioned,Recommended date,object,date
+sanctioned,Sanction Date,object,date
+sanctioned,Sanction Amount ( ₹ ),object,currency
+sanctioned,Work Status,object,categorical

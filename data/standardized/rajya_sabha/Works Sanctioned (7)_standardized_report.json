@@ -1,0 +1,92 @@
+{
+  "parliament": "rajya_sabha",
+  "rows_processed": 19312,
+  "columns_processed": 12,
+  "transformations": {
+    "sr_no": {
+      "original_column": "Sr. No.",
+      "rule_applied": "identifier",
+      "values_changed": 0,
+      "values_unchanged": 19312,
+      "invalid_values_count": 0
+    },
+    "work_category": {
+      "original_column": "Work category",
+      "rule_applied": "category",
+      "values_changed": 522,
+      "values_unchanged": 18790,
+      "invalid_values_count": 0
+    },
+    "work_description": {
+      "original_column": "Work description",
+      "rule_applied": "text",
+      "values_changed": 2331,
+      "values_unchanged": 16981,
+      "invalid_values_count": 0
+    },
+    "state": {
+      "original_column": "State",
+      "rule_applied": "state",
+      "values_changed": 179,
+      "values_unchanged": 19133,
+      "invalid_values_count": 0
+    },
+    "ida_agency": {
+      "original_column": "IDA",
+      "rule_applied": "identifier",
+      "values_changed": 0,
+      "values_unchanged": 19312,
+      "invalid_values_count": 0
+    },
+    "mp_name": {
+      "original_column": "Hon'ble Members of Parliament",
+      "rule_applied": "person_name",
+      "values_changed": 19311,
+      "values_unchanged": 1,
+      "invalid_values_count": 0
+    },
+    "electednominated": {
+      "original_column": "Elected/Nominated",
+      "rule_applied": "identifier",
+      "values_changed": 0,
+      "values_unchanged": 19312,
+      "invalid_values_count": 0
+    },
+    "recommended_date": {
+      "original_column": "Recommended date",
+      "rule_applied": "date",
+      "values_changed": 19311,
+      "values_unchanged": 1,
+      "invalid_values_count": 0
+    },
+    "sanction_date": {
+      "original_column": "Sanction Date",
+      "rule_applied": "date",
+      "values_changed": 19311,
+      "values_unchanged": 1,
+      "invalid_values_count": 0
+    },
+    "sanction_amount": {
+      "original_column": "Sanction Amount ( \u20b9 )",
+      "rule_applied": "currency",
+      "values_changed": 19311,
+      "values_unchanged": 1,
+      "invalid_values_count": 0
+    },
+    "work_status": {
+      "original_column": "Work Status",
+      "rule_applied": "status",
+      "values_changed": 1863,
+      "values_unchanged": 17449,
+      "invalid_values_count": 0
+    }
+  },
+  "invalid_values": [],
+  "validation": {
+    "is_valid": true,
+    "validation_errors": [],
+    "validation_warnings": []
+  },
+  "warnings": [],
+  "errors": []
+}

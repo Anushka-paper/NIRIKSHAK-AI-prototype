@@ -1,0 +1,62 @@
+dataset_name,column_name,non_null_count,missing_count,missing_pct,missingness_tier
+allocation,Sr. No.,543,0,0.0,Complete
+allocation,State,543,0,0.0,Complete
+allocation,Hon'ble Members of Parliaments,543,0,0.0,Complete
+allocation,Constituency,543,0,0.0,Complete
+allocation,Allocated AMOUNT ( ₹ ),542,1,0.18,Low
+allocation_standardized,sr_no,543,0,0.0,Complete
+allocation_standardized,state,543,0,0.0,Complete
+allocation_standardized,mp_name,543,0,0.0,Complete
+allocation_standardized,constituency,543,0,0.0,Complete
+allocation_standardized,allocated_amount,542,1,0.18,Low
+calamity,Sr. No.,12,0,0.0,Complete
+calamity,Calamity Type,12,0,0.0,Complete
+calamity,Calamity Name,12,0,0.0,Complete
+calamity,Hon'ble Members of Parliament,12,0,0.0,Complete
+calamity,Date of Consent,12,0,0.0,Complete
+calamity,Consent Amount ( ₹ ),12,0,0.0,Complete
+completed,Sr. No.,33975,0,0.0,Complete
+completed,Work Category,33975,0,0.0,Complete
+completed,Work,33975,0,0.0,Complete
+completed,State,33975,0,0.0,Complete
+completed,IDA,33975,0,0.0,Complete
+completed,Work Description,33896,79,0.23,Low
+completed,Hon'ble Members of Parliament,33975,0,0.0,Complete
+completed,Constituency,33975,0,0.0,Complete
+completed,Image,24672,9303,27.38,High
+completed,Completion Date,33975,0,0.0,Complete
+completed,Amount Disbursed ( ₹ ),33897,78,0.23,Low
+expenditure,Sr. No.,83015,0,0.0,Complete
+expenditure,State,83015,0,0.0,Complete
+expenditure,Work,83015,0,0.0,Complete
+expenditure,Work ID,83015,0,0.0,Complete
+expenditure,IDA,83015,0,0.0,Complete
+expenditure,Hon'ble Members of Parliament,83015,0,0.0,Complete
+expenditure,Constituency,83015,0,0.0,Complete
+expenditure,Expenditure Date,83015,0,0.0,Complete
+expenditure,Vendor Name,83015,0,0.0,Complete
+expenditure,Payment Status,83015,0,0.0,Complete
+expenditure,Fund Disbursed Amount ( ₹ ),83015,0,0.0,Complete
+recommended,Sr. No.,103392,0,0.0,Complete
+recommended,Work category,103392,0,0.0,Complete
+recommended,WORK,103392,0,0.0,Complete
+recommended,State,103392,0,0.0,Complete
+recommended,IDA,103392,0,0.0,Complete
+recommended,Hon'ble Members of Parliament,103392,0,0.0,Complete
+recommended,Constituency,103392,0,0.0,Complete
+recommended,Work description,103279,113,0.11,Low
+recommended,Recommended date,103392,0,0.0,Complete
+recommended,RECOMMENDED AMOUNT   ( ₹ ),103392,0,0.0,Complete
+recommended,Sanction Date,77927,25465,24.63,High
+sanctioned,Sr. No.,78286,0,0.0,Complete
+sanctioned,Work category,78286,0,0.0,Complete
+sanctioned,Work,78286,0,0.0,Complete
+sanctioned,State,78286,0,0.0,Complete
+sanctioned,IDA,78286,0,0.0,Complete
+sanctioned,Hon'ble Members of Parliament,78286,0,0.0,Complete
+sanctioned,Constituency,78286,0,0.0,Complete
+sanctioned,Work description,78188,98,0.13,Low
+sanctioned,Recommended date,78286,0,0.0,Complete
+sanctioned,Sanction Date,78286,0,0.0,Complete
+sanctioned,Sanction Amount ( ₹ ),78286,0,0.0,Complete
+sanctioned,Work Status,78286,0,0.0,Complete

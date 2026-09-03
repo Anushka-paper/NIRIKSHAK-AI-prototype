@@ -1,0 +1,62 @@
+dataset_name,column_name,detected_type
+allocation,Sr. No.,identifier
+allocation,State,categorical
+allocation,Hon'ble Members of Parliaments,identifier
+allocation,Constituency,identifier
+allocation,Allocated AMOUNT ( ₹ ),currency
+allocation_standardized,sr_no,identifier
+allocation_standardized,state,categorical
+allocation_standardized,mp_name,identifier
+allocation_standardized,constituency,identifier
+allocation_standardized,allocated_amount,numeric
+calamity,Sr. No.,identifier
+calamity,Calamity Type,categorical
+calamity,Calamity Name,categorical
+calamity,Hon'ble Members of Parliament,categorical
+calamity,Date of Consent,date
+calamity,Consent Amount ( ₹ ),currency
+completed,Sr. No.,identifier
+completed,Work Category,categorical
+completed,Work,text
+completed,State,categorical
+completed,IDA,identifier
+completed,Work Description,text
+completed,Hon'ble Members of Parliament,categorical
+completed,Constituency,categorical
+completed,Image,categorical
+completed,Completion Date,date
+completed,Amount Disbursed ( ₹ ),currency
+expenditure,Sr. No.,identifier
+expenditure,State,categorical
+expenditure,Work,text
+expenditure,Work ID,identifier
+expenditure,IDA,identifier
+expenditure,Hon'ble Members of Parliament,categorical
+expenditure,Constituency,categorical
+expenditure,Expenditure Date,date
+expenditure,Vendor Name,categorical
+expenditure,Payment Status,categorical
+expenditure,Fund Disbursed Amount ( ₹ ),currency
+recommended,Sr. No.,identifier
+recommended,Work category,categorical
+recommended,WORK,text
+recommended,State,categorical
+recommended,IDA,identifier
+recommended,Hon'ble Members of Parliament,categorical
+recommended,Constituency,categorical
+recommended,Work description,text
+recommended,Recommended date,date
+recommended,RECOMMENDED AMOUNT   ( ₹ ),currency
+recommended,Sanction Date,date
+sanctioned,Sr. No.,identifier
+sanctioned,Work category,categorical
+sanctioned,Work,text
+sanctioned,State,categorical
+sanctioned,IDA,identifier
+sanctioned,Hon'ble Members of Parliament,categorical
+sanctioned,Constituency,categorical
+sanctioned,Work description,text
+sanctioned,Recommended date,date
+sanctioned,Sanction Date,date
+sanctioned,Sanction Amount ( ₹ ),currency
+sanctioned,Work Status,categorical

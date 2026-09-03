@@ -1,0 +1,91 @@
+{
+  "parliament": "rajya_sabha",
+  "rows_processed": 24948,
+  "columns_processed": 11,
+  "transformations": {
+    "sr_no": {
+      "original_column": "Sr. No.",
+      "rule_applied": "identifier",
+      "values_changed": 0,
+      "values_unchanged": 24948,
+      "invalid_values_count": 0
+    },
+    "work_category": {
+      "original_column": "Work category",
+      "rule_applied": "category",
+      "values_changed": 764,
+      "values_unchanged": 24184,
+      "invalid_values_count": 0
+    },
+    "work_description": {
+      "original_column": "Work description",
+      "rule_applied": "text",
+      "values_changed": 2813,
+      "values_unchanged": 22135,
+      "invalid_values_count": 0
+    },
+    "state": {
+      "original_column": "State",
+      "rule_applied": "state",
+      "values_changed": 219,
+      "values_unchanged": 24729,
+      "invalid_values_count": 0
+    },
+    "ida_agency": {
+      "original_column": "IDA",
+      "rule_applied": "identifier",
+      "values_changed": 0,
+      "values_unchanged": 24948,
+      "invalid_values_count": 0
+    },
+    "mp_name": {
+      "original_column": "Hon'ble Members of Parliament",
+      "rule_applied": "person_name",
+      "values_changed": 24947,
+      "values_unchanged": 1,
+      "invalid_values_count": 0
+    },
+    "electednominated": {
+      "original_column": "Elected/Nominated",
+      "rule_applied": "identifier",
+      "values_changed": 0,
+      "values_unchanged": 24948,
+      "invalid_values_count": 0
+    },
+    "recommended_date": {
+      "original_column": "Recommended date",
+      "rule_applied": "date",
+      "values_changed": 24947,
+      "values_unchanged": 1,
+      "invalid_values_count": 0
+    },
+    "recommended_amount": {
+      "original_column": "RECOMMENDED AMOUNT   ( \u20b9 )",
+      "rule_applied": "currency",
+      "values_changed": 24947,
+      "values_unchanged": 1,
+      "invalid_values_count": 0
+    },
+    "sanction_date": {
+      "original_column": "Sanction Date",
+      "rule_applied": "date",
+      "values_changed": 19067,
+      "values_unchanged": 5881,
+      "invalid_values_count": 1
+    }
+  },
+  "invalid_values": [
+    {
+      "column": "sanction_date",
+      "raw_value": "21,98,31,54,509.21",
+      "reason": "Failed ISO date parse"
+    }
+  ],
+  "validation": {
+    "is_valid": true,
+    "validation_errors": [],
+    "validation_warnings": []
+  },
+  "warnings": [],
+  "errors": []
+}

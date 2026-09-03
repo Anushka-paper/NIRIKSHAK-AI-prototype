@@ -1,0 +1,59 @@
+dataset_a,dataset_b,common_key
+allocation,calamity,Sr. No.
+allocation,completed,State
+allocation,completed,Sr. No.
+allocation,completed,Constituency
+allocation,expenditure,State
+allocation,expenditure,Sr. No.
+allocation,expenditure,Constituency
+allocation,recommended,State
+allocation,recommended,Sr. No.
+allocation,recommended,Constituency
+allocation,sanctioned,State
+allocation,sanctioned,Sr. No.
+allocation,sanctioned,Constituency
+calamity,completed,Sr. No.
+calamity,completed,Hon'ble Members of Parliament
+calamity,expenditure,Sr. No.
+calamity,expenditure,Hon'ble Members of Parliament
+calamity,recommended,Sr. No.
+calamity,recommended,Hon'ble Members of Parliament
+calamity,sanctioned,Sr. No.
+calamity,sanctioned,Hon'ble Members of Parliament
+completed,expenditure,Hon'ble Members of Parliament
+completed,expenditure,Sr. No.
+completed,expenditure,IDA
+completed,expenditure,State
+completed,expenditure,Work
+completed,expenditure,Constituency
+completed,recommended,Hon'ble Members of Parliament
+completed,recommended,Sr. No.
+completed,recommended,IDA
+completed,recommended,State
+completed,recommended,Constituency
+completed,sanctioned,Hon'ble Members of Parliament
+completed,sanctioned,Sr. No.
+completed,sanctioned,IDA
+completed,sanctioned,State
+completed,sanctioned,Work
+completed,sanctioned,Constituency
+expenditure,recommended,Hon'ble Members of Parliament
+expenditure,recommended,Sr. No.
+expenditure,recommended,IDA
+expenditure,recommended,State
+expenditure,recommended,Constituency
+expenditure,sanctioned,Hon'ble Members of Parliament
+expenditure,sanctioned,Sr. No.
+expenditure,sanctioned,IDA
+expenditure,sanctioned,State
+expenditure,sanctioned,Work
+expenditure,sanctioned,Constituency
+recommended,sanctioned,Work description
+recommended,sanctioned,Hon'ble Members of Parliament
+recommended,sanctioned,Sanction Date
+recommended,sanctioned,Work category
+recommended,sanctioned,Sr. No.
+recommended,sanctioned,IDA
+recommended,sanctioned,State
+recommended,sanctioned,Recommended date
+recommended,sanctioned,Constituency

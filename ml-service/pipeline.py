@@ -24,10 +24,13 @@ class NirikshakPipeline:
     Orchestrates Discovery -> Loading -> Profiling -> Standardisation -> Validation -> Summary.
     """
 
-    def __init__(self, raw_dir: str | Path = None, profiling_dir: str | Path = None, standardized_dir: str | Path = None):
+    def __init__(self, raw_dir: str | Path = None, profiling_dir: str | Path = None, 
+                 standardized_dir: str | Path = None, enable_er: bool = False, er_sample_limit: int = 1500):
         self.raw_dir = Path(raw_dir) if raw_dir else (BASE_DIR / "data" / "raw")
         self.profiling_dir = Path(profiling_dir) if profiling_dir else (BASE_DIR / "data" / "profiling")
         self.standardized_dir = Path(standardized_dir) if standardized_dir else (BASE_DIR / "data" / "standardized")
+        self.enable_er = enable_er
+        self.er_sample_limit = er_sample_limit
 
     def run(self, parliament: str = "all") -> dict:
         """
@@ -92,6 +95,19 @@ class NirikshakPipeline:
             except Exception as e:
                 logger.error(f"Error during standardisation for [{par}]: {e}")
 
+            # 4. Entity Resolution (Dynamic Work & Record Linking)
+            er_report = {}
+            if self.enable_er:
+                logger.info(f"4. Running Dynamic Entity Resolution for [{par}]...")
+                try:
+                    from entity_resolution.resolver import resolve_parliament
+                    er_report = resolve_parliament(
+                        parliament=par,
+                        sample_limit=self.er_sample_limit
+                    )
+                except Exception as e:
+                    logger.error(f"Error during entity resolution for [{par}]: {e}")
+
             par_time = round(time.time() - par_start, 2)
             pipeline_summary["parliaments_processed"][par] = {
                 "datasets_discovered": len(file_list),
@@ -99,6 +115,7 @@ class NirikshakPipeline:
                 "datasets_loaded_failed": sum(1 for v in loaded_dict.values() if v["metadata"]["load_status"] == "failed"),
                 "profiling_status": "success" if profile_reports else "failed",
                 "standardization_status": "success" if std_reports else "failed",
+                "entity_resolution_status": "success" if er_report else ("disabled" if not self.enable_er else "failed"),
                 "processing_time_seconds": par_time
             }
 
@@ -124,13 +141,17 @@ def main():
     parser.add_argument("--raw-dir", help="Custom raw data directory")
     parser.add_argument("--profiling-dir", help="Custom profiling output directory")
     parser.add_argument("--standardized-dir", help="Custom standardized output directory")
+    parser.add_argument("--resolve-entities", "-r", action="store_true", help="Execute entity resolution stage")
+    parser.add_argument("--er-limit", type=int, default=1500, help="Candidate sample limit for entity resolution")
 
     args = parser.parse_args()
 
     pipeline = NirikshakPipeline(
         raw_dir=args.raw_dir,
         profiling_dir=args.profiling_dir,
-        standardized_dir=args.standardized_dir
+        standardized_dir=args.standardized_dir,
+        enable_er=args.resolve_entities,
+        er_sample_limit=args.er_limit
     )
     pipeline.run(parliament=args.parliament)
 

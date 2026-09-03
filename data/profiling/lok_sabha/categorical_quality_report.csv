@@ -1,0 +1,25 @@
+dataset_name,column_name,unique_values,missing_values,rare_categories_count,category_variations_found
+allocation,State,36,0,17,0
+allocation_standardized,state,36,0,17,0
+calamity,Calamity Type,2,0,0,0
+calamity,Calamity Name,6,0,0,0
+calamity,Hon'ble Members of Parliament,10,0,0,0
+completed,Work Category,3,0,1,0
+completed,State,33,0,14,0
+completed,Hon'ble Members of Parliament,501,0,492,0
+completed,Constituency,501,0,492,0
+completed,Image,1,9303,0,0
+expenditure,State,35,0,15,0
+expenditure,Hon'ble Members of Parliament,531,0,522,0
+expenditure,Constituency,531,0,522,0
+expenditure,Vendor Name,23300,0,23300,690
+expenditure,Payment Status,2,0,0,0
+recommended,Work category,4,0,2,0
+recommended,State,36,0,17,0
+recommended,Hon'ble Members of Parliament,538,0,536,0
+recommended,Constituency,538,0,536,0
+sanctioned,Work category,4,0,2,0
+sanctioned,State,36,0,16,0
+sanctioned,Hon'ble Members of Parliament,536,0,535,0
+sanctioned,Constituency,536,0,535,0
+sanctioned,Work Status,6,0,0,0

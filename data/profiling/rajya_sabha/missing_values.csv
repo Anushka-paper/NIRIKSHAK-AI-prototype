@@ -1,0 +1,57 @@
+dataset_name,column_name,non_null_count,missing_count,missing_pct,missingness_tier
+allocated limit for honble mps (4),Sr. No.,231,0,0.0,Complete
+allocated limit for honble mps (4),State,231,0,0.0,Complete
+allocated limit for honble mps (4),Hon'ble Members of Parliament,231,0,0.0,Complete
+allocated limit for honble mps (4),Elected/Nominated,231,0,0.0,Complete
+allocated limit for honble mps (4),Allocated AMOUNT ( ₹ ),231,0,0.0,Complete
+amount consented for calamity (3),Sr. No.,20,0,0.0,Complete
+amount consented for calamity (3),Calamity Type,20,0,0.0,Complete
+amount consented for calamity (3),Calamity Name,20,0,0.0,Complete
+amount consented for calamity (3),Hon'ble Members of Parliament,20,0,0.0,Complete
+amount consented for calamity (3),Date of Consent,20,0,0.0,Complete
+amount consented for calamity (3),Consent Amount ( ₹ ),20,0,0.0,Complete
+expenditure on completed and on-going works as on date (2),Sr. No.,24966,0,0.0,Complete
+expenditure on completed and on-going works as on date (2),State,24966,0,0.0,Complete
+expenditure on completed and on-going works as on date (2),Work,24966,0,0.0,Complete
+expenditure on completed and on-going works as on date (2),Work ID,24966,0,0.0,Complete
+expenditure on completed and on-going works as on date (2),IDA,24966,0,0.0,Complete
+expenditure on completed and on-going works as on date (2),Hon'ble Members of Parliament,24966,0,0.0,Complete
+expenditure on completed and on-going works as on date (2),Elected/Nominated,24966,0,0.0,Complete
+expenditure on completed and on-going works as on date (2),Expenditure Date,24966,0,0.0,Complete
+expenditure on completed and on-going works as on date (2),Vendor Name,24966,0,0.0,Complete
+expenditure on completed and on-going works as on date (2),Payment Status,24966,0,0.0,Complete
+expenditure on completed and on-going works as on date (2),Fund Disbursed Amount ( ₹ ),24966,0,0.0,Complete
+works completed (8),Sr. No.,9911,0,0.0,Complete
+works completed (8),Work Category,9906,5,0.05,Low
+works completed (8),Work,9911,0,0.0,Complete
+works completed (8),State,9911,0,0.0,Complete
+works completed (8),IDA,9911,0,0.0,Complete
+works completed (8),Work Description,9905,6,0.06,Low
+works completed (8),Hon'ble Members of Parliament,9911,0,0.0,Complete
+works completed (8),Elected/Nominated,9911,0,0.0,Complete
+works completed (8),Image,6453,3458,34.89,High
+works completed (8),Completion Date,9911,0,0.0,Complete
+works completed (8),Amount Disbursed ( ₹ ),9893,18,0.18,Low
+works recommended (2),Sr. No.,24947,0,0.0,Complete
+works recommended (2),Work category,24942,5,0.02,Low
+works recommended (2),WORK,24947,0,0.0,Complete
+works recommended (2),State,24947,0,0.0,Complete
+works recommended (2),IDA,24947,0,0.0,Complete
+works recommended (2),Hon'ble Members of Parliament,24947,0,0.0,Complete
+works recommended (2),Elected/Nominated,24947,0,0.0,Complete
+works recommended (2),Work description,24924,23,0.09,Low
+works recommended (2),Recommended date,24947,0,0.0,Complete
+works recommended (2),RECOMMENDED AMOUNT   ( ₹ ),24947,0,0.0,Complete
+works recommended (2),Sanction Date,19067,5880,23.57,High
+works sanctioned (7),Sr. No.,19311,0,0.0,Complete
+works sanctioned (7),Work category,19304,7,0.04,Low
+works sanctioned (7),Work,19311,0,0.0,Complete
+works sanctioned (7),State,19311,0,0.0,Complete
+works sanctioned (7),IDA,19311,0,0.0,Complete
+works sanctioned (7),Hon'ble Members of Parliament,19311,0,0.0,Complete
+works sanctioned (7),Elected/Nominated,19311,0,0.0,Complete
+works sanctioned (7),Work description,19300,11,0.06,Low
+works sanctioned (7),Recommended date,19311,0,0.0,Complete
+works sanctioned (7),Sanction Date,19311,0,0.0,Complete
+works sanctioned (7),Sanction Amount ( ₹ ),19311,0,0.0,Complete
+works sanctioned (7),Work Status,19311,0,0.0,Complete

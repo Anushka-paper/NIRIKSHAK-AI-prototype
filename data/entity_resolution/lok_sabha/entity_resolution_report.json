@@ -1,0 +1,59 @@
+{
+  "execution_timestamp": "2026-09-03T15:26:02.693476",
+  "parliament": "lok_sabha",
+  "datasets_discovered": 4,
+  "dataset_pairs_compared": 6,
+  "total_high_confidence_matches": 7868,
+  "total_records_in_review_queue": 7748,
+  "processing_time_seconds": 48.23,
+  "pair_statistics": [
+    {
+      "source_dataset": "completed",
+      "target_dataset": "expenditure",
+      "candidate_pairs_evaluated": 13771,
+      "high_confidence_matches": 23,
+      "records_in_review": 108,
+      "unresolved_records": 1482
+    },
+    {
+      "source_dataset": "completed",
+      "target_dataset": "recommended",
+      "candidate_pairs_evaluated": 18854,
+      "high_confidence_matches": 1191,
+      "records_in_review": 3383,
+      "unresolved_records": 1041
+    },
+    {
+      "source_dataset": "completed",
+      "target_dataset": "sanctioned",
+      "candidate_pairs_evaluated": 19157,
+      "high_confidence_matches": 1197,
+      "records_in_review": 6810,
+      "unresolved_records": 1041
+    },
+    {
+      "source_dataset": "expenditure",
+      "target_dataset": "recommended",
+      "candidate_pairs_evaluated": 5511,
+      "high_confidence_matches": 7,
+      "records_in_review": 357,
+      "unresolved_records": 1493
+    },
+    {
+      "source_dataset": "expenditure",
+      "target_dataset": "sanctioned",
+      "candidate_pairs_evaluated": 5504,
+      "high_confidence_matches": 7,
+      "records_in_review": 714,
+      "unresolved_records": 1493
+    },
+    {
+      "source_dataset": "recommended",
+      "target_dataset": "sanctioned",
+      "candidate_pairs_evaluated": 63178,
+      "high_confidence_matches": 5443,
+      "records_in_review": 224,
+      "unresolved_records": 20
+    }
+  ]
+}

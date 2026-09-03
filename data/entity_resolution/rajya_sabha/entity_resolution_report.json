@@ -1,0 +1,91 @@
+{
+  "execution_timestamp": "2026-09-03T15:28:17.291950",
+  "parliament": "rajya_sabha",
+  "datasets_discovered": 5,
+  "dataset_pairs_compared": 10,
+  "total_high_confidence_matches": 1921,
+  "total_records_in_review_queue": 19457,
+  "processing_time_seconds": 113.88,
+  "pair_statistics": [
+    {
+      "source_dataset": "allocated limit for honble mps (4)",
+      "target_dataset": "expenditure on completed and on-going works as on date (2)",
+      "candidate_pairs_evaluated": 1427,
+      "high_confidence_matches": 0,
+      "records_in_review": 1427,
+      "unresolved_records": 232
+    },
+    {
+      "source_dataset": "allocated limit for honble mps (4)",
+      "target_dataset": "works completed (8)",
+      "candidate_pairs_evaluated": 0,
+      "high_confidence_matches": 0,
+      "records_in_review": 1427,
+      "unresolved_records": 232
+    },
+    {
+      "source_dataset": "allocated limit for honble mps (4)",
+      "target_dataset": "works recommended (2)",
+      "candidate_pairs_evaluated": 1415,
+      "high_confidence_matches": 0,
+      "records_in_review": 2842,
+      "unresolved_records": 232
+    },
+    {
+      "source_dataset": "allocated limit for honble mps (4)",
+      "target_dataset": "works sanctioned (7)",
+      "candidate_pairs_evaluated": 1419,
+      "high_confidence_matches": 0,
+      "records_in_review": 4261,
+      "unresolved_records": 232
+    },
+    {
+      "source_dataset": "expenditure on completed and on-going works as on date (2)",
+      "target_dataset": "works completed (8)",
+      "candidate_pairs_evaluated": 0,
+      "high_confidence_matches": 0,
+      "records_in_review": 0,
+      "unresolved_records": 1500
+    },
+    {
+      "source_dataset": "expenditure on completed and on-going works as on date (2)",
+      "target_dataset": "works recommended (2)",
+      "candidate_pairs_evaluated": 22073,
+      "high_confidence_matches": 0,
+      "records_in_review": 1272,
+      "unresolved_records": 1500
+    },
+    {
+      "source_dataset": "expenditure on completed and on-going works as on date (2)",
+      "target_dataset": "works sanctioned (7)",
+      "candidate_pairs_evaluated": 22203,
+      "high_confidence_matches": 0,
+      "records_in_review": 2570,
+      "unresolved_records": 1500
+    },
+    {
+      "source_dataset": "works completed (8)",
+      "target_dataset": "works recommended (2)",
+      "candidate_pairs_evaluated": 0,
+      "high_confidence_matches": 0,
+      "records_in_review": 0,
+      "unresolved_records": 1500
+    },
+    {
+      "source_dataset": "works completed (8)",
+      "target_dataset": "works sanctioned (7)",
+      "candidate_pairs_evaluated": 0,
+      "high_confidence_matches": 0,
+      "records_in_review": 0,
+      "unresolved_records": 1500
+    },
+    {
+      "source_dataset": "works recommended (2)",
+      "target_dataset": "works sanctioned (7)",
+      "candidate_pairs_evaluated": 148453,
+      "high_confidence_matches": 1921,
+      "records_in_review": 12626,
+      "unresolved_records": 102
+    }
+  ]
+}

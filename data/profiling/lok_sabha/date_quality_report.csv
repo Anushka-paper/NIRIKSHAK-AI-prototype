@@ -1,0 +1,8 @@
+dataset_name,column_name,missing_dates,invalid_dates,future_dates,min_date,max_date
+calamity,Date of Consent,0,0,0,2024-09-03,2025-12-07
+completed,Completion Date,0,0,0,2024-08-12,2026-08-31
+expenditure,Expenditure Date,0,0,0,2024-07-25,2026-08-31
+recommended,Recommended date,0,0,0,2024-07-08,2026-08-31
+recommended,Sanction Date,25465,0,0,2024-07-09,2026-08-31
+sanctioned,Recommended date,0,0,0,2024-07-08,2026-08-24
+sanctioned,Sanction Date,0,0,0,2024-07-09,2026-08-31
