@@ -3,10 +3,10 @@ import path from 'path';
 
 function sumColumn(filePath: string, columnName: string): number {
   try {
-    const fullPath = path.resolve(process.cwd(), '..', filePath);
-    if (!fs.existsSync(fullPath)) return 0;
+    const fullPath = process.cwd() + '/../' + filePath;
+    if (!fs.existsSync(/*turbopackIgnore: true*/ fullPath)) return 0;
     
-    const content = fs.readFileSync(fullPath, 'utf8');
+    const content = fs.readFileSync(/*turbopackIgnore: true*/ fullPath, 'utf8');
     const lines = content.split('\n');
     if (lines.length < 2) return 0;
     
@@ -30,9 +30,9 @@ function sumColumn(filePath: string, columnName: string): number {
 
 function countRows(filePath: string): number {
   try {
-    const fullPath = path.resolve(process.cwd(), '..', filePath);
-    if (!fs.existsSync(fullPath)) return 0;
-    const content = fs.readFileSync(fullPath, 'utf8');
+    const fullPath = process.cwd() + '/../' + filePath;
+    if (!fs.existsSync(/*turbopackIgnore: true*/ fullPath)) return 0;
+    const content = fs.readFileSync(/*turbopackIgnore: true*/ fullPath, 'utf8');
     const lines = content.split('\n').filter(line => line.trim().length > 0);
     return Math.max(0, lines.length - 1);
   } catch (e) {
@@ -56,11 +56,11 @@ export function getMpladsMetrics() {
 }
 
 export function getTrendingProjects() {
-  const fullPath = path.resolve(process.cwd(), '..', 'data/standardized/lok_sabha/recommended_standardized.csv');
+  const fullPath = process.cwd() + '/../' + 'data/standardized/lok_sabha/recommended_standardized.csv';
   try {
-    if (!fs.existsSync(fullPath)) return [];
+    if (!fs.existsSync(/*turbopackIgnore: true*/ fullPath)) return [];
     
-    const content = fs.readFileSync(fullPath, 'utf8');
+    const content = fs.readFileSync(/*turbopackIgnore: true*/ fullPath, 'utf8');
     const lines = content.split('\n').filter(line => line.trim().length > 0);
     if (lines.length < 2) return [];
     

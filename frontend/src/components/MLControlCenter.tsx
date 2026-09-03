@@ -250,7 +250,7 @@ export default function MLControlCenter() {
                     Contributing Factors
                   </span>
                   <ul className="text-xs text-gray-700 list-disc pl-4 space-y-1">
-                    {predictionResult.data.key_factors.map((f, i) => (
+                    {predictionResult.data.key_factors.map((f: string, i: number) => (
                       <li key={i}>{f}</li>
                     ))}
                   </ul>

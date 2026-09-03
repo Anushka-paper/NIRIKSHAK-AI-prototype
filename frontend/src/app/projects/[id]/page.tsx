@@ -299,7 +299,7 @@ export default function ProjectDetailPage() {
                 <div className="p-4 bg-white rounded-2xl border shadow-sm space-y-2">
                   <span className="text-xs font-bold text-gray-900 block">Explainable AI: Key Risk Drivers</span>
                   <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-gray-600">
-                    {mlPrediction.key_factors.map((f, i) => (
+                    {mlPrediction.key_factors.map((f: string, i: number) => (
                       <li key={i} className="flex items-center gap-2 bg-gray-50 p-2.5 rounded-xl border">
                         <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
                         <span>{f}</span>
