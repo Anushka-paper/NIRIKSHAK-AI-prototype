@@ -34,6 +34,25 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.on_event("startup")
+def preload_caches():
+    """Warm up the memory caches before accepting traffic so Vercel doesn't timeout."""
+    import threading
+    def _warmup():
+        print("Warming up caches in background...")
+        try:
+            from .dataset_aggregator import aggregate_six_datasets
+            aggregate_six_datasets(parliament="all")
+            
+            from .state_aggregator import get_aggregated_states
+            get_aggregated_states(parliament="all")
+            print("Caches warmed successfully!")
+        except Exception as e:
+            print(f"Failed to warm up cache: {e}")
+    
+    # Run in a background thread so the server port binds immediately
+    threading.Thread(target=_warmup).start()
+
 @app.get("/")
 def root():
     return {
