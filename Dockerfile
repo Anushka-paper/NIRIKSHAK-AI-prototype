@@ -17,8 +17,5 @@ RUN pip install --no-cache-dir -r backend/requirements.txt
 # Copy the entire repository into the container
 COPY . /app/
 
-# Expose the port Hugging Face expects
-EXPOSE 7860
-
-# Start the FastAPI server on port 7860
-CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "7860"]
+# Start the FastAPI server using the dynamic port provided by Railway/Hosting platform
+CMD uvicorn backend.main:app --host 0.0.0.0 --port ${PORT:-8000}
