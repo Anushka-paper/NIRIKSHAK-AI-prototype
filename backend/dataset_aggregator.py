@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Dict, Any, List
 import pandas as pd
 import numpy as np
+from functools import lru_cache
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -86,6 +87,7 @@ def clean_currency(val) -> float:
     except Exception:
         return 0.0
 
+@lru_cache(maxsize=4)
 def aggregate_six_datasets(parliament: str = "all") -> Dict[str, Any]:
     parliaments = ["lok_sabha", "rajya_sabha"] if parliament == "all" else [parliament]
 

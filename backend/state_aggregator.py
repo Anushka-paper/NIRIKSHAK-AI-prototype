@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Dict, Any, List, Optional
 import pandas as pd
 import numpy as np
+from functools import lru_cache
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -29,6 +30,7 @@ def clean_state_id(state_name: str) -> str:
     s = s.replace(" ", "-")
     return "".join(c for c in s if c.isalnum() or c == "-")
 
+@lru_cache(maxsize=4)
 def get_aggregated_states(parliament: str = "all") -> List[Dict[str, Any]]:
     """
     Groups canonical work features by State/UT and computes metrics dynamically.
@@ -100,6 +102,7 @@ def get_aggregated_states(parliament: str = "all") -> List[Dict[str, Any]]:
     state_results.sort(key=lambda x: x["totalProjects"], reverse=True)
     return state_results
 
+@lru_cache(maxsize=128)
 def get_single_state_details(state_id: str, parliament: str = "all") -> Optional[Dict[str, Any]]:
     """
     Returns aggregated details for a single State or Union Territory by slug.
