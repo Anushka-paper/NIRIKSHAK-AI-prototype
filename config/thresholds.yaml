@@ -1,6 +1,0 @@
-cost_overrun_pct: 15.0
-sanction_delay_days_max: 90
-inactivity_gap_days_max: 180
-expenditure_before_sanction_tolerance: 0
-duplicate_nlp_similarity_threshold: 0.85
-vendor_concentration_max_pct: 40.0

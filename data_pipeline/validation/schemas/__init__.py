@@ -1,1 +1,0 @@
-"""House Schema Definitions"""
