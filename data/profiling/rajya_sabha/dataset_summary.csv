@@ -1,0 +1,7 @@
+parliament,dataset_name,total_rows,record_rows,summary_rows,columns_count,quality_score
+rajya_sabha,allocated limit for honble mps (4),232,231,1,5,100
+rajya_sabha,amount consented for calamity (3),21,20,1,6,100
+rajya_sabha,expenditure on completed and on-going works as on date (2),24967,24966,1,11,75
+rajya_sabha,works completed (8),9912,9911,1,11,89
+rajya_sabha,works recommended (2),24948,24947,1,11,89
+rajya_sabha,works sanctioned (7),19312,19311,1,12,90

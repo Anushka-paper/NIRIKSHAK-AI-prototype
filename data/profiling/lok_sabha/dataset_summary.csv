@@ -1,0 +1,8 @@
+parliament,dataset_name,total_rows,record_rows,summary_rows,columns_count,quality_score
+lok_sabha,allocation,544,543,1,5,90
+lok_sabha,allocation_standardized,544,543,1,5,80
+lok_sabha,calamity,13,12,1,6,100
+lok_sabha,completed,33976,33975,1,11,79
+lok_sabha,expenditure,83016,83015,1,11,75
+lok_sabha,recommended,103393,103392,1,11,89
+lok_sabha,sanctioned,78287,78286,1,12,90

@@ -1,0 +1,86 @@
+{
+  "rows_processed": 103393,
+  "columns_processed": 11,
+  "transformations": {
+    "sr_no": {
+      "original_column": "Sr. No.",
+      "rule_applied": "identifier",
+      "values_changed": 0,
+      "values_unchanged": 103393,
+      "invalid_values_count": 0
+    },
+    "work_category": {
+      "original_column": "Work category",
+      "rule_applied": "category",
+      "values_changed": 2129,
+      "values_unchanged": 101264,
+      "invalid_values_count": 0
+    },
+    "work_description": {
+      "original_column": "Work description",
+      "rule_applied": "text",
+      "values_changed": 10122,
+      "values_unchanged": 93271,
+      "invalid_values_count": 0
+    },
+    "state": {
+      "original_column": "State",
+      "rule_applied": "state",
+      "values_changed": 1055,
+      "values_unchanged": 102338,
+      "invalid_values_count": 0
+    },
+    "ida_agency": {
+      "original_column": "IDA",
+      "rule_applied": "identifier",
+      "values_changed": 0,
+      "values_unchanged": 103393,
+      "invalid_values_count": 0
+    },
+    "mp_name": {
+      "original_column": "Hon'ble Members of Parliament",
+      "rule_applied": "person_name",
+      "values_changed": 72697,
+      "values_unchanged": 30696,
+      "invalid_values_count": 0
+    },
+    "constituency": {
+      "original_column": "Constituency",
+      "rule_applied": "text",
+      "values_changed": 0,
+      "values_unchanged": 103393,
+      "invalid_values_count": 0
+    },
+    "recommended_date": {
+      "original_column": "Recommended date",
+      "rule_applied": "date",
+      "values_changed": 103392,
+      "values_unchanged": 1,
+      "invalid_values_count": 0
+    },
+    "recommended_amount": {
+      "original_column": "RECOMMENDED AMOUNT   ( \u20b9 )",
+      "rule_applied": "currency",
+      "values_changed": 103392,
+      "values_unchanged": 1,
+      "invalid_values_count": 0
+    },
+    "sanction_date": {
+      "original_column": "Sanction Date",
+      "rule_applied": "date",
+      "values_changed": 77927,
+      "values_unchanged": 25466,
+      "invalid_values_count": 1
+    }
+  },
+  "invalid_values": [
+    {
+      "column": "sanction_date",
+      "raw_value": "56,41,94,31,615.27",
+      "reason": "Failed ISO date parse"
+    }
+  ],
+  "warnings": [
+    "Column 'state' has 63 unmapped state values"
+  ]
+}

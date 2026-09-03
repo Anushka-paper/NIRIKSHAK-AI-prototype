@@ -1,0 +1,8 @@
+dataset_name,column_name,missing_dates,invalid_dates,future_dates,min_date,max_date
+amount consented for calamity (3),Date of Consent,0,0,0,2024-09-10,2025-11-17
+expenditure on completed and on-going works as on date (2),Expenditure Date,0,0,0,2023-07-27,2026-08-31
+works completed (8),Completion Date,0,0,0,2023-08-02,2026-08-31
+works recommended (2),Recommended date,0,0,0,2023-06-14,2026-08-31
+works recommended (2),Sanction Date,5880,0,0,2023-07-07,2026-08-31
+works sanctioned (7),Recommended date,0,0,0,2023-06-14,2026-08-25
+works sanctioned (7),Sanction Date,0,0,0,2023-07-07,2026-08-31

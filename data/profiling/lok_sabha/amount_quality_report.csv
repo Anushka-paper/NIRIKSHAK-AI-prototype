@@ -1,0 +1,8 @@
+dataset_name,column_name,count,min,max,mean,median,zero_count,negative_count,outlier_count
+allocation,Allocated AMOUNT ( ₹ ),542,49000000.0,327477390.9,153469655.58,147000000.0,0,0,130
+allocation_standardized,allocated_amount,542,49000000.0,327477390.9,153469655.58,147000000.0,0,0,130
+calamity,Consent Amount ( ₹ ),12,500000.0,10000000.0,3380616.67,2500000.0,0,0,1
+completed,Amount Disbursed ( ₹ ),33897,8448.0,46470400.0,481772.07,298886.0,0,0,3847
+expenditure,Fund Disbursed Amount ( ₹ ),83015,1.0,32562250.0,329892.71,190546.0,0,0,6597
+recommended,RECOMMENDED AMOUNT   ( ₹ ),103392,1.0,99965000.0,545684.69,340000.0,0,0,7969
+sanctioned,Sanction Amount ( ₹ ),78286,2.46,49740000.0,526329.37,300000.0,0,0,6836

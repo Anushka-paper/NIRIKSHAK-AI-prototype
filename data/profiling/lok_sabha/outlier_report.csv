@@ -1,0 +1,8 @@
+dataset_name,column_name,outlier_count,outlier_pct,lower_bound,upper_bound
+allocation,Allocated AMOUNT ( ₹ ),130,23.99,145708038.71,149153268.81
+allocation_standardized,allocated_amount,130,23.99,145708038.71,149153268.81
+calamity,Consent Amount ( ₹ ),1,8.33,-2962775.0,7604625.0
+completed,Amount Disbursed ( ₹ ),3847,11.35,-326177.5,995706.5
+expenditure,Fund Disbursed Amount ( ₹ ),6597,7.95,-440427.5,904256.5
+recommended,RECOMMENDED AMOUNT   ( ₹ ),7969,7.71,-400000.0,1200000.0
+sanctioned,Sanction Amount ( ₹ ),6836,8.73,-327500.0,1076500.0

@@ -1,0 +1,12 @@
+dataset_name,column_name,unique_ids,duplicate_ids,missing_ids,uniqueness_ratio_pct
+allocated limit for honble mps (4),Sr. No.,231,0,0,100.0
+amount consented for calamity (3),Sr. No.,20,0,0,100.0
+expenditure on completed and on-going works as on date (2),Sr. No.,24966,0,0,100.0
+expenditure on completed and on-going works as on date (2),Work ID,15201,9765,0,60.89
+expenditure on completed and on-going works as on date (2),IDA,529,24437,0,2.12
+works completed (8),Sr. No.,9911,0,0,100.0
+works completed (8),IDA,429,9482,0,4.33
+works recommended (2),Sr. No.,24947,0,0,100.0
+works recommended (2),IDA,620,24327,0,2.49
+works sanctioned (7),Sr. No.,19311,0,0,100.0
+works sanctioned (7),IDA,571,18740,0,2.96

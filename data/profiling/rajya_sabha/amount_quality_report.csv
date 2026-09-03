@@ -1,0 +1,7 @@
+dataset_name,column_name,count,min,max,mean,median,zero_count,negative_count,outlier_count
+allocated limit for honble mps (4),Allocated AMOUNT ( ₹ ),231,23800006.0,310898953.3,145621135.5,147000000.0,0,0,0
+amount consented for calamity (3),Consent Amount ( ₹ ),20,500000.0,10000000.0,5225000.0,2500000.0,0,0,0
+expenditure on completed and on-going works as on date (2),Fund Disbursed Amount ( ₹ ),24966,0.01,31900000.0,494212.2,248000.0,0,0,1978
+works completed (8),Amount Disbursed ( ₹ ),9893,10000.0,39955654.0,765301.35,497370.0,0,0,425
+works recommended (2),RECOMMENDED AMOUNT   ( ₹ ),24947,3.89,73500000.0,881194.31,500000.0,0,0,1648
+works sanctioned (7),Sanction Amount ( ₹ ),19311,10000.0,73500000.0,878198.82,500000.0,0,0,1212

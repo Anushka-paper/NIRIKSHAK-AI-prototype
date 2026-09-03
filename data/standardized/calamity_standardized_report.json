@@ -1,0 +1,50 @@
+{
+  "rows_processed": 13,
+  "columns_processed": 6,
+  "transformations": {
+    "sr_no": {
+      "original_column": "Sr. No.",
+      "rule_applied": "identifier",
+      "values_changed": 0,
+      "values_unchanged": 13,
+      "invalid_values_count": 0
+    },
+    "calamity_type": {
+      "original_column": "Calamity Type",
+      "rule_applied": "category",
+      "values_changed": 0,
+      "values_unchanged": 13,
+      "invalid_values_count": 0
+    },
+    "calamity_name": {
+      "original_column": "Calamity Name",
+      "rule_applied": "category",
+      "values_changed": 9,
+      "values_unchanged": 4,
+      "invalid_values_count": 0
+    },
+    "mp_name": {
+      "original_column": "Hon'ble Members of Parliament",
+      "rule_applied": "person_name",
+      "values_changed": 10,
+      "values_unchanged": 3,
+      "invalid_values_count": 0
+    },
+    "date_of_consent": {
+      "original_column": "Date of Consent",
+      "rule_applied": "date",
+      "values_changed": 12,
+      "values_unchanged": 1,
+      "invalid_values_count": 0
+    },
+    "consent_amount": {
+      "original_column": "Consent Amount ( \u20b9 )",
+      "rule_applied": "currency",
+      "values_changed": 13,
+      "values_unchanged": 0,
+      "invalid_values_count": 0
+    }
+  },
+  "invalid_values": [],
+  "warnings": []
+}

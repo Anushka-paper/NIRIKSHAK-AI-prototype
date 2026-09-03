@@ -1,0 +1,5 @@
+dataset_name,column_name,outlier_count,outlier_pct,lower_bound,upper_bound
+expenditure on completed and on-going works as on date (2),Fund Disbursed Amount ( ₹ ),1978,7.92,-630913.12,1291521.88
+works completed (8),Amount Disbursed ( ₹ ),425,4.3,-879109.15,2103145.49
+works recommended (2),RECOMMENDED AMOUNT   ( ₹ ),1648,6.61,-892500.0,2135500.0
+works sanctioned (7),Sanction Amount ( ₹ ),1212,6.28,-890950.5,2132917.5

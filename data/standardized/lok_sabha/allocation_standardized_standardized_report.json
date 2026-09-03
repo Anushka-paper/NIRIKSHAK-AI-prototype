@@ -1,0 +1,50 @@
+{
+  "parliament": "lok_sabha",
+  "rows_processed": 544,
+  "columns_processed": 5,
+  "transformations": {
+    "sr_no": {
+      "original_column": "sr_no",
+      "rule_applied": "identifier",
+      "values_changed": 0,
+      "values_unchanged": 544,
+      "invalid_values_count": 0
+    },
+    "state": {
+      "original_column": "state",
+      "rule_applied": "state",
+      "values_changed": 0,
+      "values_unchanged": 544,
+      "invalid_values_count": 0
+    },
+    "mp_name": {
+      "original_column": "mp_name",
+      "rule_applied": "person_name",
+      "values_changed": 0,
+      "values_unchanged": 544,
+      "invalid_values_count": 0
+    },
+    "constituency": {
+      "original_column": "constituency",
+      "rule_applied": "text",
+      "values_changed": 0,
+      "values_unchanged": 544,
+      "invalid_values_count": 0
+    },
+    "allocated_amount": {
+      "original_column": "allocated_amount",
+      "rule_applied": "currency",
+      "values_changed": 543,
+      "values_unchanged": 1,
+      "invalid_values_count": 0
+    }
+  },
+  "invalid_values": [],
+  "validation": {
+    "is_valid": true,
+    "validation_errors": [],
+    "validation_warnings": []
+  },
+  "warnings": [],
+  "errors": []
+}
