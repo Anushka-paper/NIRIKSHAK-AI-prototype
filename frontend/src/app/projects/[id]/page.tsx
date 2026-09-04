@@ -42,6 +42,7 @@ export default function ProjectDetailPage() {
     async function fetchWork() {
       setLoading(true);
       setError(null);
+      setMlPrediction(null);
       try {
         const res = await fetch(`/api/features/works/${encodeURIComponent(id)}?parliament=${parliament}`);
         if (!res.ok) throw new Error(`Failed to load project (${res.status})`);
