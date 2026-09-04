@@ -22,6 +22,9 @@ import {
   AlertCircle
 } from "lucide-react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
+const StatusDonut       = dynamic(() => import("@/components/charts/StatusDonut"),       { ssr: false });
+const OverviewFinancial = dynamic(() => import("@/components/charts/OverviewFinancial"), { ssr: false });
 
 export default function OverviewPage() {
   const [parliament, setParliament] = useState<string>("all");
@@ -241,6 +244,23 @@ export default function OverviewPage() {
             </div>
           </section>
 
+          {/* Project Status Donut Chart */}
+          <section className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-subtle">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b mb-4 gap-2">
+              <div>
+                <h3 className="font-headline font-bold text-xl text-gray-900 flex items-center gap-2">
+                  <Activity className="w-5 h-5 text-primary" />
+                  Project Status Distribution
+                </h3>
+                <p className="text-xs text-gray-500 mt-0.5">Breakdown of Completed, Ongoing, and Pending works</p>
+              </div>
+              <span className="text-xs font-mono font-bold text-primary bg-primary/10 px-3 py-1 rounded-xl">
+                {totalWorks.toLocaleString()} Total
+              </span>
+            </div>
+            <StatusDonut completed={completedWorks} ongoing={ongoingWorks} pending={pendingWorks} />
+          </section>
+
           {/* Section 2: Financial Aggregations Breakdown */}
           <section className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-subtle space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b gap-2">
@@ -298,6 +318,17 @@ export default function OverviewPage() {
                 </span>
                 <span className="text-[11px] text-gray-500 mt-0.5 block">Disaster Relief Relocations</span>
               </div>
+            </div>
+
+            {/* Visual Budget Comparison Chart */}
+            <div className="pt-4 border-t border-gray-100">
+              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Visual Budget Comparison</h4>
+              <OverviewFinancial
+                allocated={data.analytics.totalAllocatedAmount}
+                sanctioned={data.analytics.totalSanctionedAmount}
+                expenditure={data.analytics.totalExpenditureAmount}
+                calamity={data.analytics.totalCalamityAmount}
+              />
             </div>
           </section>
 

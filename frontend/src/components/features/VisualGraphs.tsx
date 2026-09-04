@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import { 
   BarChart3, 
   TrendingUp, 
@@ -11,6 +12,7 @@ import {
   Activity,
   ArrowUpRight
 } from "lucide-react";
+const StateHeatBar = dynamic(() => import("@/components/charts/StateHeatBar"), { ssr: false });
 
 interface StateBreakdown {
   state: string;
@@ -248,31 +250,7 @@ export default function VisualGraphs({
             <span className="text-[11px] font-bold text-gray-400 uppercase">Top 10 States</span>
           </div>
 
-          <div className="flex flex-col gap-3">
-            {stateBreakdown.map((s, i) => {
-              const widthPct = Math.max(8, Math.round((s.anomaly_count / maxStateCount) * 100));
-              return (
-                <div key={s.state} className="flex flex-col gap-1">
-                  <div className="flex items-center justify-between text-xs font-bold text-gray-700">
-                    <span className="flex items-center gap-1.5">
-                      <span className="w-4 text-gray-400 font-mono text-[10px]">{i + 1}</span>
-                      {s.state}
-                    </span>
-                    <div className="flex items-center gap-3">
-                      <span className="text-rose-600">{s.anomaly_count.toLocaleString()} works</span>
-                      <span className="text-gray-400 text-[11px] font-mono">({formatCurrency(s.at_risk_amount)})</span>
-                    </div>
-                  </div>
-                  <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
-                    <div
-                      className="bg-rose-500 h-full rounded-full transition-all duration-500"
-                      style={{ width: `${widthPct}%` }}
-                    />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          <StateHeatBar data={stateBreakdown} topN={10} />
         </div>
 
         {/* Visual 4: Root Causes Ranking */}

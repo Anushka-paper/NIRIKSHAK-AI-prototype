@@ -21,6 +21,9 @@ import {
 } from "lucide-react";
 import { WorkFeature } from "@/types/features";
 import { predictRisk, PredictionResponse, checkDuplicate } from "@/lib/api";
+import dynamic from "next/dynamic";
+const RiskGauge     = dynamic(() => import("@/components/charts/RiskGauge"),     { ssr: false });
+const FinancialBars = dynamic(() => import("@/components/charts/FinancialBars"), { ssr: false });
 
 export default function ProjectDetailPage() {
   const params = useParams();
@@ -285,55 +288,52 @@ export default function ProjectDetailPage() {
 
           {mlPrediction ? (
             <div className="pt-6 space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="p-4 bg-white rounded-2xl border shadow-sm">
-                  <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block">
-                    Predicted Risk Level
-                  </span>
-                  <span className={`inline-block font-headline font-bold text-lg px-3 py-1 rounded-full mt-2 ${
-                    mlPrediction.risk_level === "HIGH"
-                      ? "bg-red-100 text-red-700"
-                      : mlPrediction.risk_level === "MEDIUM"
-                      ? "bg-amber-100 text-amber-800"
-                      : "bg-emerald-100 text-emerald-800"
-                  }`}>
-                    {mlPrediction.risk_level} RISK ({(mlPrediction.risk_probability * 100).toFixed(0)}% Probability)
-                  </span>
+              {/* Risk Gauge + Key Info — 2-col layout */}
+              <div className="flex flex-col md:flex-row gap-6 items-center">
+                {/* Gauge */}
+                <div className="flex flex-col items-center justify-center bg-white rounded-2xl border shadow-sm p-6 shrink-0 min-w-[200px]">
+                  <RiskGauge
+                    probability={mlPrediction.risk_probability}
+                    riskLevel={mlPrediction.risk_level}
+                    delayDays={mlPrediction.predicted_delay_days}
+                  />
                 </div>
 
-                <div className="p-4 bg-white rounded-2xl border shadow-sm">
-                  <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block">
-                    Projected Milestone Delay
-                  </span>
-                  <span className="font-headline font-bold text-2xl text-gray-900 block mt-2">
-                    {mlPrediction.predicted_delay_days > 0 ? `+${mlPrediction.predicted_delay_days} Days Delay` : "On Schedule"}
-                  </span>
-                  <span className="text-[11px] text-gray-500 mt-1 block">Calculated from elapsed duration vs peer works</span>
-                </div>
+                {/* Right panel: delay + recommendation */}
+                <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="p-4 bg-white rounded-2xl border shadow-sm">
+                    <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block">
+                      Projected Milestone Delay
+                    </span>
+                    <span className="font-headline font-bold text-2xl text-gray-900 block mt-2">
+                      {mlPrediction.predicted_delay_days > 0 ? `+${mlPrediction.predicted_delay_days} Days` : "On Schedule"}
+                    </span>
+                    <span className="text-[11px] text-gray-500 mt-1 block">vs peer works in category</span>
+                  </div>
+                  <div className="p-4 bg-white rounded-2xl border shadow-sm">
+                    <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block">
+                      Administrative Action
+                    </span>
+                    <p className="text-xs text-gray-800 font-bold mt-2 leading-relaxed">
+                      {mlPrediction.recommendations}
+                    </p>
+                  </div>
 
-                <div className="p-4 bg-white rounded-2xl border shadow-sm">
-                  <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block">
-                    Administrative Action
-                  </span>
-                  <p className="text-xs text-gray-800 font-bold mt-2 leading-relaxed">
-                    {mlPrediction.recommendations}
-                  </p>
+                  {mlPrediction.key_factors?.length > 0 && (
+                    <div className="sm:col-span-2 p-4 bg-white rounded-2xl border shadow-sm space-y-2">
+                      <span className="text-xs font-bold text-gray-900 block">Explainable AI: Key Risk Drivers</span>
+                      <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-gray-600">
+                        {mlPrediction.key_factors.map((f: string, i: number) => (
+                          <li key={i} className="flex items-center gap-2 bg-gray-50 p-2.5 rounded-xl border">
+                            <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                            <span>{f}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
               </div>
-
-              {mlPrediction.key_factors && mlPrediction.key_factors.length > 0 && (
-                <div className="p-4 bg-white rounded-2xl border shadow-sm space-y-2">
-                  <span className="text-xs font-bold text-gray-900 block">Explainable AI: Key Risk Drivers</span>
-                  <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-gray-600">
-                    {mlPrediction.key_factors.map((f: string, i: number) => (
-                      <li key={i} className="flex items-center gap-2 bg-gray-50 p-2.5 rounded-xl border">
-                        <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
-                        <span>{f}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
             </div>
           ) : (
             <div className="py-6 text-center text-xs text-gray-400">
@@ -386,6 +386,16 @@ export default function ProjectDetailPage() {
               </span>
               <span className="text-[10px] text-gray-500 mt-0.5 block">Sanction - Expenditure</span>
             </div>
+          </div>
+
+          {/* Financial Bar Chart Visual */}
+          <div className="pt-4 border-t border-gray-100">
+            <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Budget Flow Visualization</h4>
+            <FinancialBars
+              recommended={Number(work.recommended_amount) || 0}
+              sanctioned={Number(work.sanctioned_amount) || 0}
+              spent={Number(work.expenditure_amount) || 0}
+            />
           </div>
         </section>
 
