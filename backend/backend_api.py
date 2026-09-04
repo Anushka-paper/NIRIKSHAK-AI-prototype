@@ -574,3 +574,61 @@ def get_v1_features_work(work_id: str, parliament: str = "all"):
         traceback.print_exc()
         from fastapi import HTTPException
         raise HTTPException(status_code=500, detail=str(e))
+
+from pydantic import BaseModel
+from typing import Optional, List, Dict
+
+class PredictRequest(BaseModel):
+    work_id: Optional[str] = None
+    estimated_cost: float
+    days_since_sanction: int
+    current_status: Optional[str] = None
+    state: Optional[str] = None
+    category: Optional[str] = None
+
+@app.post("/api/v1/predict")
+def predict_risk(payload: PredictRequest):
+    try:
+        # A lightweight heuristic "mock" of the Gradient Boosted Tree for the prototype
+        
+        cost_factor = min(payload.estimated_cost / 5000000.0, 1.0) # Up to 50 Lakhs
+        days_factor = min(payload.days_since_sanction / 365.0, 1.0)
+        
+        # Base risk calculation
+        risk_score = (cost_factor * 0.3) + (days_factor * 0.7)
+        
+        if payload.current_status == "COMPLETED":
+            risk_score = 0.05
+            
+        risk_level = "LOW"
+        if risk_score > 0.7:
+            risk_level = "HIGH"
+        elif risk_score > 0.4:
+            risk_level = "MEDIUM"
+            
+        prob = max(0.1, min(0.99, risk_score + 0.05))
+        delay_days = int(payload.days_since_sanction * 0.4) if risk_score > 0.4 else 0
+        
+        recs = "Standard monitoring recommended."
+        if risk_level == "HIGH":
+            recs = "Immediate administrative review required. High probability of significant delays."
+        elif risk_level == "MEDIUM":
+            recs = "Schedule a physical inspection to verify milestone progress."
+            
+        factors = [
+            {"factor": "Days Since Sanction", "impact": f"{payload.days_since_sanction} days elapsed"},
+            {"factor": "Sanctioned Budget", "impact": f"High value project" if payload.estimated_cost > 2000000 else "Standard value project"}
+        ]
+            
+        return {
+            "risk_level": risk_level,
+            "risk_probability": prob,
+            "predicted_delay_days": delay_days,
+            "recommendations": recs,
+            "key_factors": factors
+        }
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        from fastapi import HTTPException
+        raise HTTPException(status_code=500, detail=str(e))
