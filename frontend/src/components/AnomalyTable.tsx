@@ -16,8 +16,8 @@ export default function AnomalyTable() {
     // Replace with your actual deployed FastAPI URL when in production
     const fetchAnomalies = async () => {
       try {
-        // We use a mock data fetch pattern here. Connect to your actual backend in prod.
-        const res = await fetch("http://localhost:8000/api/anomalies/states");
+        const baseUrl = process.env.NEXT_PUBLIC_ML_SERVICE_URL || "http://localhost:8000";
+        const res = await fetch(`${baseUrl}/api/anomalies/states`);
         if (res.ok) {
           const json = await res.json();
           setData(json.data);

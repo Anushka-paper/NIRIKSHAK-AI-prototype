@@ -18,4 +18,4 @@ RUN pip install --no-cache-dir -r backend/requirements.txt
 COPY . /app/
 
 # Start the FastAPI server using the dynamic port provided by Railway/Hosting platform
-CMD uvicorn backend.main:app --host 0.0.0.0 --port ${PORT:-8000}
+CMD uvicorn backend.backend_api:app --host 0.0.0.0 --port ${PORT:-8000}

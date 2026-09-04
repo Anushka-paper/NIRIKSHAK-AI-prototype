@@ -22,7 +22,8 @@ export default function ForecastChart({ entityId = "default" }: { entityId?: str
   useEffect(() => {
     const fetchForecast = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/api/forecast/${entityId}`);
+        const baseUrl = process.env.NEXT_PUBLIC_ML_SERVICE_URL || "http://localhost:8000";
+        const res = await fetch(`${baseUrl}/api/forecast/${entityId}`);
         if (res.ok) {
           const json = await res.json();
           setData(json);

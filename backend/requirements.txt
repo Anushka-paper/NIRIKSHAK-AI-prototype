@@ -4,3 +4,13 @@ pandas
 numpy
 pydantic
 joblib
+duckdb
+httpx
+scikit-learn
+networkx
+lifelines
+sentence-transformers
+xgboost
+reportlab
+prophet
+python-multipart
