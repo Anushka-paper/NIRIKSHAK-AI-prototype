@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
@@ -350,11 +350,15 @@ def get_v1_features_works(parliament: str = "all", limit: int = 24, offset: int 
         where_clauses = []
         params = []
         if search:
-            where_clauses.append("(work_id ILIKE ? OR state ILIKE ? OR mp_name ILIKE ?)")
+            where_clauses.append("(project_id ILIKE ? OR state ILIKE ? OR category ILIKE ?)")
             params += [f"%{search}%", f"%{search}%", f"%{search}%"]
         if lifecycle_status:
-            where_clauses.append("status = ?")
-            params.append(lifecycle_status)
+            if lifecycle_status == 'COMPLETED':
+                where_clauses.append("amount_disbursed >= amount_sanctioned AND amount_sanctioned > 0")
+            elif lifecycle_status == 'ONGOING':
+                where_clauses.append("amount_disbursed > 0 AND amount_disbursed < amount_sanctioned")
+            elif lifecycle_status == 'PENDING':
+                where_clauses.append("(amount_disbursed = 0 OR amount_disbursed IS NULL)")
         if state:
             where_clauses.append("state ILIKE ?")
             params.append(f"%{state}%")
@@ -365,10 +369,19 @@ def get_v1_features_works(parliament: str = "all", limit: int = 24, offset: int 
         total = conn.execute(count_q, params).fetchone()[0]
 
         data_q = f"""
-            SELECT work_id as canonical_work_id, state, constituency, mp_name,
-                   category as work_category, sanctioned_amount, expenditure_amount,
-                   status as lifecycle_status,
-                   CASE WHEN sanctioned_amount > 0 THEN expenditure_amount / sanctioned_amount ELSE 0 END as expenditure_to_sanction_ratio
+            SELECT project_id as canonical_work_id, 
+                   state, 
+                   'Unknown Constituency' as constituency, 
+                   'Unknown MP' as mp_name,
+                   category as work_category, 
+                   amount_sanctioned as sanctioned_amount, 
+                   amount_disbursed as expenditure_amount,
+                   CASE 
+                     WHEN amount_disbursed >= amount_sanctioned AND amount_sanctioned > 0 THEN 'COMPLETED'
+                     WHEN amount_disbursed > 0 THEN 'ONGOING'
+                     ELSE 'PENDING'
+                   END as lifecycle_status,
+                   CASE WHEN amount_sanctioned > 0 THEN amount_disbursed / amount_sanctioned ELSE 0 END as expenditure_to_sanction_ratio
             FROM loksabha_expenditure {where_sql}
             LIMIT ? OFFSET ?
         """
