@@ -383,14 +383,16 @@ def get_v1_features_works(parliament: str = "all", limit: int = 24, offset: int 
         if lifecycle_status and lifecycle_status != "ALL":
             df = df[df["lifecycle_status"].astype(str).str.upper() == lifecycle_status.upper()]
 
-        # Replace NaN with None for JSON serialization
-        df = df.where(pd.notnull(df), None)
-
+        import json
+        
         total = len(df)
         paginated_df = df.iloc[offset : offset + limit]
 
+        # Use pandas to_json to properly handle NaNs -> null
+        records = json.loads(paginated_df.to_json(orient="records"))
+
         return {
-            "records": paginated_df.to_dict(orient="records"),
+            "records": records,
             "total_count": int(total)
         }
     except Exception as e:
