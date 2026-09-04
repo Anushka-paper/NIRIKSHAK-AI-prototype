@@ -1,9 +1,26 @@
 import { ArrowRight, IndianRupee, Briefcase, FileText, CheckCircle2, ShieldCheck, Activity, Database } from "lucide-react";
 import Link from "next/link";
-import { getMpladsMetrics } from "@/lib/data";
 
-export default function Home() {
-  const summaryData = getMpladsMetrics();
+export const revalidate = 3600;
+
+export default async function Home() {
+  let summaryData = { allocated: 0, expenditure: 0, completed: 0, recommended: 0 };
+  
+  try {
+    const mlUrl = process.env.NEXT_PUBLIC_ML_SERVICE_URL || 'http://localhost:8000';
+    const res = await fetch(`${mlUrl}/api/v1/dashboard/overview?parliament=all`, { next: { revalidate: 3600 } });
+    if (res.ok) {
+      const data = await res.json();
+      summaryData = {
+        allocated: data?.analytics?.totalAllocatedAmount || 0,
+        expenditure: data?.analytics?.totalExpenditureAmount || 0,
+        completed: data?.projectStatusMetrics?.completedWorks || 0,
+        recommended: data?.projectStatusMetrics?.totalWorks || 0,
+      };
+    }
+  } catch (e) {
+    console.error("Failed to fetch metrics", e);
+  }
 
   const formatCurrency = (val: number) => {
     if (val >= 10000000) return `₹${(val / 10000000).toFixed(2)} Cr`;
