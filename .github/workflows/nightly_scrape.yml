@@ -1,0 +1,51 @@
+name: Nightly MPLADS Live Scrape
+
+on:
+  schedule:
+    - cron: '30 20 * * *'   # Runs at 2:00 AM IST every night (20:30 UTC)
+  workflow_dispatch:          # Allows manual trigger from GitHub Actions tab
+
+jobs:
+  scrape-and-train:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install playwright aiohttp beautifulsoup4
+
+      - name: Install Playwright Chromium browser
+        run: playwright install chromium
+
+      - name: Run Live Scraper
+        run: python data_pipeline/live_scraper.py
+
+      - name: Run ETL Pipeline
+        run: python data_pipeline/etl_pipeline.py
+
+      - name: Re-train ML Models on new data
+        run: python ml_models/train_all.py
+
+      - name: Upload DuckDB artifact for backend
+        uses: actions/upload-artifact@v4
+        with:
+          name: parliament-data-${{ github.run_id }}
+          path: data_processed/parliament_data.duckdb
+          retention-days: 7
+
+      - name: Commit updated timestamp
+        run: |
+          git config user.name "nirikshak-bot"
+          git config user.email "bot@nirikshak.ai"
+          git add data_pipeline/.last_scraped
+          git diff --staged --quiet || git commit -m "chore: nightly data sync $(date -u +%Y-%m-%d)"
+          git push

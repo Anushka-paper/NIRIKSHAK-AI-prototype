@@ -1,0 +1,32 @@
+name: Daily Data Scraper
+
+on:
+  schedule:
+    - cron: '0 2 * * *' # Runs daily at 2:00 AM
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  scrape-and-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: pip install -r data_pipeline/requirements.txt
+
+      - name: Run Scraper
+        run: python data_pipeline/scraper.py
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "GitHub Action Scraper"
+          git config --global user.email "actions@github.com"
+          git add data_pipeline/LS_DATASET/ data_pipeline/RS_DATASET/
+          git commit -m "Automated data fetch: Update CSVs" || echo "No changes to commit"
+          git push

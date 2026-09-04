@@ -78,7 +78,18 @@ export default function OverviewPage() {
   const completionPercentage = totalWorks > 0 ? ((completedWorks / totalWorks) * 100).toFixed(1) : "0.0";
 
   return (
-    <div className="flex flex-col gap-10 font-body pb-24">
+    <div className="flex flex-col font-body pb-24">
+      {/* Alert Bar for Last Scraped Data */}
+      {data?.pipeline?.lastUpdated && (
+        <div className="bg-blue-50 border-b border-blue-100 px-4 py-2 flex items-center justify-center gap-2 mb-6">
+          <Database className="w-4 h-4 text-blue-600" />
+          <span className="text-sm font-medium text-blue-800">
+            Last Synced Data: <span className="font-bold">{data.pipeline.lastUpdated}</span> (Simulated MOSPI Scrape)
+          </span>
+        </div>
+      )}
+      
+      <div className="flex flex-col gap-10">
       {/* Header & Parliament Selector */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-6">
         <div>
@@ -422,6 +433,7 @@ export default function OverviewPage() {
           </section>
         </>
       )}
+      </div>
     </div>
   );
 }

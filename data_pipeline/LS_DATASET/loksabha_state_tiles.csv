@@ -1,0 +1,145 @@
+state_id,state,parliament_type,tenure_id,tenure_caption,allocated_crore,expenditure_crore,works_recommended,works_sanctioned,works_completed,scraped_at
+35,Andaman And Nicobar Islands,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:31:43.829642
+2,Andhra Pradesh,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:31:44.218165
+3,Arunachal Pradesh,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:31:44.957687
+5,Assam,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:31:45.578523
+6,Bihar,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:31:46.216106
+7,Chandigarh,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:31:46.752882
+8,Chhattisgarh,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:31:47.342900
+11,Delhi,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:31:47.976684
+12,Goa,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:31:48.560134
+27,Gujarat,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:31:49.095893
+14,Haryana,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:31:49.688305
+15,Himachal Pradesh,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:31:50.237988
+16,Jammu And Kashmir,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:31:50.821321
+17,Jharkhand,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:31:51.484847
+18,Karnataka,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:31:52.043264
+36,Kerala,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:31:52.573379
+130,Ladakh,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:31:53.257162
+19,Lakshadweep,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:31:53.896292
+20,Madhya Pradesh,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:31:54.526913
+21,Maharashtra,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:31:55.182749
+22,Manipur,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:31:55.713478
+23,Meghalaya,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:31:56.312401
+13,Mizoram,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:31:56.935585
+24,Nagaland,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:31:57.614271
+25,Odisha,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:31:58.237053
+26,Puducherry,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:31:58.757778
+1,Punjab,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:31:59.335550
+28,Rajasthan,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:31:59.976077
+29,Sikkim,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:00.617413
+30,Tamil Nadu,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:01.259224
+129,Telangana,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:01.815476
+10,The Dadra And Nagar Haveli And Daman And Diu,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:02.359927
+31,Tripura,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:02.910157
+33,Uttar Pradesh,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:03.816305
+32,Uttarakhand,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:04.354986
+34,West Bengal,LS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:04.937850
+35,Andaman And Nicobar Islands,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:05.465206
+2,Andhra Pradesh,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:05.865092
+3,Arunachal Pradesh,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:06.536799
+5,Assam,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:07.182603
+6,Bihar,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:07.812075
+7,Chandigarh,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:08.341675
+8,Chhattisgarh,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:08.895133
+11,Delhi,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:09.582250
+12,Goa,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:10.216336
+27,Gujarat,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:10.775833
+14,Haryana,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:11.337726
+15,Himachal Pradesh,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:11.976231
+16,Jammu And Kashmir,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:12.512653
+17,Jharkhand,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:13.098482
+18,Karnataka,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:13.624009
+36,Kerala,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:14.148382
+130,Ladakh,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:14.709581
+19,Lakshadweep,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:15.327607
+20,Madhya Pradesh,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:15.980936
+21,Maharashtra,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:16.637935
+22,Manipur,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:17.257783
+23,Meghalaya,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:17.897236
+13,Mizoram,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:18.469785
+24,Nagaland,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:18.985346
+25,Odisha,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:19.662449
+26,Puducherry,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:20.307238
+1,Punjab,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:20.935593
+28,Rajasthan,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:21.467557
+29,Sikkim,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:22.056879
+30,Tamil Nadu,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:22.697360
+129,Telangana,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:23.262033
+10,The Dadra And Nagar Haveli And Daman And Diu,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:23.848095
+31,Tripura,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:24.456761
+33,Uttar Pradesh,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:25.102502
+32,Uttarakhand,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:25.766457
+34,West Bengal,LS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:26.378144
+35,Andaman And Nicobar Islands,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:27.022623
+2,Andhra Pradesh,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:27.659404
+3,Arunachal Pradesh,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:28.641946
+5,Assam,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:29.256553
+6,Bihar,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:29.802776
+7,Chandigarh,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:30.383657
+8,Chhattisgarh,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:31.018758
+11,Delhi,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:31.660185
+12,Goa,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:32.296241
+27,Gujarat,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:32.831419
+14,Haryana,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:33.418048
+15,Himachal Pradesh,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:34.021075
+16,Jammu And Kashmir,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:34.862001
+17,Jharkhand,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:35.661542
+18,Karnataka,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:36.430693
+36,Kerala,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:37.257356
+130,Ladakh,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:37.775811
+19,Lakshadweep,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:38.304461
+20,Madhya Pradesh,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:38.899094
+21,Maharashtra,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:39.459036
+22,Manipur,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:40.021571
+23,Meghalaya,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:40.578332
+13,Mizoram,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:41.152335
+24,Nagaland,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:41.698757
+25,Odisha,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:42.277852
+26,Puducherry,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:42.825619
+1,Punjab,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:43.402602
+28,Rajasthan,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:44.175613
+29,Sikkim,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:44.978406
+30,Tamil Nadu,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:45.788922
+129,Telangana,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:46.598647
+10,The Dadra And Nagar Haveli And Daman And Diu,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:47.376197
+31,Tripura,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:47.948168
+33,Uttar Pradesh,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:48.498159
+32,Uttarakhand,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:49.074792
+34,West Bengal,RS,5,17th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:49.614777
+35,Andaman And Nicobar Islands,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:50.154452
+2,Andhra Pradesh,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:50.704306
+3,Arunachal Pradesh,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:51.234030
+5,Assam,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:51.786156
+6,Bihar,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:52.402188
+7,Chandigarh,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:52.942017
+8,Chhattisgarh,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:54.299102
+11,Delhi,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:54.931381
+12,Goa,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:55.560201
+27,Gujarat,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:56.138903
+14,Haryana,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:56.721613
+15,Himachal Pradesh,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:57.366588
+16,Jammu And Kashmir,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:58.119349
+17,Jharkhand,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:58.706512
+18,Karnataka,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:59.287107
+36,Kerala,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:32:59.872543
+130,Ladakh,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:33:00.421639
+19,Lakshadweep,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:33:01.012732
+20,Madhya Pradesh,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:33:01.630725
+21,Maharashtra,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:33:02.212204
+22,Manipur,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:33:02.851360
+23,Meghalaya,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:33:03.454621
+13,Mizoram,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:33:04.244194
+24,Nagaland,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:33:05.638154
+25,Odisha,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:33:06.318163
+26,Puducherry,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:33:06.940148
+1,Punjab,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:33:07.522342
+28,Rajasthan,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:33:09.186811
+29,Sikkim,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:33:09.746704
+30,Tamil Nadu,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:33:10.314431
+129,Telangana,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:33:10.900441
+10,The Dadra And Nagar Haveli And Daman And Diu,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:33:11.526824
+31,Tripura,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:33:12.117162
+33,Uttar Pradesh,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:33:12.792357
+32,Uttarakhand,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:33:13.798808
+34,West Bengal,RS,7,18th Lok Sabha,0.0,0.0,0,0,0,2026-09-04T21:33:14.407236

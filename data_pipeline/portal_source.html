@@ -1,0 +1,512 @@
+<!DOCTYPE html><html lang="en" style="font-size: 16px;"><head>
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The Members of Parliament Local Area Development Scheme (MPLADS) is a Central Sector Scheme fully funded by the Government of India and was launched on 23 December 1993.Its primary focus is on creating durable community assets and improving essential public services, including healthcare, sanitation, education, and drinking water infrastructure.">
+<meta name="keywords" content="MPLADS, mplads, MPLADS e-SAKSHI, e-SAKSHI, Allocated Limit, MPLADS Development, MPLADS Scheme, Consituency Wise Data, Government Data, Indian Public Data, Citizen Dashboard, Public Spending, MP Profiles, MPLADS Dashboard">
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="MPLADS">
+<meta property="og:description" content="MPLADS, Allocated Limit, Consituency Wise Data, Government Data, Indian Public Data, Citizen Dashboard, Public Spending, MP Profiles, MPLADS Dashboard">
+
+<!-- Twitter -->
+<meta name="twitter:title" content="MPLADS">
+<meta name="twitter:description" content="MPLADS, Allocated Limit, Consituency Wise Data, Government Data, Indian Public Data, Citizen Dashboard, Public Spending, MP Profiles, MPLADS Dashboard">
+<!-- NEW BILLBOARD -->
+<!-- 	<script src="https://d3js.org/d3.v6.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/billboard.js/dist/billboard.min.js"></script>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/billboard.js/dist/billboard.min.css">
+ -->
+<!-- NEW BILLBOARD -->
+
+<link href="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-1.13.6/b-2.4.2/b-html5-2.4.2/b-print-2.4.2/datatables.min.css" rel="stylesheet">
+
+<!-- Font Awesome CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+<!-- PAGINATION -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<!--Loading D3.js -->
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style/css/dashboardcss.css">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&amp;display=swap" rel="stylesheet">
+
+<title>MPLADS-Dashboard</title>
+</head>
+<body class="modal-open" style="overflow: hidden; padding-right: 0px;">
+	<header class="top-header">
+
+		<div class="font-resizer">
+			<button id="font-decrease" aria-label="Decrease font size">A-</button>
+			<span class="separator"></span>
+			<button id="font-default" aria-label="Default font size">A</button>
+			<span class="separator"></span>
+			<button id="font-increase" aria-label="Increase font size">A+</button>
+		</div>
+
+		<!-- <div class="lang-switch">
+			<span>EN</span> | <span>HI</span>
+		</div> -->
+	</header>
+
+	<nav-section class="" style="background: white"> <!-- MAIN NAV BAR -->
+	<nav class="navbar navbar-expand-lg navbar-light navcus d-flex mainnav">
+
+		<div class="logodiv">
+			<!-- <img src="/zkImages/mplads_logo_2023.jpg" class="mpladslogo"/> -->
+			<a href="#"><img src="/zkImages/Mplads.png" class="mainlogo" style="filter: brightness(0) saturate(100%) invert(12%) sepia(54%) saturate(1325%) hue-rotate(176deg) brightness(92%) contrast(95%); width: auto; max-height: 54px;" alt="MPLADS e-SAKSHI"></a>
+		</div>
+
+		<div class="">
+			<!-- <a class="navbar-brand" href="#"><img src="/zkImages/mplads_logo_2023.jpg" class="mainlogo" ></a> -->
+
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<!-- <div class="collapse navbar-collapse linkcus" id="navbarNav">
+            <ul class="navbar-nav">
+              <li class="nav-item bold">
+                <a
+                  class="nav-link active"
+                  aria-current="page"
+                  href="./landingpage.html"
+                  target="_blank"
+                  ><object data="/zkImages/Home.svg"></object>&nbsp;Home</a
+                >
+              </li>
+              <li class="nav-item bold">
+		          <a class="nav-link active " aria-current="page" href="#">CONTACT US</a>
+		        </li>
+              <li class="nav-item bold">
+                <a
+                  class="nav-link active"
+                  aria-current="page"
+                  href="#"
+                  style="color: rgb(26, 147, 111)"
+                  ><object id="dash" data="/zkImages/Dashboard.svg"></object
+                  >&nbsp;Dashboard</a
+                >
+              </li>
+              <li class="nav-item bold">
+                <a
+                  class="nav-link active"
+                  aria-current="page"
+                  href="/digigov/Login.zul"
+                  target="_blank"
+                >
+                  <button class="but1">Login</button>
+                </a>
+              </li>
+            </ul>
+          </div> -->
+
+			<div class="collapse navbar-collapse linkcus" id="navbarNav">
+				<ul class="navbar-nav ">
+					<li class="nav-item bold"><a class="nav-link active  " aria-current="page" href="./landingpage.html">Home</a></li>
+					<span class="separator"></span>
+					<li class="nav-item bold"><a class="nav-link" aria-current="page" href="#">Dashboard</a></li>
+				</ul>
+			</div>
+		</div>
+		<a class="nav-link active" aria-current="page" href="/digigov/Login.zul" target="_blank">
+			<button class="but1">LOGIN</button>
+		</a>
+
+	</nav>
+
+	<!-- MAIN NAV BAR --> <!-- SUB NAV BAR --> <!-- <nav
+        class="navbar navbar-expand-lg navbar-light bg-light subnav show">
+        <div class="container-fluid">
+          <div class="collapse navbar-collapse centered" id="subNavBarNav">
+            <ul class="navbar-nav" style="width: 40%">
+              <li id="lok" class="nav-item loksabha centered s-left">
+                <a class="nav-link" href="#">Lok Sabha</a>
+              </li>
+              <li
+                id="rajya"
+                class="nav-item rajyasabha centered s-right deactive"
+              >
+                <a class="nav-link" href="#">Rajya Sabha</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav> --> </nav-section>
+
+	<!-- Privacy Policy Modal -->
+	<div class="modal fade privacy-policy-modal show" id="privacyPolicyModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="privacyPolicyModalLabel" aria-modal="true" role="dialog" style="display: block;">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="btn-close privacy-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<h3 style="font-size: 1.42vw; padding: 0 1vw">What you need to
+						know about the process of works recommendation, sanction and
+						completion and fund utilization under MPLADS on the eSAKSHI Portal
+					</h3>
+					<ul>
+						<li>The MPLADS–eSAKSHI web portal <a href="www.mplads.mospi.gov.in">(www.mplads.mospi.gov.in)</a> was
+							introduced with effect from 1 April 2023 to manage the revised
+							fund-flow procedure under the MPLADS Scheme. With the launch of
+							the eSAKSHI portal, the annual entitlement of Hon’ble Members of
+							Parliament (MPs) is made available through online authorisations
+							at the beginning of each financial year or tenure
+						</li>
+						<li>Prior to 1 April 2023, the Scheme was being implemented
+							in a physical mode and the information regarding works
+							recommended and sanctioned District -wise were being maintained
+							by the concerned District Authorities. The expenditure against
+							these works were also made through physical bank accounts
+							maintained by the respective Districts for the purpose. <b>The
+								information regarding number of works recommended and sanctioned
+								and their respective amounts in respect of the 17th Lok Sabha is
+								available on the eSAKSHI portal for the year 2023-24 and not
+								available for the first four years viz. 2019-20, 2020-21,
+								2021-22 and 2022-23. Similarly, the details of works recommended
+								and sanctioned in respect of Rajya Sabha MPs is not available on
+								eSAKSHI Portal prior to the year 2023-24.</b>
+						</li>
+						<li>The portal provides login credentials to all stakeholders
+							of the Scheme, including Hon’ble MPs, the Central Nodal Agency
+							(MoSPI), State Nodal Authorities (SNAs), District Authorities
+							(NDAs and IDAs), and Implementing Agencies (IAs). Hon’ble MPs use
+							the portal to recommend eligible developmental works in their
+							constituencies and earmark funds from their annual entitlement. <b>For
+								Hon’ble MPs, the total amount recommended on the portal
+								indicates the utilisation of the allocated amounts to them under
+								the Scheme.</b>
+						</li>
+						<li>The responsibility for sanctioning and executing the
+							recommended works rests with the District Authorities. After
+							conducting the necessary feasibility checks, the District
+							Authorities sanction the works and designate the Implementing
+							Agencies responsible for execution. As per the Scheme guidelines,
+							sanctioned works are generally required to be completed within
+							one year of sanction.</li>
+						<li>Implementing Agencies raise vendor payment requests on
+							the portal at various stages of work execution, in accordance
+							with the sanction orders issued by the District Authorities. The
+							expenditure figures displayed on the dashboard represent the
+							total vendor payments released against completed/ongoing works.</li>
+						<li>Data on the eSAKSHI portal are updated in real time based
+							on inputs provided by different stakeholders through their
+							respective logins. Details of recommendations are updated when an
+							Hon’ble MP submits an online recommendation. The status of
+							sanction is updated upon sanction of the work by the District
+							Authority. Progress at different stages of sanctioned works is
+							updated based on entries made by the concerned Implementing
+							Agencies.</li>
+						<li>Upon release of the final payment, Implementing Agencies
+							are required to “mark the work as complete” on the portal as the
+							final step. <b>Only those works that are marked as complete
+								by the Implementing Agencies are reflected as completed works on
+								the public dashboard. </b>The District Authorities are continuously
+							pursued to ensure compliance by the Implementing Agencies to mark
+							the projects as completed following requisite formalities.
+						</li>
+						<li>The eSAKSHI portal also provides for uploading images of
+							assets and relevant documents at each stage of payment
+							processing. Accordingly, <b>Implementing Agencies upload
+								photographs of assets at different stages of completion, along
+								with documents such as sanction orders.</b>
+						</li>
+						<li><b>Implementing Agencies upload photographs of assets
+								at different stages of completion, along with documents such as
+								sanction orders. </b>so as to enable correct interpretation and
+							understanding by the public/ stakeholders.</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Privacy Policy Modal -->
+
+	<tile-section>
+
+	<div class="dboardtitlesection">
+		<div class="textsection">
+			<h2 class="dboardtitle">Dashboard</h2>
+			<h3>
+				<label id="titletag" class="dboarddetails">Details of 18th Lok Sabha MPs</label>
+			</h3>
+			<!-- <label class="dboardcontent"
+		            >eSAKSHI Portal displays data of works recommended online by Hon'ble
+		            Members of Parliament on and after 1st April 2023.
+		         </label> -->
+		</div>
+		<div class="searchtab">
+			<div id="mydrop" class="" style="display: flex; justify-content: space-evenly;">
+				<!-- <input class="form-control me-2 searchbar" type="search" placeholder="Search" aria-label="Search"> -->
+				<div class="searchbar">
+					<div class="search-child-div"></div>
+					<i id="searchicon" class="fa fa-search" style="align-items: center; width: auto; margin-right: 10%;"></i>
+				</div>
+				<div class="dropdown-toggle centered filter" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+					<div id="fil-img"></div>
+					<!-- <label>Filter</label> -->
+				</div>
+				<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+					<!-- <a class="dropdown-item" href="#">Action</a>
+						    <a class="dropdown-item" href="#">Another action</a>
+						    <a class="dropdown-item" href="#">Something else here</a> -->
+					<div class="drop-down-search">
+						<ul>
+							<li id="ten"><label for="Tenure">Tenure</label><br> <select id="tenure" name="tenure" class="sel select2-hidden-accessible" style="padding: 2vh" tabindex="-1" aria-hidden="true" data-select2-id="select2-data-tenure"><option data-select2-id="select2-data-14-5rnb"> </option><option value="5" data-select2-id="select2-data-16-pv5q">17th Lok Sabha</option><option value="7">18th Lok Sabha</option></select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="select2-data-13-dwfk" style="width: auto;"><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-tenure-container" aria-controls="select2-tenure-container"><span class="select2-selection__rendered" id="select2-tenure-container" role="textbox" aria-readonly="true" title="17th Lok Sabha">17th Lok Sabha</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+							</li>
+							<li><label for="states">State </label><br> <select name="States" id="demo" class="sel select2-hidden-accessible" tabindex="-1" aria-hidden="true" data-select2-id="select2-data-demo"><option data-select2-id="select2-data-15-p626"> </option><option value="35" data-select2-id="select2-data-17-rx14">Andaman And Nicobar Islands</option><option value="2">Andhra Pradesh</option><option value="3">Arunachal Pradesh</option><option value="5">Assam</option><option value="6">Bihar</option><option value="7">Chandigarh</option><option value="8">Chhattisgarh</option><option value="11">Delhi</option><option value="12">Goa</option><option value="27">Gujarat</option><option value="14">Haryana</option><option value="15">Himachal Pradesh</option><option value="16">Jammu And Kashmir</option><option value="17">Jharkhand</option><option value="18">Karnataka</option><option value="36">Kerala</option><option value="130">Ladakh</option><option value="19">Lakshadweep</option><option value="20">Madhya Pradesh</option><option value="21">Maharashtra</option><option value="22">Manipur</option><option value="23">Meghalaya</option><option value="13">Mizoram</option><option value="24">Nagaland</option><option value="25">Odisha</option><option value="26">Puducherry</option><option value="1">Punjab</option><option value="28">Rajasthan</option><option value="29">Sikkim</option><option value="30">Tamil Nadu</option><option value="129">Telangana</option><option value="10">The Dadra And Nagar Haveli And Daman And Diu</option><option value="31">Tripura</option><option value="33">Uttar Pradesh</option><option value="32">Uttarakhand</option><option value="34">West Bengal</option></select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="select2-data-7-ia95" style="width: auto;"><span class="selection"><span class="select2-selection select2-selection--single select2-selection--clearable" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-demo-container" aria-controls="select2-demo-container"><button type="button" class="select2-selection__clear" tabindex="-1" title="Remove all items" aria-label="Remove all items" aria-describedby="select2-demo-container" data-select2-id="select2-data-18-7vcp"><span aria-hidden="true">×</span></button><span class="select2-selection__rendered" id="select2-demo-container" role="textbox" aria-readonly="true" title="Andaman And Nicobar Islands">Andaman And Nicobar Islands</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span></li>
+							<li id="const"><label for="constituency">Constituency</label><br>
+								<select id="constituency" name="Constituency" class="sel select2-hidden-accessible" tabindex="-1" aria-hidden="true" data-select2-id="select2-data-constituency"><option data-select2-id="select2-data-19-0xjv"></option><option value="1" data-select2-id="select2-data-21-agew">ANDAMAN AND NICOBAR ISLANDS</option></select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="select2-data-8-d1fa" style="width: auto;"><span class="selection"><span class="select2-selection select2-selection--single select2-selection--clearable" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-constituency-container" aria-controls="select2-constituency-container"><button type="button" class="select2-selection__clear" tabindex="-1" title="Remove all items" aria-label="Remove all items" aria-describedby="select2-constituency-container" data-select2-id="select2-data-22-y582"><span aria-hidden="true">×</span></button><span class="select2-selection__rendered" id="select2-constituency-container" role="textbox" aria-readonly="true" title="ANDAMAN AND NICOBAR ISLANDS">ANDAMAN AND NICOBAR ISLANDS</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+							</li>
+							<li><label for="MPname">MP Name</label><br> <select id="MpName" name="MPnames" class="sel select2-hidden-accessible" tabindex="-1" aria-hidden="true" data-select2-id="select2-data-MpName"><option data-select2-id="select2-data-23-ps8h"></option><option value="3018937">Kuldeep Rai Sharma</option></select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="select2-data-9-ifc4" style="width: auto;"><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-MpName-container" aria-controls="select2-MpName-container"><span class="select2-selection__rendered" id="select2-MpName-container" role="textbox" aria-readonly="true" title="Please Select"><span class="select2-selection__placeholder">Please Select</span></span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span></li>
+
+							<li>
+								<div id="search_btn">
+									<button type="button" class="btn btn-warning" style="margin-left: -20px" id="reset">Reset</button>
+									<button type="button" class="btn btn-success" id="searchFilter">
+										Search</button>
+									<!-- 	<input type="Submit" value ="Reset" name="search" style="margin-left:-40px;" class="filterbutton" id="reset">
+												<input type="Submit" value ="Search" name="search" class="filterbutton" id="searchFilter"> -->
+									<script>
+										$("#reset").click(function() {
+											location.reload();
+										});
+									</script>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+
+				<div>
+					<button id="lok" class="sabhabutton">Lok Sabha</button>
+					<button id="rajya" class="sabhabutton deactive">Rajya
+						Sabha</button>
+				</div>
+
+			</div>
+
+		</div>
+	</div>
+	<marquee direction="left">
+		<label class="dboardcontent">eSAKSHI Portal displays data of
+			works recommended online by Hon'ble Members of Parliament on and
+			after 1st April 2023. </label>
+
+	</marquee>
+
+	
+	<!-- <div class="centered" style="height: 7vh; align-items: center">
+        <marquee direction="left">
+          
+        </marquee>
+      </div> -->
+	<div class="rep-card-container">
+
+		<div class="report-container">
+
+			<div class="title">Title</div>
+
+			<div class="dbchart-container">
+				<svg width="397" height="397" viewBox="0 0 397 397">
+  
+			  Background circle
+			  <circle cx="198.5" cy="198.5" r="140" fill="none" stroke="#e0e0e0" stroke-width="25"></circle>
+			
+			 			
+			  Segment 1 (Recommended)
+			  <circle cx="198.5" cy="198.5" r="140" fill="none" stroke="#2ec7c9" stroke-width="25" stroke-linecap="round" id="seg1"></circle>
+			
+			  Segment 2 (Sanctioned)
+			  <circle cx="198.5" cy="198.5" r="140" fill="none" stroke="#2f86eb" stroke-width="25" stroke-linecap="round" id="seg2"></circle>
+			
+			  Segment 3 (Completed)
+			  <circle cx="198.5" cy="198.5" r="140" fill="none" stroke="#0d2b45" stroke-width="25" stroke-linecap="round" id="seg3"></circle>
+						
+			</svg>
+
+				<div class="center-text">Works</div>
+			</div>
+
+			<div class="legend">
+				<div class="legend-item">
+					<span class="dot" style="background: #2ec7c9;"></span>
+					<div class="legend-content">
+						Works Recommended<br> <b class="legend-content-bold">3,3123
+							Cr</b>
+					</div>
+				</div>
+
+				<div class="legend-item">
+					<span class="dot" style="background: #2f86eb;"></span>
+					<div class="legend-content">
+						Works Sanctioned<br> <b class="legend-content-bold">4,466.38
+							Cr</b>
+					</div>
+				</div>
+
+				<div class="legend-item">
+					<span class="dot" style="background: #0d2b45;"></span>
+					<div class="legend-content">
+						Works Completed<br> <b class="legend-content-bold">859.40
+							Cr</b>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+
+		<!-- <div class="cards-container">
+
+			<div id="fra" class="Dashboard-tile fr"></div>
+
+			<div id="tcc" class="Dashboard-tile tc"></div>
+
+			<div id="tra" class="Dashboard-tile twr"></div>
+
+			<div id="tsw" class="Dashboard-tile te"></div>
+
+			<div id="tca" class="Dashboard-tile twc"></div>
+
+			<div id="tea" class="Dashboard-tile te"></div>
+
+			<script type="module" src="/libs/simplegrid/preLoginDashboard.js"></script>
+		</div> -->
+
+		<div class="row cards-container gy-2">
+			<div class="col-md-2 col-4">
+				<div id="fra" class="Dashboard-tile fr" value="Allocated Limit for Hon'ble MPs" title="₹ &nbsp;83,33,66,73,298.01"><label class="tilekeys">Allocated Limit for Hon'ble MPs</label><div> <label class="tileval"><i class="fa fa-rupee tileicon"></i>&nbsp;8,333.67 Crore</label></div></div>
+			</div>
+			<div class="col-md-2 col-4">
+				<div id="tcc" class="Dashboard-tile tc" value="Amount consented for Calamity"><label class="tilekey">Amount consented for Calamity</label><div><label class="tilevalAmo"><i class="fa fa-rupee tileicon"></i>&nbsp;4.06 Crore</label><br></div></div>
+			</div>
+			<div class="col-md-2 col-4">
+				<div id="tra" class="Dashboard-tile twr" value="Works Recommended"><label class="tilekey">Works Recommended</label><label class="tilekey">No.  <b>106465</b></label><div><label class="tilevalAmo"><i class="fa fa-rupee tileicon"></i>&nbsp;5,705.79 Crore</label><br></div></div>
+			</div>
+			<div class="col-md-2 col-4">
+				<div id="tsw" class="Dashboard-tile te" value="Works Sanctioned"><label class="tilekey">Works Sanctioned</label><label class="tilekey">No.  <b>79082</b></label><div><label class="tilevalAmo"><i class="fa fa-rupee tileicon"></i>&nbsp;4,169.27 Crore</label><br></div></div>
+			</div>
+			<div class="col-md-2 col-4">
+				<div id="tca" class="Dashboard-tile twc" value="Works Completed"><label class="tilekey">Works Completed</label><label class="tilekey">No.  <b>34275</b></label><div><label class="tilevalAmo"><i class="fa fa-rupee tileicon"></i>&nbsp;1,673.38 Crore</label><br></div></div>
+			</div>
+			<div class="col-md-2 col-4">
+				<div id="tea" class="Dashboard-tile te" value="Expenditure on Completed and On-going Works as on Date" title="₹ &nbsp;27,71,91,18,835.45"><label class="tilekeys">Expenditure on Completed and On-going Works as on Date<label class="tilevalLbl"></label></label><div> <label class="tileval"><i class="fa fa-rupee tileicon"></i>&nbsp;2,771.91 Crore</label></div></div>
+			</div>
+
+			<script type="module" src="/libs/simplegrid/preLoginDashboard.js"></script>
+		</div>
+
+
+	</div>
+
+	<div class="table-section my-1">
+		<div id="spin" class="text-center" style="display: none;">
+			<div class="spinner-border text-success" style="height: 70px; width: 70px; font-size: 30" role="status">
+				<span class="visually-hidden">Loading...</span>
+			</div>
+		</div>
+		<div class="tablebody" style="">
+			<div class="tabletitle" id="gridtitle"><p>Allocated Limit for Hon'ble MPs</p></div>
+			<div id="tablepag_wrapper" class="dataTables_wrapper dt-bootstrap5"><div class="dt-buttons">   <a class="dt-button buttons-excel buttons-html5" tabindex="0" aria-controls="tablepag" href="#" title="PDF"><span><i class="fa fa-file-excel-o"></i>&nbsp;<label style="font-weight:bolder;">Excel</label></span></a> <a class="dt-button buttons-csv buttons-html5" tabindex="0" aria-controls="tablepag" href="#" title="PDF"><span><i class="fa fa-file-csv-o"></i>&nbsp;<label style="font-weight:bolder;">CSV</label></span></a> <a class="dt-button buttons-pdf buttons-html5" tabindex="0" aria-controls="tablepag" href="#" title="PDF"><span><i class="fa fa-file-pdf-o"></i>&nbsp;<label style="font-weight:bolder;">PDF</label></span></a> </div><div id="tablepag_filter" class="dataTables_filter"><label>Search:<input type="search" class="form-control form-control-sm" placeholder="" aria-controls="tablepag"></label></div><div class="dataTables_scroll"><div class="dataTables_scrollHead" style="overflow: hidden; position: relative; border: 0px; width: 100%;"><div class="dataTables_scrollHeadInner" style="box-sizing: content-box; width: 0px; padding-right: 0px;"><table class="table table-light nowrap responsive table-striped tablecus S-tab dataTable" style="margin-left: 0px; width: 0px;"><thead class="sticky-top head"><tr><th class="dt-center text-center sorting sorting_asc" tabindex="0" aria-controls="tablepag" rowspan="1" colspan="1" style="width: 100px;" aria-label="Sr. No.: activate to sort column descending" aria-sort="ascending">Sr. No.</th><th class="dt-center sorting" tabindex="0" aria-controls="tablepag" rowspan="1" colspan="1" aria-label="State: activate to sort column ascending" style="width: auto;">State</th><th class="dt-center sorting" tabindex="0" aria-controls="tablepag" rowspan="1" colspan="1" aria-label="Hon'ble Members of Parliaments: activate to sort column ascending" style="width: auto;">Hon'ble Members of Parliaments</th><th class="dt-center sorting" tabindex="0" aria-controls="tablepag" rowspan="1" colspan="1" aria-label="Constituency: activate to sort column ascending" style="width: auto;">Constituency</th><th class="dt-center text-right sorting" tabindex="0" aria-controls="tablepag" rowspan="1" colspan="1" aria-label="Allocated AMOUNT ( ₹ ): activate to sort column ascending" style="width: auto;">Allocated AMOUNT ( ₹ )</th></tr></thead></table></div></div><div class="dataTables_scrollBody" style="position: relative; overflow: auto; width: 100%; max-height: 500px;"><table id="tablepag" class="table table-light nowrap responsive table-striped tablecus S-tab dataTable" aria-describedby="tablepag_info"><thead class="sticky-top head"><tr style="height: 0px;"><th class="dt-center text-center sorting sorting_asc" aria-controls="tablepag" rowspan="1" colspan="1" style="width: 100px; padding-top: 0px; padding-bottom: 0px; border-top-width: 0px; border-bottom-width: 0px; height: 0px;" aria-sort="ascending" aria-label="Sr. No.: activate to sort column descending"><div class="dataTables_sizing" style="height: 0px; overflow: hidden;">Sr. No.</div></th><th class="dt-center sorting" aria-controls="tablepag" rowspan="1" colspan="1" aria-label="State: activate to sort column ascending" style="padding-top: 0px; padding-bottom: 0px; border-top-width: 0px; border-bottom-width: 0px; height: 0px; width: auto;"><div class="dataTables_sizing" style="height: 0px; overflow: hidden;">State</div></th><th class="dt-center sorting" aria-controls="tablepag" rowspan="1" colspan="1" aria-label="Hon'ble Members of Parliaments: activate to sort column ascending" style="padding-top: 0px; padding-bottom: 0px; border-top-width: 0px; border-bottom-width: 0px; height: 0px; width: auto;"><div class="dataTables_sizing" style="height: 0px; overflow: hidden;">Hon'ble Members of Parliaments</div></th><th class="dt-center sorting" aria-controls="tablepag" rowspan="1" colspan="1" aria-label="Constituency: activate to sort column ascending" style="padding-top: 0px; padding-bottom: 0px; border-top-width: 0px; border-bottom-width: 0px; height: 0px; width: auto;"><div class="dataTables_sizing" style="height: 0px; overflow: hidden;">Constituency</div></th><th class="dt-center text-right sorting" aria-controls="tablepag" rowspan="1" colspan="1" aria-label="Allocated AMOUNT ( ₹ ): activate to sort column ascending" style="padding-top: 0px; padding-bottom: 0px; border-top-width: 0px; border-bottom-width: 0px; height: 0px; width: auto;"><div class="dataTables_sizing" style="height: 0px; overflow: hidden;">Allocated AMOUNT ( ₹ )</div></th></tr></thead><tfoot class="sticky-bottom"><tr style="height: 0px;"><td style="text-align: left; font-weight: bolder; padding-top: 0px; padding-bottom: 0px; border-top-width: 0px; border-bottom-width: 0px; height: 0px; width: 0px;" class="dt-center text-center" rowspan="1" colspan="1"><div class="dataTables_sizing" style="height: 0px; overflow: hidden;">Grand Total</div></td><td class="dt-center" rowspan="1" colspan="1" style="padding-top: 0px; padding-bottom: 0px; border-top-width: 0px; border-bottom-width: 0px; height: 0px; width: 0px;"><div class="dataTables_sizing" style="height: 0px; overflow: hidden;">&nbsp;</div></td><td class="dt-center" rowspan="1" colspan="1" style="padding-top: 0px; padding-bottom: 0px; border-top-width: 0px; border-bottom-width: 0px; height: 0px; width: 0px;"><div class="dataTables_sizing" style="height: 0px; overflow: hidden;">&nbsp;</div></td><td class="dt-center" rowspan="1" colspan="1" style="padding-top: 0px; padding-bottom: 0px; border-top-width: 0px; border-bottom-width: 0px; height: 0px; width: 0px;"><div class="dataTables_sizing" style="height: 0px; overflow: hidden;">&nbsp;</div></td><td class="dt-center text-right" rowspan="1" colspan="1" style="padding-top: 0px; padding-bottom: 0px; border-top-width: 0px; border-bottom-width: 0px; height: 0px; width: 0px;"><div class="dataTables_sizing" style="height: 0px; overflow: hidden;">83,33,66,73,298.01</div></td></tr></tfoot>
+				
+				<tbody class="tail"><tr class="odd"><td class="dt-center text-center sorting_1"><div style="text-align:center">1</div></td><td class="  dt-center">Maharashtra</td><td class="  dt-center">AASHTIKAR PATIL NAGESH BAPURAO</td><td class="  dt-center">HINGOLI</td><td class="  dt-center text-right"><div style="text-align:right">190289442</div></td></tr><tr class="even"><td class="dt-center text-center sorting_1"><div style="text-align:center">2</div></td><td class="  dt-center">Jammu And Kashmir</td><td class="  dt-center">ABDUL RASHID SHEIKH</td><td class="  dt-center">BARAMULLAH</td><td class="  dt-center text-right"><div style="text-align:right">154773472.11</div></td></tr><tr class="odd"><td class="dt-center text-center sorting_1"><div style="text-align:center">3</div></td><td class="  dt-center">Bihar</td><td class="  dt-center">ABHAY KUMAR SINHA</td><td class="  dt-center">AURANGABAD_BR</td><td class="  dt-center text-right"><div style="text-align:right">147000000</div></td></tr><tr class="even"><td class="dt-center text-center sorting_1"><div style="text-align:center">4</div></td><td class="  dt-center">West Bengal</td><td class="  dt-center">ABHIJIT GANGOPADHYAY</td><td class="  dt-center">TAMLUK</td><td class="  dt-center text-right"><div style="text-align:right">147000000</div></td></tr><tr class="odd"><td class="dt-center text-center sorting_1"><div style="text-align:center">5</div></td><td class="  dt-center">West Bengal</td><td class="  dt-center">Abu Taher Khan</td><td class="  dt-center">MURSHIDABAD</td><td class="  dt-center text-right"><div style="text-align:right">147000000</div></td></tr><tr class="even"><td class="dt-center text-center sorting_1"><div style="text-align:center">6</div></td><td class="  dt-center">West Bengal</td><td class="  dt-center">ADHIKARI SOUMENDU</td><td class="  dt-center">KANTHI</td><td class="  dt-center text-right"><div style="text-align:right">147000000</div></td></tr><tr class="odd"><td class="dt-center text-center sorting_1"><div style="text-align:center">7</div></td><td class="  dt-center">Uttar Pradesh</td><td class="  dt-center">ADITYA YADAV</td><td class="  dt-center">BADAUN</td><td class="  dt-center text-right"><div style="text-align:right">147000000</div></td></tr><tr class="even"><td class="dt-center text-center sorting_1"><div style="text-align:center">8</div></td><td class="  dt-center">Kerala</td><td class="  dt-center">Adv Adoor Prakash </td><td class="  dt-center">ATTINGAL</td><td class="  dt-center text-right"><div style="text-align:right">147000000</div></td></tr><tr class="odd"><td class="dt-center text-center sorting_1"><div style="text-align:center">9</div></td><td class="  dt-center">Kerala</td><td class="  dt-center">Adv Dean Kuriakose</td><td class="  dt-center">IDUKKI</td><td class="  dt-center text-right"><div style="text-align:right">147000000</div></td></tr><tr class="even"><td class="dt-center text-center sorting_1"><div style="text-align:center">10</div></td><td class="  dt-center">Maharashtra</td><td class="  dt-center">ADV GOWAAL KAGADA PADAVI</td><td class="  dt-center">NANDURBAR(ST)</td><td class="  dt-center text-right"><div style="text-align:right">147816309.11</div></td></tr><tr class="odd"><td class="dt-center text-center sorting_1"><div style="text-align:center">11</div></td><td class="  dt-center">Kerala</td><td class="  dt-center">ADV K FRANCIS GEORGE</td><td class="  dt-center">KOTTAYAM</td><td class="  dt-center text-right"><div style="text-align:right">188722256.11</div></td></tr><tr class="even"><td class="dt-center text-center sorting_1"><div style="text-align:center">12</div></td><td class="  dt-center">Uttar Pradesh</td><td class="  dt-center">AFZAL ANSARI</td><td class="  dt-center">GHAZIPUR</td><td class="  dt-center text-right"><div style="text-align:right">220500000</div></td></tr><tr class="odd"><td class="dt-center text-center sorting_1"><div style="text-align:center">13</div></td><td class="  dt-center">Jammu And Kashmir</td><td class="  dt-center">AGA SYED RUHULLAH MEHDI</td><td class="  dt-center">SRINAGAR</td><td class="  dt-center text-right"><div style="text-align:right">147000000</div></td></tr><tr class="even"><td class="dt-center text-center sorting_1"><div style="text-align:center">14</div></td><td class="  dt-center">Uttarakhand</td><td class="  dt-center">Ajay Bhatt</td><td class="  dt-center">NAINITAL UDHAM SINGH NAG.</td><td class="  dt-center text-right"><div style="text-align:right">147000000</div></td></tr><tr class="odd"><td class="dt-center text-center sorting_1"><div style="text-align:center">15</div></td><td class="  dt-center">Bihar</td><td class="  dt-center">Ajay Kumar Mandal</td><td class="  dt-center">BHAGALPUR</td><td class="  dt-center text-right"><div style="text-align:right">147000000</div></td></tr><tr class="even"><td class="dt-center text-center sorting_1"><div style="text-align:center">16</div></td><td class="  dt-center">Uttarakhand</td><td class="  dt-center">Ajay Tamta</td><td class="  dt-center">ALMORA(SC)</td><td class="  dt-center text-right"><div style="text-align:right">147000000</div></td></tr><tr class="odd"><td class="dt-center text-center sorting_1"><div style="text-align:center">17</div></td><td class="  dt-center">Uttar Pradesh</td><td class="  dt-center">AJENDRA SINGH LODHI</td><td class="  dt-center">HAMIRPUR_UP</td><td class="  dt-center text-right"><div style="text-align:right">147000000</div></td></tr><tr class="even"><td class="dt-center text-center sorting_1"><div style="text-align:center">18</div></td><td class="  dt-center">Uttar Pradesh</td><td class="  dt-center">AKHILESH YADAV</td><td class="  dt-center">KANNAUJ</td><td class="  dt-center text-right"><div style="text-align:right">147000000</div></td></tr><tr class="odd"><td class="dt-center text-center sorting_1"><div style="text-align:center">19</div></td><td class="  dt-center">Uttar Pradesh</td><td class="  dt-center">AKSHAYA YADAV</td><td class="  dt-center">FIROZABAD</td><td class="  dt-center text-right"><div style="text-align:right">147000000</div></td></tr><tr class="even"><td class="dt-center text-center sorting_1"><div style="text-align:center">20</div></td><td class="  dt-center">Manipur</td><td class="  dt-center">ALFRED KANNGAM S ARTHUR</td><td class="  dt-center">OUTER MANIPUR(ST)</td><td class="  dt-center text-right"><div style="text-align:right">147000000</div></td></tr></tbody>
+				
+			</table></div><div class="dataTables_scrollFoot" style="overflow: hidden; border: 0px; width: 100%;"><div class="dataTables_scrollFootInner" style="display: none; width: 0px; padding-right: 0px;"><table class="table table-light nowrap responsive table-striped tablecus S-tab dataTable" style="margin-left: 0px; width: 0px;"><tfoot class="sticky-bottom"><tr><td style="text-align: left; font-weight: bolder; width: 0px;" class="dt-center text-center" rowspan="1" colspan="1">Grand Total</td><td class="dt-center" rowspan="1" colspan="1" style="width: 0px;">&nbsp;</td><td class="dt-center" rowspan="1" colspan="1" style="width: 0px;">&nbsp;</td><td class="dt-center" rowspan="1" colspan="1" style="width: 0px;">&nbsp;</td><td class="dt-center text-right" rowspan="1" colspan="1" style="width: 0px;">83,33,66,73,298.01</td></tr></tfoot></table></div></div></div><div class="dataTables_info" id="tablepag_info" role="status" aria-live="polite">Showing 1 to 20  of  543 Records</div><div class="dataTables_paginate paging_simple_numbers" id="tablepag_paginate"><ul class="pagination"><li class="paginate_button page-item previous disabled" id="tablepag_previous"><a aria-controls="tablepag" aria-disabled="true" role="link" data-dt-idx="previous" tabindex="0" class="page-link">Previous</a></li><li class="paginate_button page-item active"><a href="#" aria-controls="tablepag" role="link" aria-current="page" data-dt-idx="0" tabindex="0" class="page-link">1</a></li><li class="paginate_button page-item "><a href="#" aria-controls="tablepag" role="link" data-dt-idx="1" tabindex="0" class="page-link">2</a></li><li class="paginate_button page-item "><a href="#" aria-controls="tablepag" role="link" data-dt-idx="2" tabindex="0" class="page-link">3</a></li><li class="paginate_button page-item "><a href="#" aria-controls="tablepag" role="link" data-dt-idx="3" tabindex="0" class="page-link">4</a></li><li class="paginate_button page-item "><a href="#" aria-controls="tablepag" role="link" data-dt-idx="4" tabindex="0" class="page-link">5</a></li><li class="paginate_button page-item disabled" id="tablepag_ellipsis"><a aria-controls="tablepag" aria-disabled="true" role="link" data-dt-idx="ellipsis" tabindex="0" class="page-link">…</a></li><li class="paginate_button page-item "><a href="#" aria-controls="tablepag" role="link" data-dt-idx="27" tabindex="0" class="page-link">28</a></li><li class="paginate_button page-item next" id="tablepag_next"><a href="#" aria-controls="tablepag" role="link" data-dt-idx="next" tabindex="0" class="page-link">Next</a></li></ul></div></div>
+			<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+			<script src="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-1.13.6/b-2.4.2/b-html5-2.4.2/b-print-2.4.2/datatables.min.js"></script>
+			<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+			<script type="module" src="../WebContent/libs/simplegrid/poptable.js"></script>
+		</div>
+	</div>
+	</tile-section>
+
+	<!-- For Image Pop up -->
+	<div class="modal fade" id="image_pop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="staticBackdropLabel">Attachments</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body"></div>
+			</div>
+		</div>
+	</div>
+
+	<!-- For Image Pop up -->
+
+	<!-- For Review rating by work -->
+	<div class="modal fade" id="wrk-revrate-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		<div class="modal-dialog modal-xl modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="staticBackdropLabel">Reviews And
+						Rating</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body"></div>
+			</div>
+		</div>
+	</div>
+
+
+	<footer>
+		<div class="footer-top">
+
+			<div class="contact-info">
+				<div>
+					<strong>Contact us:&nbsp;</strong>
+					<div>
+						Landline no: 011-2345602, 011-23455607<br> Email id:
+						cna-mplads@mospi.gov.in
+					</div>
+				</div>
+			</div>
+			<div class="socialicon">
+				<div>
+					<img id="playStoreIcon" style="height: 39px; cursor: pointer; margin-top: 20px;" src="/zkImages/play-store.png" onclick="callApi('playstore')" alt="MPLADS e-SAKSHI App"> <img id="appStoreIcon" style="height: 40px; margin-top: 18px; cursor: pointer;" src="/zkImages/app-store.png" onclick="callApi('appstore')" alt="MPLADS e-SAKSHI App">
+				</div>
+			</div>
+		</div>
+
+		<div class="footercus">
+			<p>© Content Owned by Ministry of Statistics and Programme
+				Implementation Government of India | Site Maintained by Tata
+				Consultancy Services Ltd.&nbsp;</p>
+		</div>
+	</footer>
+
+	<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+	<script type="module" src="/libs/simplegrid/loksaba.js"></script>
+	<script type="module" src="/libs/simplegrid/rajyasaba.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<!-- NEW -->
+
+<!-- OLD -->
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.1.0/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js"></script>
+
+<!--  OLD -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+<!-- additionals buttons -->
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.4.1/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.4.1/js/buttons.flash.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.4.1/js/buttons.html5.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.4.1/js/buttons.print.min.js"></script>
+<!-- PAGINATION JQUERY -->
+
+<div class="modal-backdrop fade show"></div></body><!-- jQuery --><!-- Data Table JS --></html>
