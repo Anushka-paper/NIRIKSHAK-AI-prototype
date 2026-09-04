@@ -127,6 +127,11 @@ async def get_v1_overview_states(parliament: str = "all"):
 
     summaries = []
     
+    try:
+        from .state_aggregator import clean_state_id
+    except ImportError:
+        from state_aggregator import clean_state_id
+
     ut_list = ["Delhi", "Puducherry", "Chandigarh", "Lakshadweep", 
                "Dadra And Nagar Haveli And Daman And Diu", 
                "Andaman And Nicobar Islands", "Ladakh", "Jammu And Kashmir"]
@@ -135,7 +140,7 @@ async def get_v1_overview_states(parliament: str = "all"):
         state_name = str(row['state'])
         
         summaries.append({
-            "id": state_name[:3].upper() + str(idx),
+            "id": clean_state_id(state_name),
             "name": state_name,
             "type": "UT" if any(u.lower() in state_name.lower() for u in ut_list) else "STATE",
             "totalProjects": int(row['work_count']),
