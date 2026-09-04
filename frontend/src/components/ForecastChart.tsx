@@ -73,7 +73,7 @@ export default function ForecastChart({ entityId = "default" }: { entityId?: str
             <YAxis tick={{ fill: '#6b7280', fontSize: 12 }} axisLine={false} tickLine={false} tickFormatter={(val) => `₹${(val/100000).toFixed(1)}L`} />
             <Tooltip 
               contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-              formatter={(value: number) => [`₹${value.toLocaleString()}`, '']}
+              formatter={(value: any) => [`₹${Number(value).toLocaleString()}`, '']}
             />
             <Legend wrapperStyle={{ paddingTop: '20px' }} />
             
