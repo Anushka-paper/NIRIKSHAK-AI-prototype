@@ -1,17 +1,216 @@
 {
-  "execution_timestamp": "2026-09-03T21:37:14.527086",
-  "target_parliament_scope": "lok_sabha",
+  "execution_timestamp": "2026-09-04T03:21:16.948405",
+  "parliament_scope": "all",
+  "stages": [
+    "Stage 0: Raw Ingestion",
+    "Stage 1: Schema Validation & Quarantine",
+    "Stage 2: Entity Resolution & Cleaning",
+    "Stage 3: Lifecycle Integration (11 Canonical Tables)",
+    "Stage 4: Base Feature Engineering (Feature Store)",
+    "Stage 5: Model Adapters Preparation",
+    "Stage 6: Scoring & Audit Reporting"
+  ],
   "parliaments_processed": {
     "lok_sabha": {
-      "datasets_discovered": 7,
-      "datasets_loaded_success": 7,
-      "datasets_loaded_failed": 0,
-      "profiling_status": "success",
-      "standardization_status": "success",
-      "entity_resolution_status": "disabled",
-      "feature_engineering_status": "disabled",
-      "processing_time_seconds": 48.84
+      "datasets_ingested": 6,
+      "canonical_tables_generated": 11,
+      "canonical_works_count": 78502,
+      "canonical_expenditures_count": 83015,
+      "feature_store_features": 36,
+      "validation_report": {
+        "allocation": {
+          "dataset_type": "allocation",
+          "parliament": "lok_sabha",
+          "total_rows": 544,
+          "valid_rows": 542,
+          "quarantined_rows": 2,
+          "matched_critical_columns": {
+            "mp": "Hon'ble Members of Parliaments",
+            "amount": "Allocated AMOUNT ( \u20b9 )"
+          },
+          "ambiguous_columns_flagged": [],
+          "validation_passed": false
+        },
+        "recommended": {
+          "dataset_type": "recommended",
+          "parliament": "lok_sabha",
+          "total_rows": 103393,
+          "valid_rows": 103392,
+          "quarantined_rows": 1,
+          "matched_critical_columns": {
+            "work": "WORK",
+            "date": "Recommended date",
+            "amount": "RECOMMENDED AMOUNT   ( \u20b9 )"
+          },
+          "ambiguous_columns_flagged": [
+            "Sanction Date"
+          ],
+          "validation_passed": false
+        },
+        "sanctioned": {
+          "dataset_type": "sanctioned",
+          "parliament": "lok_sabha",
+          "total_rows": 78287,
+          "valid_rows": 78286,
+          "quarantined_rows": 1,
+          "matched_critical_columns": {
+            "work": "Work",
+            "date": "Sanction Date",
+            "amount": "Sanction Amount ( \u20b9 )"
+          },
+          "ambiguous_columns_flagged": [
+            "Sanction Date",
+            "Work Status"
+          ],
+          "validation_passed": false
+        },
+        "expenditure": {
+          "dataset_type": "expenditure",
+          "parliament": "lok_sabha",
+          "total_rows": 83016,
+          "valid_rows": 83015,
+          "quarantined_rows": 1,
+          "matched_critical_columns": {
+            "work": "Work",
+            "amount": "Fund Disbursed Amount ( \u20b9 )"
+          },
+          "ambiguous_columns_flagged": [
+            "Payment Status"
+          ],
+          "validation_passed": false
+        },
+        "completed": {
+          "dataset_type": "completed",
+          "parliament": "lok_sabha",
+          "total_rows": 33976,
+          "valid_rows": 33897,
+          "quarantined_rows": 79,
+          "matched_critical_columns": {
+            "work": "Work",
+            "date": "Completion Date",
+            "amount": "Amount Disbursed ( \u20b9 )"
+          },
+          "ambiguous_columns_flagged": [
+            "Image"
+          ],
+          "validation_passed": false
+        },
+        "calamity": {
+          "dataset_type": "calamity",
+          "parliament": "lok_sabha",
+          "total_rows": 13,
+          "valid_rows": 12,
+          "quarantined_rows": 1,
+          "matched_critical_columns": {
+            "mp": "Hon'ble Members of Parliament",
+            "amount": "Consent Amount ( \u20b9 )"
+          },
+          "ambiguous_columns_flagged": [],
+          "validation_passed": false
+        }
+      },
+      "duration_seconds": 113.6
+    },
+    "rajya_sabha": {
+      "datasets_ingested": 6,
+      "canonical_tables_generated": 11,
+      "canonical_works_count": 19501,
+      "canonical_expenditures_count": 24966,
+      "feature_store_features": 36,
+      "validation_report": {
+        "allocation": {
+          "dataset_type": "allocation",
+          "parliament": "rajya_sabha",
+          "total_rows": 232,
+          "valid_rows": 231,
+          "quarantined_rows": 1,
+          "matched_critical_columns": {
+            "mp": "Hon'ble Members of Parliament",
+            "amount": "Allocated AMOUNT ( \u20b9 )"
+          },
+          "ambiguous_columns_flagged": [],
+          "validation_passed": false
+        },
+        "recommended": {
+          "dataset_type": "recommended",
+          "parliament": "rajya_sabha",
+          "total_rows": 24948,
+          "valid_rows": 24947,
+          "quarantined_rows": 1,
+          "matched_critical_columns": {
+            "work": "WORK",
+            "date": "Recommended date",
+            "amount": "RECOMMENDED AMOUNT   ( \u20b9 )"
+          },
+          "ambiguous_columns_flagged": [
+            "Sanction Date"
+          ],
+          "validation_passed": false
+        },
+        "sanctioned": {
+          "dataset_type": "sanctioned",
+          "parliament": "rajya_sabha",
+          "total_rows": 19312,
+          "valid_rows": 19311,
+          "quarantined_rows": 1,
+          "matched_critical_columns": {
+            "work": "Work",
+            "date": "Sanction Date",
+            "amount": "Sanction Amount ( \u20b9 )"
+          },
+          "ambiguous_columns_flagged": [
+            "Sanction Date",
+            "Work Status"
+          ],
+          "validation_passed": false
+        },
+        "expenditure": {
+          "dataset_type": "expenditure",
+          "parliament": "rajya_sabha",
+          "total_rows": 24967,
+          "valid_rows": 24966,
+          "quarantined_rows": 1,
+          "matched_critical_columns": {
+            "work": "Work",
+            "amount": "Fund Disbursed Amount ( \u20b9 )"
+          },
+          "ambiguous_columns_flagged": [
+            "Payment Status"
+          ],
+          "validation_passed": false
+        },
+        "completed": {
+          "dataset_type": "completed",
+          "parliament": "rajya_sabha",
+          "total_rows": 9912,
+          "valid_rows": 9893,
+          "quarantined_rows": 19,
+          "matched_critical_columns": {
+            "work": "Work",
+            "date": "Completion Date",
+            "amount": "Amount Disbursed ( \u20b9 )"
+          },
+          "ambiguous_columns_flagged": [
+            "Image"
+          ],
+          "validation_passed": false
+        },
+        "calamity": {
+          "dataset_type": "calamity",
+          "parliament": "rajya_sabha",
+          "total_rows": 21,
+          "valid_rows": 20,
+          "quarantined_rows": 1,
+          "matched_critical_columns": {
+            "mp": "Hon'ble Members of Parliament",
+            "amount": "Consent Amount ( \u20b9 )"
+          },
+          "ambiguous_columns_flagged": [],
+          "validation_passed": false
+        }
+      },
+      "duration_seconds": 69.21
     }
   },
-  "total_processing_time_seconds": 48.85
+  "total_duration_seconds": 182.82
 }

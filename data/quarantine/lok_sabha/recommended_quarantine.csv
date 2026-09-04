@@ -1,0 +1,2 @@
+Sr. No.,Work category,WORK,State,IDA,Hon'ble Members of Parliament,Constituency,Work description,Recommended date,RECOMMENDED AMOUNT   ( ₹ ),Sanction Date,work_id_raw,source_house,source_file,quarantine_reason
+Grand Total, , , , , , , , , ,"56,41,94,31,615.27", ,lok_sabha,recommended.csv,Missing required value in 'WORK'; Missing required value in 'Recommended date'; Missing required value in 'RECOMMENDED AMOUNT   ( ₹ )'; 

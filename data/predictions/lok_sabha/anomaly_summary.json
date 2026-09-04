@@ -1,0 +1,20 @@
+{
+  "parliament": "lok_sabha",
+  "total_works_evaluated": 78502,
+  "anomalies_detected": 3926,
+  "anomaly_rate_pct": 5.0,
+  "high_risk_works_count": 699,
+  "features_utilized": [
+    "sanction_amount",
+    "district_category_median",
+    "cost_deviation_pct",
+    "total_expenditure_vs_sanction_amount",
+    "total_execution_days",
+    "vendor_txn_count_per_district_per_quarter",
+    "is_overpayment",
+    "budget_ceiling_breach_flag",
+    "evidence_missing_flag"
+  ],
+  "model_path": "C:\\Users\\ASUS\\Desktop\\nirikshak\\NIRIKSHAK-AI-prototype\\artifacts\\isolation_forest_lok_sabha.joblib",
+  "predictions_path": "C:\\Users\\ASUS\\Desktop\\nirikshak\\NIRIKSHAK-AI-prototype\\data\\predictions\\lok_sabha\\work_anomalies.csv"
+}

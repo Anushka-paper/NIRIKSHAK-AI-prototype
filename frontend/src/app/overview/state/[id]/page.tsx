@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { StateSummary } from "@/types/overview";
@@ -19,8 +19,28 @@ import {
   ExternalLink,
   ShieldCheck,
   MapPin,
-  Building2
+  Building2,
+  FileSpreadsheet,
+  LayoutGrid,
+  List,
+  Calendar,
+  User,
+  Tag
 } from "lucide-react";
+import MPPerformanceSection, { MPPerformanceRecord } from "@/components/features/MPPerformanceSection";
+
+interface RawCompletedRecord {
+  work_id: string;
+  description: string;
+  state: string;
+  constituency: string;
+  mp_name: string;
+  amount: number;
+  completion_date: string;
+  ida_agency: string;
+  category: string;
+  parliament: string;
+}
 
 export default function StateDetailPage() {
   const params = useParams();
@@ -41,12 +61,38 @@ export default function StateDetailPage() {
   const [loadingProjects, setLoadingProjects] = useState<boolean>(true);
   const [projectsError, setProjectsError] = useState<string | null>(null);
 
+  // Raw Completed Projects State
+  const [rawCompleted, setRawCompleted] = useState<RawCompletedRecord[]>([]);
+  const [rawCompletedTotal, setRawCompletedTotal] = useState<number>(0);
+  const [rawCompletedAmount, setRawCompletedAmount] = useState<number>(0);
+  const [loadingRawCompleted, setLoadingRawCompleted] = useState<boolean>(true);
+  const [completedViewMode, setCompletedViewMode] = useState<"cards" | "table">("cards");
+  const [completedPage, setCompletedPage] = useState<number>(1);
+  const completedLimit = 9;
+
+  // MP Performance Graph State
+  const [mpsPerformance, setMpsPerformance] = useState<MPPerformanceRecord[]>([]);
+  const [loadingMps, setLoadingMps] = useState<boolean>(true);
+
   // Filters & Pagination
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
-  const [sortBy, setSortBy] = useState<string>("amount_desc");
   const [page, setPage] = useState<number>(1);
   const limit = 20;
+
+  // Helper to parse cluttered work ID strings into clean ID & Title
+  const parseWorkInfo = (rawWork: string) => {
+    if (!rawWork) return { id: "MPLADS Project", title: "Public Infrastructure Work" };
+    // Example: "WS/MP492/2024-2025/134984-Lighting of public spaces"
+    const dashIdx = rawWork.indexOf("-");
+    if (dashIdx !== -1 && rawWork.startsWith("WS/")) {
+      return {
+        id: rawWork.substring(0, dashIdx).trim(),
+        title: rawWork.substring(dashIdx + 1).trim()
+      };
+    }
+    return { id: rawWork, title: "" };
+  };
 
   // 1. Fetch State Aggregated Summary
   useEffect(() => {
@@ -72,7 +118,60 @@ export default function StateDetailPage() {
     loadStateSummary();
   }, [stateId, parliament]);
 
-  // 2. Fetch Filtered Projects for this State
+  // 2. Fetch Completed Projects from RAW completed dataset
+  useEffect(() => {
+    if (!stateId) return;
+    async function loadRawCompleted() {
+      setLoadingRawCompleted(true);
+      try {
+        const offset = (completedPage - 1) * completedLimit;
+        const qParams = new URLSearchParams({
+          parliament,
+          state: stateId,
+          limit: String(completedLimit),
+          offset: String(offset)
+        });
+        const res = await fetch(`/api/raw/completed?${qParams.toString()}`);
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data) {
+            setRawCompleted(json.data.records || []);
+            setRawCompletedTotal(json.data.total_count || 0);
+            setRawCompletedAmount(json.data.total_amount || 0);
+          }
+        }
+      } catch (err) {
+        console.error("Error loading raw completed works:", err);
+      } finally {
+        setLoadingRawCompleted(false);
+      }
+    }
+    loadRawCompleted();
+  }, [stateId, parliament, completedPage]);
+
+  // 3. Fetch MP Performance for this State (for the graph)
+  useEffect(() => {
+    if (!stateId) return;
+    async function loadMpsPerformance() {
+      setLoadingMps(true);
+      try {
+        const res = await fetch(`/api/overview/states/${encodeURIComponent(stateId)}/mps?parliament=${parliament}`);
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && Array.isArray(json.data)) {
+            setMpsPerformance(json.data);
+          }
+        }
+      } catch (err) {
+        console.error("Error loading MP performance:", err);
+      } finally {
+        setLoadingMps(false);
+      }
+    }
+    loadMpsPerformance();
+  }, [stateId, parliament]);
+
+  // 4. Fetch Filtered Projects for this State
   useEffect(() => {
     if (!stateId) return;
     async function loadProjects() {
@@ -121,11 +220,6 @@ export default function StateDetailPage() {
 
   const totalPages = Math.ceil(totalProjectsCount / limit) || 1;
 
-  // Completed projects subset for the Completed Work Section
-  const completedProjectsList = useMemo(() => {
-    return projects.filter(p => p.lifecycle_status === "COMPLETED").slice(0, 5);
-  }, [projects]);
-
   if (loadingSummary) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6 font-body">
@@ -148,10 +242,10 @@ export default function StateDetailPage() {
           <h2 className="text-xl font-headline font-bold text-gray-900">State Not Found</h2>
           <p className="text-xs text-gray-600">{summaryError || "Could not retrieve records for this State/UT."}</p>
           <Link
-            href="/overview"
+            href="/states"
             className="inline-block px-5 py-2.5 rounded-xl bg-gray-900 text-white text-xs font-bold hover:bg-gray-800"
           >
-            ← Back to Overview
+            ← Back to States Directory
           </Link>
         </div>
       </div>
@@ -164,10 +258,10 @@ export default function StateDetailPage() {
       <div className="flex items-center justify-between border-b pb-4">
         <div className="flex items-center gap-3">
           <Link
-            href="/overview"
+            href="/states"
             className="p-2 rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-600 transition-colors flex items-center gap-1.5 text-xs font-bold"
           >
-            <ArrowLeft className="w-4 h-4" /> Back to Overview
+            <ArrowLeft className="w-4 h-4" /> Back to States
           </Link>
           <div className="h-4 w-px bg-gray-200" />
           <span className="font-mono text-xs font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-lg">
@@ -183,7 +277,7 @@ export default function StateDetailPage() {
         </span>
       </div>
 
-      {/* State Overview Header - Requirement 8 */}
+      {/* State Overview Header */}
       <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-subtle flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <div className="flex items-center gap-2 mb-2">
@@ -216,7 +310,7 @@ export default function StateDetailPage() {
         </div>
       </div>
 
-      {/* Summary KPI Cards - Requirement 9 */}
+      {/* Summary KPI Cards */}
       <section className="grid grid-cols-2 md:grid-cols-4 gap-5">
         <div className="bg-white p-5 rounded-2xl shadow-subtle border border-gray-100">
           <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block">
@@ -259,91 +353,261 @@ export default function StateDetailPage() {
         </div>
       </section>
 
-      {/* Completed Work Section - Requirement 10 */}
+      {/* Clean & Understandable Completed Work Section */}
       <section className="bg-white rounded-3xl p-6 sm:p-8 border border-emerald-100 shadow-subtle space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-gray-100 gap-2">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-gray-100 gap-4">
           <div>
             <div className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 uppercase tracking-wider mb-1">
               <CheckCircle2 className="w-4 h-4" />
-              Verified Execution Track Record
+              Verified Completed Works
             </div>
             <h2 className="font-headline font-bold text-2xl text-gray-900">
-              Completed Work in {stateSummary.name}
+              Completed Works in {stateSummary.name}
             </h2>
             <p className="text-xs text-gray-500">
-              Calculated exclusively from project records marked as completed in the official dataset.
+              Verified physical completion certificates from the official MoSPI registers.
             </p>
           </div>
 
-          <div className="flex items-center gap-4 bg-emerald-50/70 p-3 rounded-xl border border-emerald-200">
+          <div className="flex items-center gap-4 bg-emerald-50/80 p-3 rounded-2xl border border-emerald-200 shrink-0">
             <div>
-              <span className="text-[10px] uppercase font-bold text-emerald-700 block">Completed Projects</span>
-              <span className="font-bold text-base text-emerald-900">{stateSummary.completedProjects.toLocaleString()}</span>
+              <span className="text-[10px] uppercase font-bold text-emerald-700 block">Total Completed</span>
+              <span className="font-bold text-lg text-emerald-950 font-mono">
+                {rawCompletedTotal > 0 ? rawCompletedTotal.toLocaleString() : stateSummary.completedProjects.toLocaleString()}
+              </span>
             </div>
-            <div className="h-6 w-px bg-emerald-200" />
+            <div className="h-7 w-px bg-emerald-300/60" />
             <div>
-              <span className="text-[10px] uppercase font-bold text-emerald-700 block">Completed Amount</span>
-              <span className="font-bold text-base text-emerald-900">{formatINR(stateSummary.completedAmount)}</span>
+              <span className="text-[10px] uppercase font-bold text-emerald-700 block">Total Disbursed</span>
+              <span className="font-bold text-lg text-emerald-950 font-mono">
+                {rawCompletedAmount > 0 ? formatINR(rawCompletedAmount) : formatINR(stateSummary.completedAmount)}
+              </span>
             </div>
-            <div className="h-6 w-px bg-emerald-200" />
+            <div className="h-7 w-px bg-emerald-300/60" />
             <div>
-              <span className="text-[10px] uppercase font-bold text-emerald-700 block">Completion Rate</span>
-              <span className="font-bold text-base text-emerald-900">{stateSummary.completionRate}%</span>
+              <span className="text-[10px] uppercase font-bold text-emerald-700 block">Rate</span>
+              <span className="font-bold text-lg text-emerald-950 font-mono">{stateSummary.completionRate}%</span>
             </div>
           </div>
         </div>
 
-        {/* Completed Works Sample Table */}
-        {completedProjectsList.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-gray-50/80 uppercase font-bold text-gray-500 border-b">
-                <tr>
-                  <th className="p-3">Project ID</th>
-                  <th className="p-3">Description</th>
-                  <th className="p-3">Constituency</th>
-                  <th className="p-3">MP Name</th>
-                  <th className="p-3 text-right">Amount</th>
-                  <th className="p-3 text-center">Status</th>
-                  <th className="p-3 text-center">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {completedProjectsList.map((cp) => (
-                  <tr key={cp.canonical_work_id} className="hover:bg-gray-50/60 transition-colors">
-                    <td className="p-3 font-mono font-bold text-primary">{cp.canonical_work_id}</td>
-                    <td className="p-3 font-medium text-gray-800 max-w-sm truncate" title={cp.work_description}>
-                      {cp.work_description || "MPLADS Project"}
-                    </td>
-                    <td className="p-3 text-gray-600">{cp.constituency || "-"}</td>
-                    <td className="p-3 text-gray-600 font-medium">{cp.mp_name}</td>
-                    <td className="p-3 text-right font-mono font-bold text-gray-900">
-                      {formatINR(Number(cp.completion_amount || cp.sanctioned_amount))}
-                    </td>
-                    <td className="p-3 text-center">
-                      <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
-                        <CheckCircle2 className="w-3 h-3" /> Completed
-                      </span>
-                    </td>
-                    <td className="p-3 text-center">
-                      <Link
-                        href={`/projects/${encodeURIComponent(cp.canonical_work_id)}?parliament=${cp.parliament}`}
-                        className="text-primary hover:underline font-bold inline-flex items-center gap-0.5"
-                      >
-                        Details <ExternalLink className="w-3 h-3" />
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        {/* View Mode Switcher (Cards vs Table) */}
+        <div className="flex items-center justify-between">
+          <span className="text-xs text-gray-500 font-medium">
+            Showing <strong className="text-gray-900">{rawCompleted.length}</strong> works &bull; Page{" "}
+            <strong className="text-gray-900">{completedPage}</strong> of{" "}
+            <strong className="text-gray-900">{Math.ceil(rawCompletedTotal / completedLimit) || 1}</strong>
+          </span>
+
+          <div className="bg-gray-100 p-1 rounded-xl flex items-center gap-1 shadow-inner">
+            <button
+              onClick={() => setCompletedViewMode("cards")}
+              className={`px-3 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                completedViewMode === "cards"
+                  ? "bg-white text-emerald-800 shadow-sm"
+                  : "text-gray-500 hover:text-gray-900"
+              }`}
+            >
+              <LayoutGrid className="w-3.5 h-3.5" />
+              <span>Cards</span>
+            </button>
+            <button
+              onClick={() => setCompletedViewMode("table")}
+              className={`px-3 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                completedViewMode === "table"
+                  ? "bg-white text-emerald-800 shadow-sm"
+                  : "text-gray-500 hover:text-gray-900"
+              }`}
+            >
+              <List className="w-3.5 h-3.5" />
+              <span>Table</span>
+            </button>
           </div>
+        </div>
+
+        {/* Clean, Readable Card Layout */}
+        {loadingRawCompleted ? (
+          <div className="py-16 text-center text-xs text-gray-400">
+            <div className="w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+            Loading completed works...
+          </div>
+        ) : rawCompleted.length > 0 ? (
+          completedViewMode === "cards" ? (
+            /* Clean Card View */
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {rawCompleted.map((rc, idx) => {
+                const { id: cleanWorkId, title: cleanWorkTitle } = parseWorkInfo(rc.work_id);
+                return (
+                  <div
+                    key={`${rc.work_id}-${idx}`}
+                    className="bg-white rounded-2xl p-5 border border-gray-100 shadow-subtle hover:shadow-medium hover:border-emerald-300 transition-all flex flex-col justify-between"
+                  >
+                    <div className="space-y-3.5">
+                      {/* Top Header Pill Row */}
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                          <CheckCircle2 className="w-3 h-3 text-emerald-600" /> Completed
+                        </span>
+                        <span className="uppercase text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-gray-100 text-gray-600 tracking-wider">
+                          {rc.parliament.replace("_", " ")}
+                        </span>
+                      </div>
+
+                      {/* Work Title & ID */}
+                      <div>
+                        <span className="font-mono text-[11px] text-gray-400 block tracking-tight">
+                          {cleanWorkId}
+                        </span>
+                        {cleanWorkTitle && (
+                          <span className="text-xs font-bold text-primary block mt-0.5">
+                            {cleanWorkTitle}
+                          </span>
+                        )}
+                        <h4
+                          className="text-sm font-bold text-gray-900 mt-1 line-clamp-2 leading-snug"
+                          title={rc.description || cleanWorkTitle}
+                        >
+                          {rc.description || cleanWorkTitle || "Development Project"}
+                        </h4>
+                      </div>
+
+                      {/* Clean Details Key-Value Box */}
+                      <div className="bg-gray-50/80 rounded-xl p-3 space-y-1.5 text-xs border border-gray-100">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-gray-400 font-medium">MP</span>
+                          <span className="font-bold text-gray-800 text-right truncate max-w-[180px]">
+                            {rc.mp_name || "-"}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-gray-400 font-medium">Constituency</span>
+                          <span className="text-gray-700 font-medium text-right truncate max-w-[180px]">
+                            {rc.constituency || "-"}
+                          </span>
+                        </div>
+                        {rc.ida_agency && (
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-gray-400 font-medium">Agency</span>
+                            <span className="text-gray-600 text-right truncate max-w-[180px]">
+                              {rc.ida_agency}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Bottom Financial & Completion Date Strip */}
+                    <div className="pt-3.5 border-t border-gray-100 mt-4 flex items-center justify-between">
+                      <div>
+                        <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider block">
+                          Disbursed Amount
+                        </span>
+                        <span className="font-headline font-extrabold text-xl text-emerald-700 font-mono block mt-0.5">
+                          {formatINR(rc.amount)}
+                        </span>
+                      </div>
+
+                      {rc.completion_date && (
+                        <div className="text-right">
+                          <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider block">
+                            Completion Date
+                          </span>
+                          <span className="text-xs font-mono font-bold text-gray-700 block mt-0.5">
+                            {rc.completion_date}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            /* Table View */
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-gray-50/80 uppercase font-bold text-gray-500 border-b">
+                  <tr>
+                    <th className="p-3">Work ID</th>
+                    <th className="p-3">Description</th>
+                    <th className="p-3">Constituency</th>
+                    <th className="p-3">MP Name</th>
+                    <th className="p-3 text-right">Disbursed</th>
+                    <th className="p-3 text-center">Chamber</th>
+                    <th className="p-3 text-center">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {rawCompleted.map((rc, idx) => (
+                    <tr key={`${rc.work_id}-${idx}`} className="hover:bg-gray-50/60 transition-colors">
+                      <td className="p-3 font-mono font-bold text-primary max-w-xs truncate" title={rc.work_id}>
+                        {rc.work_id}
+                      </td>
+                      <td className="p-3 font-medium text-gray-800 max-w-sm truncate" title={rc.description}>
+                        {rc.description || "Completed Development Work"}
+                      </td>
+                      <td className="p-3 text-gray-600">{rc.constituency || "-"}</td>
+                      <td className="p-3 text-gray-600 font-medium">{rc.mp_name}</td>
+                      <td className="p-3 text-right font-mono font-bold text-gray-900">
+                        {formatINR(rc.amount)}
+                      </td>
+                      <td className="p-3 text-center">
+                        <span className="uppercase text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-gray-100 text-gray-700">
+                          {rc.parliament.replace("_", " ")}
+                        </span>
+                      </td>
+                      <td className="p-3 text-center">
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                          <CheckCircle2 className="w-3 h-3" /> Completed
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )
         ) : (
-          <p className="text-xs text-gray-400 italic">No completed projects found in current filter.</p>
+          <p className="text-xs text-gray-400 italic">No completed records returned for this State/UT.</p>
+        )}
+
+        {/* Pagination Bar for Completed Works */}
+        {rawCompletedTotal > completedLimit && (
+          <div className="flex items-center justify-between pt-4 border-t text-xs text-gray-600">
+            <span>
+              Page <strong className="font-mono text-gray-900">{completedPage}</strong> of{" "}
+              <strong className="font-mono text-gray-900">{Math.ceil(rawCompletedTotal / completedLimit)}</strong> ({rawCompletedTotal.toLocaleString()} verified completed works)
+            </span>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setCompletedPage((p) => Math.max(1, p - 1))}
+                disabled={completedPage === 1}
+                className="p-1.5 border rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setCompletedPage((p) => Math.min(Math.ceil(rawCompletedTotal / completedLimit), p + 1))}
+                disabled={completedPage >= Math.ceil(rawCompletedTotal / completedLimit)}
+                className="p-1.5 border rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
         )}
       </section>
 
-      {/* Full Paginated & Filterable Project Table - Requirements 11, 12, 13, 20, 21 */}
+      {/* MP Performance Profile & Graph Visualization */}
+      {!loadingMps && mpsPerformance.length > 0 && (
+        <MPPerformanceSection
+          mps={mpsPerformance}
+          stateName={stateSummary.name}
+        />
+      )}
+
+      {/* Full Paginated & Filterable Project Table */}
       <section className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-subtle space-y-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b">
           <div>
@@ -398,7 +662,6 @@ export default function StateDetailPage() {
             {projectsError}
           </div>
         ) : projects.length === 0 ? (
-          /* Empty State - Requirement 18 */
           <div className="py-16 text-center bg-gray-50 rounded-2xl border text-gray-500 space-y-2">
             <AlertCircle className="w-8 h-8 text-gray-400 mx-auto" />
             <h3 className="font-headline font-bold text-base text-gray-800">No projects found</h3>
@@ -470,7 +733,7 @@ export default function StateDetailPage() {
           </div>
         )}
 
-        {/* Pagination Bar - Requirement 21 */}
+        {/* Pagination Bar */}
         {totalProjectsCount > limit && (
           <div className="flex items-center justify-between pt-4 border-t text-xs text-gray-600">
             <span>

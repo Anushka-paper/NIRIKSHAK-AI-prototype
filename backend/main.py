@@ -139,6 +139,26 @@ def get_overview_single_state(state_id: str, parliament: str = Query("all", patt
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Failed to retrieve state details: {str(e)}")
 
+@app.get("/api/v1/overview/states/{state_id}/mps")
+def get_state_mps_performance(state_id: str, parliament: str = Query("all", pattern="^(lok_sabha|rajya_sabha|all)$")):
+    """
+    Returns performance metrics (works count, completion rate, expenditures) for all MPs in the state for graph visualization.
+    """
+    try:
+        from .state_aggregator import get_state_mp_performance
+    except ImportError:
+        from state_aggregator import get_state_mp_performance
+
+    try:
+        mps = get_state_mp_performance(state_id=state_id, parliament=parliament)
+        payload = json.dumps(mps, ensure_ascii=False)
+        from fastapi import Response
+        return Response(content=payload, media_type="application/json")
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Failed to aggregate MP performance: {str(e)}")
+
 @app.get("/api/v1/data/profiling")
 def get_profiling_summary(parliament: str = Query("lok_sabha", pattern="^(lok_sabha|rajya_sabha)$")):
     summary_csv = BASE_DIR / "data" / "profiling" / parliament / "dataset_summary.csv"
@@ -481,6 +501,71 @@ def get_work_features(
         "records": subset.to_dict(orient="records")
     }
 
+@app.get("/api/v1/raw/completed")
+def get_raw_completed_projects(
+    parliament: str = Query("all", pattern="^(lok_sabha|rajya_sabha|all)$"),
+    state: Optional[str] = None,
+    limit: int = 20,
+    offset: int = 0
+):
+    """
+    Fetches completed projects directly from raw completed datasets (completed.csv / Works Completed (8).csv).
+    """
+    parliaments = ["lok_sabha", "rajya_sabha"] if parliament == "all" else [parliament]
+    rows = []
+
+    for p in parliaments:
+        if p == "lok_sabha":
+            fpath = BASE_DIR / "data" / "raw" / "lok_sabha" / "completed.csv"
+        else:
+            fpath = BASE_DIR / "data" / "raw" / "rajya_sabha" / "Works Completed (8).csv"
+
+        if fpath.exists():
+            df = pd.read_csv(fpath, low_memory=False)
+            df["parliament"] = p
+
+            amt_col = next((c for c in df.columns if "disbursed" in c.lower() or "amount" in c.lower()), None)
+            if amt_col:
+                df["amount_clean"] = pd.to_numeric(
+                    df[amt_col].astype(str).str.replace(",", "").str.replace("₹", "").str.replace("Rs.", "").str.replace("?", ""),
+                    errors="coerce"
+                ).fillna(0.0)
+            else:
+                df["amount_clean"] = 0.0
+
+            if state:
+                st_clean = state.lower().replace("-", " ").strip()
+                df = df[
+                    (df["State"].astype(str).str.lower().str.strip() == state.lower().strip()) |
+                    (df["State"].astype(str).str.lower().str.replace("-", " ").str.strip() == st_clean)
+                ]
+
+            for _, r in df.iterrows():
+                rows.append({
+                    "work_id": str(r.get("Work", "") or r.get("Sr. No.", "")),
+                    "description": str(r.get("Work Description", "") or r.get("Work", "")),
+                    "state": str(r.get("State", "")),
+                    "constituency": str(r.get("Constituency", "") or r.get("Elected/Nominated", "")),
+                    "mp_name": str(r.get("Hon'ble Members of Parliament", "")),
+                    "amount": float(r.get("amount_clean", 0.0)),
+                    "completion_date": str(r.get("Completion Date", "")),
+                    "ida_agency": str(r.get("IDA", "")),
+                    "category": str(r.get("Work Category", "")),
+                    "parliament": p
+                })
+
+    total_count = len(rows)
+    total_amount = sum(r["amount"] for r in rows)
+    subset = rows[offset:offset+limit]
+
+    return {
+        "total_count": total_count,
+        "total_amount": total_amount,
+        "offset": offset,
+        "limit": limit,
+        "records": subset
+    }
+
 @app.get("/api/v1/features/works/{canonical_work_id}")
 def get_single_work_feature(canonical_work_id: str, parliament: str = Query("lok_sabha", pattern="^(lok_sabha|rajya_sabha|all)$")):
     """
@@ -546,6 +631,136 @@ def get_feature_quality(parliament: str = Query("lok_sabha", pattern="^(lok_sabh
         "leakage_audit": leakage_records
     }
 
+@app.get("/api/v1/anomalies/summary")
+def get_anomalies_summary(parliament: str = Query("all", pattern="^(lok_sabha|rajya_sabha|all)$")):
+    """
+    Returns high-level statistics and anomaly detection rates from the Isolation Forest model.
+    """
+    pred_dir = BASE_DIR / "data" / "predictions"
+    houses = ["lok_sabha", "rajya_sabha"] if parliament == "all" else [parliament]
+    result = {}
+    for h in houses:
+        sum_file = pred_dir / h / "anomaly_summary.json"
+        if sum_file.exists():
+            with open(sum_file, "r", encoding="utf-8") as f:
+                result[h] = json.load(f)
+    return result
+
+@app.get("/api/v1/anomalies")
+def get_work_anomalies(
+    parliament: str = Query("all", pattern="^(lok_sabha|rajya_sabha|all)$"),
+    state: Optional[str] = Query(None),
+    only_anomalies: bool = Query(True),
+    min_score: float = Query(0.70),
+    limit: int = Query(50)
+):
+    """
+    Returns ranked anomalies scored by the Isolation Forest model with reasons.
+    """
+    pred_dir = BASE_DIR / "data" / "predictions"
+    houses = ["lok_sabha", "rajya_sabha"] if parliament == "all" else [parliament]
+    dfs = []
+    for h in houses:
+        f = pred_dir / h / "work_anomalies.csv"
+        if f.exists():
+            df = pd.read_csv(f, low_memory=False)
+            dfs.append(df)
+
+    if not dfs:
+        return {"total": 0, "anomalies": []}
+
+    combined = pd.concat(dfs, ignore_index=True)
+
+    if only_anomalies:
+        combined = combined[combined["is_anomaly"] == True]
+
+    if min_score > 0:
+        combined = combined[combined["anomaly_score"] >= min_score]
+
+    if state:
+        combined = combined[combined["state"].astype(str).str.lower() == state.lower()]
+
+    combined = combined.sort_values(by="anomaly_score", ascending=False)
+    total_found = len(combined)
+    records = combined.head(limit).fillna("").to_dict(orient="records")
+
+    return {
+        "total": total_found,
+        "limit": limit,
+        "anomalies": records
+    }
+
+@app.get("/api/v1/anomalies/graphs")
+def get_anomaly_graphs(parliament: str = Query("all", pattern="^(lok_sabha|rajya_sabha|all)$")):
+    """
+    Returns aggregated chart distributions for anomalies:
+    - State-wise anomaly count and total at-risk amount
+    - Risk band distribution (Low, Medium, High, Critical)
+    - Primary irregularity reason distribution
+    """
+    pred_dir = BASE_DIR / "data" / "predictions"
+    houses = ["lok_sabha", "rajya_sabha"] if parliament == "all" else [parliament]
+    dfs = []
+    for h in houses:
+        f = pred_dir / h / "work_anomalies.csv"
+        if f.exists():
+            df = pd.read_csv(f, low_memory=False)
+            dfs.append(df)
+
+    if not dfs:
+        return {"state_breakdown": [], "risk_bands": [], "reason_breakdown": []}
+
+    combined = pd.concat(dfs, ignore_index=True)
+    anom_df = combined[combined["is_anomaly"] == True].copy()
+
+    # 1. State-wise breakdown (Top 10 states by anomaly count)
+    state_grouped = anom_df.groupby("state").agg(
+        anomaly_count=("work_id", "count"),
+        at_risk_amount=("sanction_amount", "sum")
+    ).reset_index().sort_values(by="anomaly_count", ascending=False).head(10)
+    state_data = state_grouped.to_dict(orient="records")
+
+    # 2. Risk Bands Distribution
+    bands = [
+        {"band": "Normal (< 50%)", "count": int((combined["anomaly_score"] < 0.50).sum()), "color": "#10B981"},
+        {"band": "Moderate (50-69%)", "count": int(((combined["anomaly_score"] >= 0.50) & (combined["anomaly_score"] < 0.70)).sum()), "color": "#3B82F6"},
+        {"band": "High Risk (70-84%)", "count": int(((combined["anomaly_score"] >= 0.70) & (combined["anomaly_score"] < 0.85)).sum()), "color": "#F59E0B"},
+        {"band": "Critical (≥ 85%)", "count": int((combined["anomaly_score"] >= 0.85).sum()), "color": "#EF4444"}
+    ]
+
+    # 3. Reason categorization
+    reason_tags = {
+        "Cost Benchmark Outliers": int(anom_df["anomaly_reasons"].str.contains("Sanction cost", na=False).sum()),
+        "Disbursement Overpayment": int(anom_df["anomaly_reasons"].str.contains("Tranche disbursement", na=False).sum()),
+        "Missing Photo Evidence": int(anom_df["anomaly_reasons"].str.contains("without photo evidence", na=False).sum()),
+        "Excessive Execution Duration": int(anom_df["anomaly_reasons"].str.contains("execution duration", na=False).sum()),
+        "Vendor Concentration": int(anom_df["anomaly_reasons"].str.contains("vendor concentration", na=False).sum())
+    }
+    reasons_data = [{"reason": k, "count": v} for k, v in sorted(reason_tags.items(), key=lambda x: x[1], reverse=True)]
+
+    # 4. Scatter Plot Points (Cost Deviation % vs Anomaly Risk Score %)
+    scatter_sample = []
+    valid_scatter = anom_df.dropna(subset=["cost_deviation_pct", "anomaly_score"]).copy()
+    valid_scatter = valid_scatter[(valid_scatter["cost_deviation_pct"] >= -50) & (valid_scatter["cost_deviation_pct"] <= 1500)]
+    sample_df = valid_scatter.sample(n=min(60, len(valid_scatter)), random_state=42)
+    for _, r in sample_df.iterrows():
+        scatter_sample.append({
+            "work_id": str(r["work_id"])[:35],
+            "state": str(r["state"]),
+            "cost_lakhs": round(float(r.get("sanction_amount", 0.0)) / 100000, 1),
+            "score": round(float(r["anomaly_score"]) * 100, 1),
+            "deviation": round(float(r["cost_deviation_pct"]), 1),
+            "reasons": str(r.get("anomaly_reasons", "Outlier"))
+        })
+
+    return {
+        "state_breakdown": state_data,
+        "risk_bands": bands,
+        "reason_breakdown": reasons_data,
+        "scatter_points": scatter_sample
+    }
+
+
 @app.get("/health")
 def root_health():
     return {
@@ -554,5 +769,6 @@ def root_health():
         "version": "1.0.0",
         "ml_pipeline_available": True
     }
+
 
 
