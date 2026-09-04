@@ -219,8 +219,15 @@ def predict_expenditure(payload: ExpenditurePayload):
 
 @app.get("/api/v1/dashboard/overview")
 async def get_v1_dashboard_overview(parliament: str = "all"):
-    # Pull real aggregate tiles from MPLADS for all-India view
-    real_tiles = await mplads_post("getTilesData", {"uname": "0,0,0,2"})
+    if parliament == "rajya_sabha":
+        combo_str = "0,1,0,2"
+    elif parliament == "lok_sabha":
+        combo_str = "0,2,0,2"
+    else:
+        combo_str = "0,0,0,2"
+
+    # Pull real aggregate tiles from MPLADS
+    real_tiles = await mplads_post("getTilesData", {"uname": combo_str})
 
     # Parse real values if available
     def parse_crore(val):
