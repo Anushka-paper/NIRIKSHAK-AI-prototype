@@ -84,7 +84,9 @@ async def mplads_post(path: str, payload: dict) -> dict | list:
         async with httpx.AsyncClient(timeout=15) as client:
             r = await client.post(url, content=json.dumps(payload), headers=headers)
             if r.status_code == 200:
-                return r.json()
+                # Safely decode ignoring utf-8 errors (like \xa0)
+                raw_text = r.content.decode('utf-8', errors='ignore')
+                return json.loads(raw_text)
     except Exception as e:
         print(f"MPLADS API error ({path}): {e}")
     return {}
@@ -223,7 +225,8 @@ async def get_v1_dashboard_overview(parliament: str = "all"):
     # Parse real values if available
     def parse_crore(val):
         try:
-            return float(str(val).replace("\u00a0", "").replace(",", "").strip()) * 1e7
+            cleaned = str(val).replace("\u00a0", "").replace(",", "").replace("Crore", "").strip()
+            return float(cleaned) * 10000000.0
         except Exception:
             return 0.0
 
@@ -290,13 +293,13 @@ async def get_v1_dashboard_overview(parliament: str = "all"):
         "features": {"totalRawColumns": 42, "totalEngineeredFeatures": 18},
         "dataQuality": {"score": 92.5, "missingValues": 105, "duplicates": 12, "validationErrors": 0, "validationStatus": "excellent"},
         "analytics": {
-            "totalAllocatedAmount": allocated or 5000000,
-            "totalCalamityAmount": calamity or 200000,
-            "totalRecommendedAmount": allocated * 0.96 or 4800000,
-            "totalSanctionedAmount": allocated * 0.9 or 4500000,
-            "totalExpenditureAmount": expenditure or 4000000,
-            "totalCompletedAmount": expenditure * 0.9 or 3800000,
-            "unspentBalance": max(0, (allocated or 5000000) - (expenditure or 4000000)),
+            "totalAllocatedAmount": allocated or 27150000000,
+            "totalCalamityAmount": calamity or 250000000,
+            "totalRecommendedAmount": allocated * 0.96 or 26000000000,
+            "totalSanctionedAmount": allocated * 0.9 or 24500000000,
+            "totalExpenditureAmount": expenditure or 19500000000,
+            "totalCompletedAmount": expenditure * 0.9 or 18000000000,
+            "unspentBalance": max(0, (allocated or 27150000000) - (expenditure or 19500000000)),
         },
         "geography": {"topStates": [{"state": "Maharashtra", "records": 5000}], "totalStatesRepresented": 36},
         "categories": [{"category": "Infrastructure", "records": 40000}],
