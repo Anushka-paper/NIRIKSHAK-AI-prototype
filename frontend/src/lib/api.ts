@@ -45,7 +45,8 @@ export async function predictRisk(payload: any): Promise<PredictionResponse> {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(payload),
+    body: JSON.stringify({ ...payload, _t: Date.now() }),
+    cache: "no-store"
   });
   return res.json();
 }

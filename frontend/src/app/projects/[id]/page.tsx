@@ -71,6 +71,7 @@ export default function ProjectDetailPage() {
 
   const handleRunMLInference = async () => {
     if (!work) return;
+    setMlPrediction(null);
     setPredicting(true);
     try {
       const res = await predictRisk({
