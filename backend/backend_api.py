@@ -425,3 +425,41 @@ async def trigger_scrape():
     with open(TIMESTAMP_FILE, "w") as f:
         f.write(ts)
     return {"status": "ok", "timestamp": ts}
+
+@app.get("/api/v1/overview/states/{state_id}")
+def get_overview_single_state(state_id: str, parliament: str = Query("all", pattern="^(lok_sabha|rajya_sabha|all)$")):
+    try:
+        from .state_aggregator import get_single_state_details
+    except ImportError:
+        from state_aggregator import get_single_state_details
+
+    try:
+        state_data = get_single_state_details(state_id=state_id, parliament=parliament)
+        if not state_data:
+            raise HTTPException(status_code=404, detail=f"State with ID '{state_id}' not found.")
+        payload = json.dumps(state_data, ensure_ascii=False)
+        from fastapi import Response
+        return Response(content=payload, media_type="application/json")
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Failed to retrieve state details: {str(e)}")
+
+@app.get("/api/v1/overview/states/{state_id}/mps")
+def get_state_mps_performance(state_id: str, parliament: str = Query("all", pattern="^(lok_sabha|rajya_sabha|all)$")):
+    try:
+        from .state_aggregator import get_state_mp_performance
+    except ImportError:
+        from state_aggregator import get_state_mp_performance
+
+    try:
+        mps = get_state_mp_performance(state_id=state_id, parliament=parliament)
+        payload = json.dumps(mps, ensure_ascii=False)
+        from fastapi import Response
+        return Response(content=payload, media_type="application/json")
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Failed to aggregate MP performance: {str(e)}")
