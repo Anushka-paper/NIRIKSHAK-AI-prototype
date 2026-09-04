@@ -93,68 +93,65 @@ async def mplads_post(path: str, payload: dict) -> dict | list:
 
 
 # ─── Real state data from MPLADS + local DB stats ─────────────────────────
-async def build_state_summaries(parliament: str) -> list:
-    """Combines real MPLADS state list with local DuckDB aggregation."""
-    house = "2"  # LOK (default)
-    tenure_id = "7"  # 18th Lok Sabha (current)
-    if parliament == "rajya_sabha":
-        house = "1"
 
-    # Get real states from MPLADS
-    states_raw = await mplads_post("getStateData", {})
-    if not states_raw:
-        states_raw = []
-
-    # Get local DB stats for enrichment
-    db_stats = {}
-    try:
-        conn = duckdb.connect(DB_PATH)
-        df = conn.execute("""
-            SELECT state,
-                   COUNT(*) as total_projects,
-                   SUM(CASE WHEN status='COMPLETED' THEN 1 ELSE 0 END) as completed,
-                   SUM(CASE WHEN status='ONGOING' THEN 1 ELSE 0 END) as ongoing,
-                   SUM(CASE WHEN status NOT IN ('COMPLETED','ONGOING') THEN 1 ELSE 0 END) as pending,
-                   SUM(sanctioned_amount) as sanctioned,
-                   SUM(expenditure_amount) as expenditure
-            FROM loksabha_expenditure
-            GROUP BY state
-        """).fetchdf()
-        conn.close()
-        for _, row in df.iterrows():
-            db_stats[row["state"]] = row.to_dict()
-    except Exception:
-        pass
+@app.get("/api/v1/overview/states")
+async def get_v1_overview_states(parliament: str = "all"):
+    import pandas as pd
+    from pathlib import Path
+    BASE_DIR = Path(__file__).parent.parent
+    
+    parliaments = ["lok_sabha", "rajya_sabha"] if parliament == "all" else [parliament]
+    dfs = []
+    for p in parliaments:
+        csv_path = BASE_DIR / "data" / "features" / p / "state_features.csv"
+        if csv_path.exists():
+            dfs.append(pd.read_csv(csv_path))
+            
+    if not dfs:
+        return []
+        
+    df = pd.concat(dfs, ignore_index=True)
+    
+    # If parliament is 'all', aggregate the states by summing up the numerical columns
+    if parliament == "all":
+        df = df.groupby('state').agg({
+            'work_count': 'sum',
+            'sanctioned_work_count': 'sum',
+            'completed_work_count': 'sum',
+            'total_sanctioned_amount': 'sum',
+            'total_expenditure': 'sum'
+        }).reset_index()
+        # Recalculate rates
+        df['completion_rate'] = (df['completed_work_count'] / df['work_count']).fillna(0)
+        df['utilization_rate'] = (df['total_expenditure'] / df['total_sanctioned_amount']).fillna(0)
 
     summaries = []
-    for s in states_raw:
-        name = s.get("STATE_NAME", "Unknown")
-        sid = s.get("STATE_ID", 0)
-        stats = db_stats.get(name, {})
-        total = int(stats.get("total_projects", 500))
-        completed = int(stats.get("completed", int(total * 0.65)))
-        ongoing = int(stats.get("ongoing", int(total * 0.25)))
-        pending = total - completed - ongoing
-        sanctioned = float(stats.get("sanctioned", total * 200000))
-        expenditure = float(stats.get("expenditure", sanctioned * 0.85))
+    
+    ut_list = ["Delhi", "Puducherry", "Chandigarh", "Lakshadweep", 
+               "Dadra And Nagar Haveli And Daman And Diu", 
+               "Andaman And Nicobar Islands", "Ladakh", "Jammu And Kashmir"]
+               
+    for idx, row in df.iterrows():
+        state_name = str(row['state'])
+        
         summaries.append({
-            "id": str(sid),
-            "name": name,
-            "type": "UT" if name in ["Delhi", "Puducherry", "Chandigarh", "Lakshadweep",
-                                      "Dadra And Nagar Haveli And Daman And Diu",
-                                      "Andaman And Nicobar Islands", "Ladakh",
-                                      "Jammu And Kashmir"] else "STATE",
-            "totalProjects": total,
-            "completedProjects": completed,
-            "ongoingProjects": ongoing,
-            "pendingProjects": max(0, pending),
-            "recommendedAmount": sanctioned * 1.05,
-            "sanctionedAmount": sanctioned,
-            "expenditureAmount": expenditure,
-            "completedAmount": expenditure * 0.9,
-            "utilizationRate": round((expenditure / sanctioned * 100) if sanctioned > 0 else 0, 1),
-            "completionRate": round((completed / total * 100) if total > 0 else 0, 1),
+            "id": state_name[:3].upper() + str(idx),
+            "name": state_name,
+            "type": "UT" if any(u.lower() in state_name.lower() for u in ut_list) else "STATE",
+            "totalProjects": int(row['work_count']),
+            "completedProjects": int(row['completed_work_count']),
+            "ongoingProjects": int(row.get('sanctioned_work_count', 0)) - int(row['completed_work_count']),
+            "pendingProjects": int(row['work_count']) - int(row.get('sanctioned_work_count', 0)),
+            "recommendedAmount": float(row['total_sanctioned_amount']) * 1.05,
+            "sanctionedAmount": float(row['total_sanctioned_amount']),
+            "expenditureAmount": float(row['total_expenditure']),
+            "completedAmount": float(row['total_expenditure']) * 0.9,
+            "utilizationRate": round(float(row['utilization_rate']) * 100, 1),
+            "completionRate": round(float(row['completion_rate']) * 100, 1),
         })
+        
+    # Sort summaries by completion Rate desc
+    summaries.sort(key=lambda x: x["completionRate"], reverse=True)
     return summaries
 
 
