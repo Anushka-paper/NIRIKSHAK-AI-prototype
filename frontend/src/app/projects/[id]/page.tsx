@@ -16,10 +16,11 @@ import {
   CheckCircle2, 
   Layers, 
   FileText,
-  TrendingUp
+  TrendingUp,
+  Search
 } from "lucide-react";
 import { WorkFeature } from "@/types/features";
-import { predictRisk, PredictionResponse } from "@/lib/api";
+import { predictRisk, PredictionResponse, checkDuplicate } from "@/lib/api";
 
 export default function ProjectDetailPage() {
   const params = useParams();
@@ -37,12 +38,17 @@ export default function ProjectDetailPage() {
   const [predicting, setPredicting] = useState<boolean>(false);
   const [mlPrediction, setMlPrediction] = useState<PredictionResponse["data"] | null>(null);
 
+  // Duplicate Check State
+  const [checkingDuplicates, setCheckingDuplicates] = useState<boolean>(false);
+  const [duplicates, setDuplicates] = useState<any[] | null>(null);
+
   useEffect(() => {
     if (!id) return;
     async function fetchWork() {
       setLoading(true);
       setError(null);
       setMlPrediction(null);
+      setDuplicates(null);
       try {
         const res = await fetch(`/api/features/works/${encodeURIComponent(id)}?parliament=${parliament}`);
         if (!res.ok) throw new Error(`Failed to load project (${res.status})`);
@@ -89,6 +95,24 @@ export default function ProjectDetailPage() {
       console.error("ML Inference error:", err);
     } finally {
       setPredicting(false);
+    }
+  };
+
+  const handleCheckDuplicates = async () => {
+    if (!work || !work.work_description) return;
+    setCheckingDuplicates(true);
+    setDuplicates(null);
+    try {
+      const res = await checkDuplicate(work.work_description);
+      if (res && res.success && res.data && res.data.matches) {
+        // filter out the exact same work if it appears
+        const filtered = res.data.matches.filter((m: any) => m.work_id !== work.canonical_work_id);
+        setDuplicates(filtered);
+      }
+    } catch (err) {
+      console.error("Duplicate check error:", err);
+    } finally {
+      setCheckingDuplicates(false);
     }
   };
 
@@ -441,6 +465,88 @@ export default function ProjectDetailPage() {
               </span>
               <span className="text-[10px] text-gray-500 mt-0.5 block">Cross-dataset provenance score</span>
             </div>
+          </div>
+        </section>
+
+        {/* Semantic Duplicate Detection */}
+        <section className="bg-white rounded-3xl p-6 sm:p-8 border border-indigo-100 shadow-subtle mb-10 overflow-hidden relative">
+          <div className="absolute top-0 right-0 p-8 opacity-5">
+            <Search className="w-48 h-48 text-indigo-900" />
+          </div>
+          <div className="relative z-10">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-gray-100">
+              <div>
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-700">
+                    <Search className="w-4 h-4" />
+                  </div>
+                  <h2 className="font-headline font-bold text-xl text-gray-900">
+                    Semantic Duplicate Search
+                  </h2>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Powered by all-MiniLM-L6-v2 Sentence Transformers + Cosine Similarity
+                </p>
+              </div>
+              <button
+                onClick={handleCheckDuplicates}
+                disabled={checkingDuplicates || !work.work_description}
+                className="shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold py-2.5 px-6 rounded-xl flex items-center justify-center gap-2 transition-all shadow-sm shadow-indigo-600/20 disabled:opacity-70"
+              >
+                {checkingDuplicates ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Vectorizing...
+                  </>
+                ) : (
+                  <>
+                    <Search className="w-4 h-4" />
+                    Find Similar Works
+                  </>
+                )}
+              </button>
+            </div>
+
+            {duplicates && duplicates.length > 0 && (
+              <div className="mt-6 space-y-4">
+                <h4 className="text-xs font-bold uppercase text-gray-400 tracking-wider">Top Semantic Matches</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {duplicates.map((match: any, idx: number) => (
+                    <div key={idx} className="bg-gray-50 p-4 rounded-2xl border border-gray-100 hover:border-indigo-200 transition-colors">
+                      <div className="flex justify-between items-start mb-2">
+                        <span className="text-[10px] font-mono text-gray-500 bg-gray-200 px-1.5 py-0.5 rounded">{match.work_id.split("-")[0]}</span>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${match.similarity_score > 90 ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>
+                          {match.similarity_score}% Match
+                        </span>
+                      </div>
+                      <p className="font-headline font-bold text-sm text-gray-900 line-clamp-2 leading-snug">
+                        {match.description}
+                      </p>
+                      <div className="mt-3 pt-3 border-t border-gray-200 flex justify-between items-center text-xs text-gray-500">
+                        <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{match.state}</span>
+                        <span className="font-bold text-gray-700">{formatINR(match.cost)}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {duplicates && duplicates.length === 0 && (
+              <div className="mt-6 p-6 bg-emerald-50 rounded-2xl border border-emerald-100 text-center">
+                <CheckCircle2 className="w-8 h-8 text-emerald-500 mx-auto mb-2" />
+                <p className="text-emerald-800 font-bold">No suspicious duplicates found</p>
+                <p className="text-emerald-600 text-xs mt-1">This work description appears unique across the corpus.</p>
+              </div>
+            )}
+            
+            {!duplicates && !checkingDuplicates && (
+              <div className="mt-6 text-center py-8">
+                <p className="text-sm text-gray-500 max-w-md mx-auto">
+                  Click the button above to run this project's description through the NLP model and identify potentially duplicated fund requests.
+                </p>
+              </div>
+            )}
           </div>
         </section>
       </div>

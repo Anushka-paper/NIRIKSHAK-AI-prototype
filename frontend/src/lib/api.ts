@@ -50,3 +50,14 @@ export async function predictRisk(payload: any): Promise<PredictionResponse> {
   });
   return res.json();
 }
+
+export async function checkDuplicate(query: string): Promise<any> {
+  const res = await fetch("/api/nlp/check-duplicate", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ query }),
+  });
+  return res.json();
+}
