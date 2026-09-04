@@ -346,49 +346,54 @@ async def get_v1_overview_states(parliament: str = "all"):
 def get_v1_features_works(parliament: str = "all", limit: int = 24, offset: int = 0,
                            search: str = None, lifecycle_status: str = None, state: str = None):
     try:
-        conn = duckdb.connect(DB_PATH)
-        where_clauses = []
-        params = []
-        if search:
-            where_clauses.append("(project_id ILIKE ? OR state ILIKE ? OR category ILIKE ?)")
-            params += [f"%{search}%", f"%{search}%", f"%{search}%"]
-        if lifecycle_status:
-            if lifecycle_status == 'COMPLETED':
-                where_clauses.append("amount_disbursed >= amount_sanctioned AND amount_sanctioned > 0")
-            elif lifecycle_status == 'ONGOING':
-                where_clauses.append("amount_disbursed > 0 AND amount_disbursed < amount_sanctioned")
-            elif lifecycle_status == 'PENDING':
-                where_clauses.append("(amount_disbursed = 0 OR amount_disbursed IS NULL)")
+        import pandas as pd
+        from pathlib import Path
+        BASE_DIR = Path(__file__).parent.parent
+        
+        parliaments = ["lok_sabha", "rajya_sabha"] if parliament == "all" else [parliament]
+        dfs = []
+        for p in parliaments:
+            csv_path = BASE_DIR / "data" / "features" / p / "work_features.csv"
+            if csv_path.exists():
+                dfs.append(pd.read_csv(csv_path, low_memory=False))
+
+        if not dfs:
+            return {"records": [], "total_count": 0, "error": "Work features not found."}
+
+        df = pd.concat(dfs, ignore_index=True) if len(dfs) > 1 else dfs[0]
+
+        # Filters
         if state:
-            where_clauses.append("state ILIKE ?")
-            params.append(f"%{state}%")
+            st_query = state.lower().replace("-", " ").strip()
+            df = df[
+                (df["state"].astype(str).str.lower().str.strip() == state.lower().strip()) |
+                (df["state"].astype(str).str.lower().str.replace("-", " ").str.strip() == st_query)
+            ]
 
-        where_sql = ("WHERE " + " AND ".join(where_clauses)) if where_clauses else ""
+        if search:
+            s = search.lower()
+            df = df[
+                df["canonical_work_id"].astype(str).str.lower().str.contains(s, na=False) |
+                df["mp_name"].astype(str).str.lower().str.contains(s, na=False) |
+                df["constituency"].astype(str).str.lower().str.contains(s, na=False)
+            ]
 
-        count_q = f"SELECT COUNT(*) FROM loksabha_expenditure {where_sql}"
-        total = conn.execute(count_q, params).fetchone()[0]
+        if lifecycle_status and lifecycle_status != "ALL":
+            df = df[df["lifecycle_status"].astype(str).str.upper() == lifecycle_status.upper()]
 
-        data_q = f"""
-            SELECT project_id as canonical_work_id, 
-                   state, 
-                   'Unknown Constituency' as constituency, 
-                   'Unknown MP' as mp_name,
-                   category as work_category, 
-                   amount_sanctioned as sanctioned_amount, 
-                   amount_disbursed as expenditure_amount,
-                   CASE 
-                     WHEN amount_disbursed >= amount_sanctioned AND amount_sanctioned > 0 THEN 'COMPLETED'
-                     WHEN amount_disbursed > 0 THEN 'ONGOING'
-                     ELSE 'PENDING'
-                   END as lifecycle_status,
-                   CASE WHEN amount_sanctioned > 0 THEN amount_disbursed / amount_sanctioned ELSE 0 END as expenditure_to_sanction_ratio
-            FROM loksabha_expenditure {where_sql}
-            LIMIT ? OFFSET ?
-        """
-        df = conn.execute(data_q, params + [limit, offset]).fetchdf()
-        conn.close()
-        return {"records": df.to_dict(orient="records"), "total_count": int(total)}
+        # Replace NaN with None for JSON serialization
+        df = df.where(pd.notnull(df), None)
+
+        total = len(df)
+        paginated_df = df.iloc[offset : offset + limit]
+
+        return {
+            "records": paginated_df.to_dict(orient="records"),
+            "total_count": int(total)
+        }
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return {"records": [], "total_count": 0, "error": str(e)}
 
 
