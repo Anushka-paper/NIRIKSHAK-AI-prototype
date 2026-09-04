@@ -318,30 +318,7 @@ async def get_v1_dashboard_overview(parliament: str = "all"):
         }
     }
 
-@app.get("/api/v1/overview/states")
-async def get_v1_overview_states(parliament: str = "all"):
-    summaries = await build_state_summaries(parliament)
-    if not summaries:
-        # Fallback to local DB only
-        try:
-            conn = duckdb.connect(DB_PATH)
-            df = conn.execute("""
-                SELECT state, COUNT(*) as total,
-                       SUM(CASE WHEN status='COMPLETED' THEN 1 ELSE 0 END) as completed
-                FROM loksabha_expenditure GROUP BY state LIMIT 36
-            """).fetchdf()
-            conn.close()
-            summaries = [
-                {"id": row["state"][:2].upper(), "name": row["state"], "type": "STATE",
-                 "totalProjects": int(row["total"]), "completedProjects": int(row["completed"]),
-                 "ongoingProjects": max(0, int(row["total"]) - int(row["completed"])),
-                 "pendingProjects": 0, "recommendedAmount": 0, "sanctionedAmount": 0,
-                 "expenditureAmount": 0, "completedAmount": 0, "utilizationRate": 0, "completionRate": 0}
-                for _, row in df.iterrows()
-            ]
-        except Exception:
-            pass
-    return summaries
+
 
 
 @app.get("/api/v1/features/works")
