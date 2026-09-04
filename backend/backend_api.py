@@ -485,3 +485,55 @@ def get_state_mps_performance(state_id: str, parliament: str = Query("all", patt
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Failed to aggregate MP performance: {str(e)}")
+
+@app.get("/api/v1/raw/completed")
+def get_v1_raw_completed(parliament: str = "all", state: str = None, limit: int = 9, offset: int = 0):
+    try:
+        import pandas as pd
+        from pathlib import Path
+        BASE_DIR = Path(__file__).parent.parent
+        parliaments = ["lok_sabha", "rajya_sabha"] if parliament == "all" else [parliament]
+        dfs = []
+        for p in parliaments:
+            csv_path = BASE_DIR / "data" / "features" / p / "work_features.csv"
+            if csv_path.exists():
+                dfs.append(pd.read_csv(csv_path, low_memory=False))
+        if not dfs:
+            return {"records": [], "total_count": 0, "total_amount": 0}
+        df = pd.concat(dfs, ignore_index=True) if len(dfs) > 1 else dfs[0]
+        
+        # Filter for COMPLETED
+        df = df[df["lifecycle_status"] == "COMPLETED"]
+
+        if state:
+            st_query = state.lower().replace("-", " ").strip()
+            df = df[
+                (df["state"].astype(str).str.lower().str.strip() == state.lower().strip()) |
+                (df["state"].astype(str).str.lower().str.replace("-", " ").str.strip() == st_query)
+            ]
+
+        total_count = len(df)
+        total_amount = df["sanctioned_amount"].sum()
+
+        paginated_df = df.iloc[offset : offset + limit]
+
+        # Map to expected frontend schema
+        mapped_df = paginated_df.rename(columns={
+            "canonical_work_id": "work_id",
+            "work_description": "description",
+            "sanctioned_amount": "amount",
+            "work_category": "category"
+        })
+
+        import json
+        records = json.loads(mapped_df.to_json(orient="records"))
+
+        return {
+            "records": records,
+            "total_count": int(total_count),
+            "total_amount": float(total_amount)
+        }
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"records": [], "total_count": 0, "total_amount": 0, "error": str(e)}
