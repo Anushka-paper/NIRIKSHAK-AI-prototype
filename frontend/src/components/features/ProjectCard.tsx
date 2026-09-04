@@ -49,7 +49,7 @@ export default function ProjectCard({ work, onViewDetails }: ProjectCardProps) {
 
   // Derived ML Model Risk Badge from engineered features
   // Derived ML Model Risk Badge from actual model output
-  const riskTier = work.risk_level || "LOW";
+  const riskTier = String(work.risk_level || "LOW");
   const anomalyScore = work.anomaly_score ? (Number(work.anomaly_score) * 100).toFixed(0) : null;
 
   // Normalize casing for constituency (raw CSV is all-caps)
@@ -85,9 +85,9 @@ export default function ProjectCard({ work, onViewDetails }: ProjectCardProps) {
               }`}
             >
               <ShieldCheck className="w-3 h-3" /> ML {riskTier} RISK
-              {anomalyScore && (riskTier === "HIGH" || riskTier === "CRITICAL") && (
+              {anomalyScore && (riskTier === "HIGH" || riskTier === "CRITICAL") ? (
                 <span className="opacity-70">({anomalyScore}%)</span>
-              )}
+              ) : null}
             </span>
           </div>
           <span

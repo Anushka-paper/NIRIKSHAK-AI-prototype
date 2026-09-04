@@ -4,10 +4,11 @@ const ML_BASE = process.env.ML_API_URL || "http://localhost:8000";
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { entityId: string } }
+  { params }: { params: Promise<{ entityId: string }> }
 ) {
   try {
-    const res = await fetch(`${ML_BASE}/api/forecast/${params.entityId}`, {
+    const { entityId } = await params;
+    const res = await fetch(`${ML_BASE}/api/forecast/${entityId}`, {
       cache: "no-store",
     });
     if (!res.ok) {
