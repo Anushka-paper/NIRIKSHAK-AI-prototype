@@ -593,8 +593,8 @@ def predict_risk(payload: PredictRequest):
             recs = "Schedule a physical inspection to verify milestone progress."
             
         factors = [
-            {"factor": "Days Since Sanction", "impact": f"{payload.days_since_sanction} days elapsed"},
-            {"factor": "Sanctioned Budget", "impact": f"High value project" if payload.estimated_cost > 2000000 else "Standard value project"}
+            f"Days Since Sanction: {payload.days_since_sanction} days elapsed",
+            f"Sanctioned Budget: {'High value project' if payload.estimated_cost > 2000000 else 'Standard value project'}"
         ]
             
         return {
