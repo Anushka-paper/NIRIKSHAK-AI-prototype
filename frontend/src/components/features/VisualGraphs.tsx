@@ -199,9 +199,11 @@ export default function VisualGraphs({
                       key={`${pt.work_id}-${i}`}
                       cx={cx}
                       cy={cy}
-                      r={isHigh ? 5.5 : 4}
+                      r={hoveredPoint?.work_id === pt.work_id ? 8 : (isHigh ? 5.5 : 4)}
                       fill={isHigh ? "#EF4444" : "#F59E0B"}
-                      className="cursor-pointer transition-all hover:scale-150 hover:stroke-white hover:stroke-2"
+                      className={`cursor-pointer transition-all duration-200 ${
+                        hoveredPoint?.work_id === pt.work_id ? "stroke-white stroke-2 drop-shadow-md z-50" : "stroke-transparent"
+                      }`}
                       onMouseEnter={() => setHoveredPoint(pt)}
                       onMouseLeave={() => setHoveredPoint(null)}
                     />

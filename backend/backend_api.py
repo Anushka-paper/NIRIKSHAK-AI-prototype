@@ -95,69 +95,19 @@ async def mplads_post(path: str, payload: dict) -> dict | list:
 # ─── Real state data from MPLADS + local DB stats ─────────────────────────
 
 @app.get("/api/v1/overview/states")
-async def get_v1_overview_states(parliament: str = "all"):
-    import pandas as pd
-    from pathlib import Path
-    BASE_DIR = Path(__file__).parent.parent
-    
-    parliaments = ["lok_sabha", "rajya_sabha"] if parliament == "all" else [parliament]
-    dfs = []
-    for p in parliaments:
-        csv_path = BASE_DIR / "data" / "features" / p / "state_features.csv"
-        if csv_path.exists():
-            dfs.append(pd.read_csv(csv_path))
-            
-    if not dfs:
-        return []
-        
-    df = pd.concat(dfs, ignore_index=True)
-    
-    # If parliament is 'all', aggregate the states by summing up the numerical columns
-    if parliament == "all":
-        df = df.groupby('state').agg({
-            'work_count': 'sum',
-            'sanctioned_work_count': 'sum',
-            'completed_work_count': 'sum',
-            'total_sanctioned_amount': 'sum',
-            'total_expenditure': 'sum'
-        }).reset_index()
-        # Recalculate rates
-        df['completion_rate'] = (df['completed_work_count'] / df['work_count']).fillna(0)
-        df['utilization_rate'] = (df['total_expenditure'] / df['total_sanctioned_amount']).fillna(0)
-
-    summaries = []
-    
+def get_v1_overview_states(parliament: str = "all"):
     try:
-        from .state_aggregator import clean_state_id
+        from .state_aggregator import get_aggregated_states
     except ImportError:
-        from state_aggregator import clean_state_id
+        from state_aggregator import get_aggregated_states
 
-    ut_list = ["Delhi", "Puducherry", "Chandigarh", "Lakshadweep", 
-               "Dadra And Nagar Haveli And Daman And Diu", 
-               "Andaman And Nicobar Islands", "Ladakh", "Jammu And Kashmir"]
-               
-    for idx, row in df.iterrows():
-        state_name = str(row['state'])
-        
-        summaries.append({
-            "id": clean_state_id(state_name),
-            "name": state_name,
-            "type": "UT" if any(u.lower() in state_name.lower() for u in ut_list) else "STATE",
-            "totalProjects": int(row['work_count']),
-            "completedProjects": int(row['completed_work_count']),
-            "ongoingProjects": int(row.get('sanctioned_work_count', 0)) - int(row['completed_work_count']),
-            "pendingProjects": int(row['work_count']) - int(row.get('sanctioned_work_count', 0)),
-            "recommendedAmount": float(row['total_sanctioned_amount']) * 1.05,
-            "sanctionedAmount": float(row['total_sanctioned_amount']),
-            "expenditureAmount": float(row['total_expenditure']),
-            "completedAmount": float(row['total_expenditure']) * 0.9,
-            "utilizationRate": round(float(row['utilization_rate']) * 100, 1),
-            "completionRate": round(float(row['completion_rate']) * 100, 1),
-        })
-        
-    # Sort summaries by completion Rate desc
-    summaries.sort(key=lambda x: x["completionRate"], reverse=True)
-    return summaries
+    try:
+        summaries = get_aggregated_states(parliament=parliament)
+        return summaries
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Failed to aggregate states: {str(e)}")
 
 
 # ─── Legacy Endpoints ──────────────────────────────────────────────────────
@@ -174,29 +124,120 @@ def get_meta():
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/anomalies/states")
-def get_anomalies_by_state():
+def get_anomalies_by_state(parliament: str = "all"):
+    """
+    Returns per-state critical anomaly counts computed directly from
+    work_anomalies prediction CSVs (anomaly_score >= 0.70).
+    """
     try:
-        conn = duckdb.connect(DB_PATH)
-        data_df = conn.execute("""
-            SELECT state, COUNT(*) as critical_anomalies 
-            FROM anomaly_results 
-            WHERE risk_level='Critical' 
-            GROUP BY state ORDER BY critical_anomalies DESC
-        """).fetchdf()
-        conn.close()
-        return {"data": data_df.to_dict(orient="records")}
+        import pandas as pd
+        from pathlib import Path
+        BASE_DIR_LOCAL = Path(__file__).parent.parent
+        parliaments = ["lok_sabha", "rajya_sabha"] if parliament == "all" else [parliament]
+        dfs = []
+        for p in parliaments:
+            f = BASE_DIR_LOCAL / "data" / "predictions" / p / "work_anomalies.csv"
+            if f.exists():
+                dfs.append(pd.read_csv(f, low_memory=False, usecols=["state", "anomaly_score"]))
+        if not dfs:
+            return {"data": []}
+        df = pd.concat(dfs, ignore_index=True)
+        # "Critical" = anomaly_score >= 0.70
+        critical = df[df["anomaly_score"] >= 0.70]
+        grouped = (
+            critical.groupby("state").size()
+            .reset_index(name="critical_anomalies")
+            .sort_values("critical_anomalies", ascending=False)
+        )
+        return {"data": grouped.to_dict(orient="records")}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error querying DB: {str(e)}")
+        import traceback; traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Error computing anomalies by state: {str(e)}")
 
 @app.get("/api/forecast/{entity_id}")
 def get_forecast(entity_id: str):
-    if not forecasting_model:
-        raise HTTPException(status_code=500, detail="Forecasting model not loaded.")
+    """
+    Returns a 6-month forward-looking expenditure forecast derived from
+    the work_features CSVs. If the trained Prophet model is available it
+    uses it; otherwise it computes a simple monthly trend projection.
+    """
     try:
-        forecast_df = forecasting_model.forecast(periods=6)
-        forecast_df['ds'] = forecast_df['ds'].dt.strftime('%Y-%m-%d')
-        return forecast_df.to_dict(orient="records")
+        import pandas as pd
+        import datetime
+        from pathlib import Path
+        BASE_DIR_LOCAL = Path(__file__).parent.parent
+
+        # Build monthly expenditure history from work_features CSVs
+        dfs = []
+        for p in ["lok_sabha", "rajya_sabha"]:
+            f = BASE_DIR_LOCAL / "data" / "features" / p / "work_features.csv"
+            if f.exists():
+                dfs.append(pd.read_csv(f, low_memory=False, usecols=["sanction_date", "expenditure_amount"]))
+
+        if not dfs:
+            raise HTTPException(status_code=404, detail="No feature data found.")
+
+        df = pd.concat(dfs, ignore_index=True)
+        df["sanction_date"] = pd.to_datetime(df["sanction_date"], errors="coerce")
+        df["expenditure_amount"] = pd.to_numeric(df["expenditure_amount"], errors="coerce").fillna(0)
+        df = df.dropna(subset=["sanction_date"])
+        df["month"] = df["sanction_date"].dt.to_period("M")
+        monthly = df.groupby("month")["expenditure_amount"].sum().reset_index()
+        monthly["ds"] = monthly["month"].dt.to_timestamp()
+        monthly = monthly.sort_values("ds")
+
+        # Try Prophet model first
+        if forecasting_model:
+            try:
+                forecast_df = forecasting_model.forecast(periods=6)
+                # Filter to only future dates
+                today = pd.Timestamp.now()
+                forecast_df = forecast_df[forecast_df["ds"] > today].head(6)
+                if not forecast_df.empty:
+                    forecast_df["ds"] = forecast_df["ds"].dt.strftime("%Y-%m-%d")
+                    return forecast_df[["ds", "yhat", "yhat_lower", "yhat_upper"]].to_dict(orient="records")
+            except Exception:
+                pass
+
+        # Fallback: use median of the most complete historical year (ignore recent incomplete months)
+        # Use data older than 4 months (gives time for records to be fully entered)
+        cutoff = pd.Timestamp.now() - pd.DateOffset(months=4)
+        stable = monthly[monthly["ds"] < cutoff].copy()
+
+        if len(stable) < 6:
+            raise HTTPException(status_code=500, detail="Not enough stable data for forecast.")
+
+        # Use the last full 12 months of stable data for seasonal baseline
+        baseline = stable.tail(12)["expenditure_amount"]
+        monthly_avg = float(baseline.mean())
+        monthly_std = float(baseline.std())
+
+        # Compute per-calendar-month seasonal factor from stable data
+        stable["cal_month"] = stable["ds"].dt.month
+        seasonal = stable.groupby("cal_month")["expenditure_amount"].median()
+
+        today = datetime.date.today()
+        result = []
+        for i in range(1, 7):
+            month_offset = today.month + i
+            year = today.year + (month_offset - 1) // 12
+            month = ((month_offset - 1) % 12) + 1
+            ds = f"{year}-{month:02d}-01"
+            # Use seasonal factor if available, else use overall average
+            seasonal_factor = float(seasonal.get(month, monthly_avg)) / max(float(seasonal.mean()), 1)
+            yhat = monthly_avg * seasonal_factor
+            uncertainty = monthly_std * 0.5
+            result.append({
+                "ds": ds,
+                "yhat": round(max(yhat, 0), 2),
+                "yhat_lower": round(max(yhat - uncertainty, 0), 2),
+                "yhat_upper": round(yhat + uncertainty, 2),
+            })
+        return result
+    except HTTPException:
+        raise
     except Exception as e:
+        import traceback; traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 class ExpenditurePayload(BaseModel):
@@ -323,7 +364,7 @@ async def get_v1_dashboard_overview(parliament: str = "all"):
 
 @app.get("/api/v1/features/works")
 def get_v1_features_works(parliament: str = "all", limit: int = 24, offset: int = 0,
-                           search: str = None, lifecycle_status: str = None, state: str = None):
+                           search: str = None, lifecycle_status: str = None, state: str = None, risk_level: str = None):
     try:
         import pandas as pd
         from pathlib import Path
@@ -360,10 +401,64 @@ def get_v1_features_works(parliament: str = "all", limit: int = 24, offset: int 
         if lifecycle_status and lifecycle_status != "ALL":
             df = df[df["lifecycle_status"].astype(str).str.upper() == lifecycle_status.upper()]
 
+        if risk_level and risk_level != "ALL":
+            dfs_anom = []
+            for p in parliaments:
+                f = BASE_DIR / "data" / "predictions" / p / "work_anomalies.csv"
+                if f.exists():
+                    dfs_anom.append(pd.read_csv(f, low_memory=False))
+            if dfs_anom:
+                df_anom = pd.concat(dfs_anom, ignore_index=True)
+                
+                if risk_level == "CRITICAL_RISK":
+                    df_anom = df_anom[df_anom["anomaly_score"] >= 0.85]
+                elif risk_level == "HIGH_RISK":
+                    df_anom = df_anom[(df_anom["anomaly_score"] >= 0.70) & (df_anom["anomaly_score"] < 0.85)]
+                elif risk_level == "MEDIUM_RISK":
+                    df_anom = df_anom[(df_anom["anomaly_score"] >= 0.50) & (df_anom["anomaly_score"] < 0.70)]
+                elif risk_level == "LOW_RISK":
+                    df_anom = df_anom[df_anom["anomaly_score"] < 0.50]
+                elif risk_level == "ALL_ANOMALIES":
+                    df_anom = df_anom[df_anom["is_anomaly"] == True]
+                    
+                matched_descriptions = df_anom["description"].dropna().unique()
+                df = df[df["work_description"].isin(matched_descriptions)]
+
         import json
         
         total = len(df)
-        paginated_df = df.iloc[offset : offset + limit]
+        paginated_df = df.iloc[offset : offset + limit].copy()
+
+        # Attach ML risk levels to each paginated record
+        dfs_all_anom = []
+        for p in parliaments:
+            f_anom = BASE_DIR / "data" / "predictions" / p / "work_anomalies.csv"
+            if f_anom.exists():
+                dfs_all_anom.append(pd.read_csv(f_anom, low_memory=False, usecols=["description", "anomaly_score"]))
+
+        if dfs_all_anom:
+            df_all_anom = pd.concat(dfs_all_anom, ignore_index=True)
+
+            def get_risk_tier(score):
+                if pd.isna(score): return "LOW"
+                if score >= 0.85: return "CRITICAL"
+                if score >= 0.70: return "HIGH"
+                if score >= 0.50: return "MEDIUM"
+                return "LOW"
+
+            df_all_anom["risk_level"] = df_all_anom["anomaly_score"].apply(get_risk_tier)
+            df_all_anom = df_all_anom.drop_duplicates(subset=["description"])
+
+            paginated_df = paginated_df.merge(
+                df_all_anom,
+                left_on="work_description",
+                right_on="description",
+                how="left"
+            )
+            paginated_df["risk_level"] = paginated_df["risk_level"].fillna("LOW")
+            paginated_df["anomaly_score"] = paginated_df["anomaly_score"].fillna(0.0)
+            if "description" in paginated_df.columns:
+                paginated_df = paginated_df.drop(columns=["description"])
 
         # Use pandas to_json to properly handle NaNs -> null
         records = json.loads(paginated_df.to_json(orient="records"))
@@ -679,4 +774,155 @@ def predict_risk(payload: PredictRequest):
         import traceback
         traceback.print_exc()
         from fastapi import HTTPException
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ── Anomaly Detection Endpoints ──────────────────────────────────────────────
+
+from pathlib import Path
+from typing import Optional
+
+@app.get("/api/v1/anomalies/summary")
+def get_anomalies_summary(parliament: str = Query("all")):
+    """High-level statistics from the Isolation Forest model."""
+    try:
+        from pathlib import Path
+        pred_dir = Path(PROJECT_ROOT) / "data" / "predictions"
+        houses = ["lok_sabha", "rajya_sabha"] if parliament == "all" else [parliament]
+        dfs = []
+        for h in houses:
+            f = pred_dir / h / "work_anomalies.csv"
+            if f.exists():
+                dfs.append(pd.read_csv(f, low_memory=False, usecols=["is_anomaly", "anomaly_score"]))
+
+        if not dfs:
+            return {"total_works": 0, "flagged_works": 0, "critical_anomalies": 0}
+
+        combined = pd.concat(dfs, ignore_index=True)
+        return {
+            "total_works": len(combined),
+            "flagged_works": int(combined["is_anomaly"].sum()),
+            "critical_anomalies": int((combined["anomaly_score"] >= 0.70).sum()),
+            # Legacy aliases for anomalies/page.tsx
+            "total_works_evaluated": len(combined),
+            "anomalies_detected": int(combined["is_anomaly"].sum()),
+            "high_risk_works_count": int((combined["anomaly_score"] >= 0.70).sum())
+        }
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/anomalies")
+def get_work_anomalies(
+    parliament: str = Query("all"),
+    state: Optional[str] = Query(None),
+    only_anomalies: bool = Query(True),
+    min_score: float = Query(0.70),
+    limit: int = Query(50)
+):
+    """Returns ranked anomalies scored by the Isolation Forest model."""
+    try:
+        from pathlib import Path
+        pred_dir = Path(PROJECT_ROOT) / "data" / "predictions"
+        houses = ["lok_sabha", "rajya_sabha"] if parliament == "all" else [parliament]
+        dfs = []
+        for h in houses:
+            f = pred_dir / h / "work_anomalies.csv"
+            if f.exists():
+                dfs.append(pd.read_csv(f, low_memory=False))
+
+        if not dfs:
+            return {"total": 0, "anomalies": []}
+
+        combined = pd.concat(dfs, ignore_index=True)
+
+        if only_anomalies:
+            combined = combined[combined["is_anomaly"] == True]
+
+        if min_score > 0:
+            combined = combined[combined["anomaly_score"] >= min_score]
+
+        if state:
+            combined = combined[combined["state"].astype(str).str.lower() == state.lower()]
+
+        combined = combined.sort_values(by="anomaly_score", ascending=False)
+        total_found = len(combined)
+        records = combined.head(limit).fillna("").to_dict(orient="records")
+
+        return {"total": total_found, "limit": limit, "anomalies": records}
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/v1/anomalies/graphs")
+def get_anomaly_graphs(parliament: str = Query("all")):
+    """Returns chart-ready aggregations: state breakdown, risk bands, reasons, scatter."""
+    try:
+        from pathlib import Path
+        pred_dir = Path(PROJECT_ROOT) / "data" / "predictions"
+        houses = ["lok_sabha", "rajya_sabha"] if parliament == "all" else [parliament]
+        dfs = []
+        for h in houses:
+            f = pred_dir / h / "work_anomalies.csv"
+            if f.exists():
+                dfs.append(pd.read_csv(f, low_memory=False))
+
+        if not dfs:
+            return {"state_breakdown": [], "risk_bands": [], "reason_breakdown": [], "scatter_points": []}
+
+        combined = pd.concat(dfs, ignore_index=True)
+        anom_df = combined[combined["is_anomaly"] == True].copy()
+
+        # 1. State breakdown
+        state_grouped = anom_df.groupby("state").agg(
+            anomaly_count=("work_id", "count"),
+            at_risk_amount=("sanction_amount", "sum")
+        ).reset_index().sort_values(by="anomaly_count", ascending=False).head(10)
+        state_data = state_grouped.to_dict(orient="records")
+
+        # 2. Risk bands
+        bands = [
+            {"band": "Normal (< 50%)",    "count": int((combined["anomaly_score"] < 0.50).sum()),  "color": "#10B981"},
+            {"band": "Moderate (50-69%)", "count": int(((combined["anomaly_score"] >= 0.50) & (combined["anomaly_score"] < 0.70)).sum()), "color": "#3B82F6"},
+            {"band": "High Risk (70-84%)","count": int(((combined["anomaly_score"] >= 0.70) & (combined["anomaly_score"] < 0.85)).sum()), "color": "#F59E0B"},
+            {"band": "Critical (>= 85%)", "count": int((combined["anomaly_score"] >= 0.85).sum()), "color": "#EF4444"},
+        ]
+
+        # 3. Root cause reasons
+        reason_tags = {
+            "Cost Benchmark Outliers":      int(anom_df["anomaly_reasons"].str.contains("Sanction cost",         na=False).sum()),
+            "Disbursement Overpayment":     int(anom_df["anomaly_reasons"].str.contains("Tranche disbursement",  na=False).sum()),
+            "Missing Photo Evidence":       int(anom_df["anomaly_reasons"].str.contains("without photo evidence",na=False).sum()),
+            "Excessive Execution Duration": int(anom_df["anomaly_reasons"].str.contains("execution duration",   na=False).sum()),
+            "Vendor Concentration":         int(anom_df["anomaly_reasons"].str.contains("vendor concentration",  na=False).sum()),
+        }
+        reasons_data = [{"reason": k, "count": v} for k, v in sorted(reason_tags.items(), key=lambda x: x[1], reverse=True)]
+
+        # 4. Scatter plot sample
+        scatter_sample = []
+        if "cost_deviation_pct" in anom_df.columns and "anomaly_score" in anom_df.columns:
+            valid = anom_df.dropna(subset=["cost_deviation_pct", "anomaly_score"])
+            valid = valid[(valid["cost_deviation_pct"] >= -50) & (valid["cost_deviation_pct"] <= 1500)]
+            sample_df = valid.sample(n=min(60, len(valid)), random_state=42)
+            for _, r in sample_df.iterrows():
+                scatter_sample.append({
+                    "work_id":    str(r["work_id"])[:35],
+                    "state":      str(r["state"]),
+                    "cost_lakhs": round(float(r.get("sanction_amount", 0.0)) / 100000, 1),
+                    "score":      round(float(r["anomaly_score"]) * 100, 1),
+                    "deviation":  round(float(r["cost_deviation_pct"]), 1),
+                    "reasons":    str(r.get("anomaly_reasons", "Outlier")),
+                })
+
+        return {
+            "state_breakdown":  state_data,
+            "risk_bands":       bands,
+            "reason_breakdown": reasons_data,
+            "scatter_points":   scatter_sample,
+        }
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))

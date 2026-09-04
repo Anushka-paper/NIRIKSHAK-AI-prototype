@@ -87,7 +87,7 @@ export default function AnomaliesPage() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [activeView, setActiveView] = useState<"graphs" | "table">("graphs");
   const [anomalies, setAnomalies] = useState<AnomalyItem[]>([]);
-  const [summary, setSummary] = useState<Record<string, SummaryData>>({});
+  const [summary, setSummary] = useState<Partial<SummaryData>>({});
   const [graphs, setGraphs] = useState<GraphsData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -153,10 +153,10 @@ export default function AnomaliesPage() {
     return `₹${val.toLocaleString()}`;
   };
 
-  // Aggregated summary stats across houses
-  const totalEvaluated = Object.values(summary).reduce((acc, s) => acc + (s.total_works_evaluated || 0), 0);
-  const totalAnomalies = Object.values(summary).reduce((acc, s) => acc + (s.anomalies_detected || 0), 0);
-  const totalHighRisk = Object.values(summary).reduce((acc, s) => acc + (s.high_risk_works_count || 0), 0);
+  // Aggregated summary stats from backend
+  const totalEvaluated = summary.total_works_evaluated || 0;
+  const totalAnomalies = summary.anomalies_detected || 0;
+  const totalHighRisk = summary.high_risk_works_count || 0;
   const avgRate = totalEvaluated > 0 ? ((totalAnomalies / totalEvaluated) * 100).toFixed(1) : "5.0";
 
   // Max for relative bar widths in graphs

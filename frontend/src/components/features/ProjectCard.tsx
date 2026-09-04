@@ -29,9 +29,10 @@ export default function ProjectCard({ work, onViewDetails }: ProjectCardProps) {
   };
 
   const utilizationPct = Math.min(
-    100, 
+    150, 
     Math.max(0, Math.round(((work.expenditure_to_sanction_ratio || 0) * 100)))
   );
+  const isOverBudget = (work.expenditure_to_sanction_ratio || 0) > 1.0;
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -47,11 +48,17 @@ export default function ProjectCard({ work, onViewDetails }: ProjectCardProps) {
   };
 
   // Derived ML Model Risk Badge from engineered features
-  const recToSanc = Number(work.recommendation_to_sanction_days) || 0;
-  const durZ = Number(work.duration_z_score) || 0;
-  const isHighRisk = work.lifecycle_status === "RECOMMENDED_ONLY" || recToSanc > 180 || durZ > 1.0;
-  const isMediumRisk = !isHighRisk && (recToSanc > 60 || utilizationPct === 0);
-  const riskTier = isHighRisk ? "HIGH" : (isMediumRisk ? "MEDIUM" : "LOW");
+  // Derived ML Model Risk Badge from actual model output
+  const riskTier = work.risk_level || "LOW";
+  const anomalyScore = work.anomaly_score ? (Number(work.anomaly_score) * 100).toFixed(0) : null;
+
+  // Normalize casing for constituency (raw CSV is all-caps)
+  const displayConstituency = work.constituency
+    ? work.constituency
+        .split(" ")
+        .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+        .join(" ")
+    : "";
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-subtle hover:shadow-medium hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between group">
@@ -68,7 +75,9 @@ export default function ProjectCard({ work, onViewDetails }: ProjectCardProps) {
             {/* Live ML Trained Model Risk Tag */}
             <span
               className={`text-[10px] uppercase font-extrabold px-2 py-0.5 rounded-md flex items-center gap-1 ${
-                riskTier === "HIGH"
+                riskTier === "CRITICAL"
+                  ? "bg-purple-50 text-purple-700 border border-purple-200"
+                  : riskTier === "HIGH"
                   ? "bg-red-50 text-red-700 border border-red-200"
                   : riskTier === "MEDIUM"
                   ? "bg-amber-50 text-amber-700 border border-amber-200"
@@ -76,6 +85,9 @@ export default function ProjectCard({ work, onViewDetails }: ProjectCardProps) {
               }`}
             >
               <ShieldCheck className="w-3 h-3" /> ML {riskTier} RISK
+              {anomalyScore && (riskTier === "HIGH" || riskTier === "CRITICAL") && (
+                <span className="opacity-70">({anomalyScore}%)</span>
+              )}
             </span>
           </div>
           <span
@@ -101,7 +113,7 @@ export default function ProjectCard({ work, onViewDetails }: ProjectCardProps) {
           <div className="flex items-center gap-1.5">
             <MapPin className="w-3.5 h-3.5 text-secondary shrink-0" />
             <span className="truncate">
-              {work.constituency ? `${work.constituency}, ` : ""}{work.state}
+              {displayConstituency ? `${displayConstituency}, ` : ""}{work.state}
             </span>
           </div>
         </div>
@@ -128,14 +140,21 @@ export default function ProjectCard({ work, onViewDetails }: ProjectCardProps) {
         <div>
           <div className="flex justify-between text-[11px] font-bold text-gray-500 mb-1">
             <span>Fund Utilization</span>
-            <span className={utilizationPct > 100 ? "text-red-600 font-black" : (utilizationPct === 0 ? "text-amber-600 font-medium" : "text-gray-700")}>
-              {utilizationPct === 0 ? "0.0% (Awaiting Disbursement)" : `${((work.expenditure_to_sanction_ratio || 0) * 100).toFixed(1)}%`}
+            <span className={isOverBudget ? "text-red-600 font-black" : (utilizationPct === 0 ? "text-amber-600 font-medium" : "text-gray-700")}>
+              {isOverBudget
+                ? `⚠ ${((work.expenditure_to_sanction_ratio || 0) * 100).toFixed(1)}% Utilized (+${(((work.expenditure_to_sanction_ratio || 0) - 1) * 100).toFixed(1)}% over sanction)`
+                : utilizationPct === 0
+                ? "0.0% (Awaiting Disbursement)"
+                : `${((work.expenditure_to_sanction_ratio || 0) * 100).toFixed(1)}%`
+              }
             </span>
           </div>
           <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
             <div
               className={`h-full rounded-full transition-all duration-500 ${
-                work.lifecycle_status === "COMPLETED"
+                isOverBudget
+                  ? "bg-red-500"
+                  : work.lifecycle_status === "COMPLETED"
                   ? "bg-emerald-500"
                   : utilizationPct > 80
                   ? "bg-primary"
@@ -149,10 +168,10 @@ export default function ProjectCard({ work, onViewDetails }: ProjectCardProps) {
         {/* Footer Meta & Buttons */}
         <div className="flex items-center justify-between pt-2">
           <div className="text-[11px] text-gray-500 flex items-center gap-1 font-mono">
-            {work.sanction_to_completion_days ? (
+            {work.sanction_to_completion_days !== undefined && work.sanction_to_completion_days !== null ? (
               <>
                 <Clock className="w-3.5 h-3.5 text-gray-400" />
-                <span>{work.sanction_to_completion_days} days</span>
+                <span>{Math.abs(Number(work.sanction_to_completion_days))} days {Number(work.sanction_to_completion_days) < 0 ? "(Early)" : ""}</span>
               </>
             ) : (
               <span className="text-gray-400">Duration: Ongoing</span>

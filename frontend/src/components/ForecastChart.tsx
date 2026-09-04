@@ -15,53 +15,42 @@ import {
 } from "recharts";
 import { TrendingUp } from "lucide-react";
 
-export default function ForecastChart({ entityId = "default" }: { entityId?: string }) {
+export default function ForecastChart({ entityId = "ALL" }: { entityId?: string }) {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const fetchForecast = async () => {
+      setLoading(true);
+      setError(false);
       try {
-        const baseUrl = process.env.NEXT_PUBLIC_ML_SERVICE_URL || "http://localhost:8000";
-        const res = await fetch(`${baseUrl}/api/forecast/${entityId}`);
+        const res = await fetch(`/api/ml/forecast/${entityId}`);
         if (res.ok) {
           const json = await res.json();
-          setData(json);
+          setData(Array.isArray(json) ? json : []);
         } else {
-          setMockData();
+          setError(true);
         }
-      } catch (e) {
-        setMockData();
+      } catch {
+        setError(true);
       } finally {
         setLoading(false);
       }
     };
-
-    const setMockData = () => {
-      // Generate some mock time series data with bounds if backend is unavailable
-      const mock = Array.from({ length: 6 }).map((_, i) => {
-        const base = 500000 + i * 50000;
-        return {
-          ds: `2024-0${i + 1}-01`,
-          yhat: base,
-          yhat_lower: base - 20000,
-          yhat_upper: base + 20000,
-        };
-      });
-      setData(mock);
-    };
-
     fetchForecast();
   }, [entityId]);
 
-  if (loading) return <div className="p-4 text-gray-500 animate-pulse">Loading forecast...</div>;
+  if (loading) return <div className="p-6 text-gray-400 animate-pulse text-sm">Computing 6-month forecast...</div>;
+  if (error || data.length === 0) return <div className="p-6 text-red-400 text-sm font-medium">Forecast unavailable. Backend may still be loading.</div>;
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-      <h2 className="text-xl font-bold mb-6 text-gray-800 flex items-center gap-2">
+      <h2 className="text-xl font-bold mb-1 text-gray-800 flex items-center gap-2">
         <TrendingUp className="text-blue-500" />
-        6-Month Expenditure Forecast (Prophet)
+        6-Month Expenditure Forecast
       </h2>
+      <p className="text-xs text-gray-400 mb-5">Forward projection from {data[0]?.ds} to {data[data.length - 1]?.ds} &bull; Confidence band shown</p>
       <div className="h-80 w-full">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart

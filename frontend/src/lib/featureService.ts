@@ -25,6 +25,7 @@ export interface FetchWorkFeaturesParams {
   parliament?: string;
   search?: string;
   lifecycle_status?: string;
+  risk_level?: string;
   limit?: number;
   offset?: number;
 }
@@ -40,6 +41,9 @@ export async function fetchWorkFeatures(params: FetchWorkFeaturesParams): Promis
   if (params.search) query.append("search", params.search);
   if (params.lifecycle_status && params.lifecycle_status !== "ALL") {
     query.append("lifecycle_status", params.lifecycle_status);
+  }
+  if (params.risk_level && params.risk_level !== "ALL") {
+    query.append("risk_level", params.risk_level);
   }
   if (params.limit !== undefined) query.append("limit", params.limit.toString());
   if (params.offset !== undefined) query.append("offset", params.offset.toString());

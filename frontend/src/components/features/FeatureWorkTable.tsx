@@ -16,6 +16,7 @@ export default function FeatureWorkTable({ parliament }: Props) {
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
+  const [riskFilter, setRiskFilter] = useState("ALL");
   const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
   const [page, setPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
@@ -30,6 +31,7 @@ export default function FeatureWorkTable({ parliament }: Props) {
         parliament,
         search: search || undefined,
         lifecycle_status: statusFilter === "ALL" ? undefined : statusFilter,
+        risk_level: riskFilter === "ALL" ? undefined : riskFilter,
         limit,
         offset: page * limit,
       });
@@ -44,11 +46,11 @@ export default function FeatureWorkTable({ parliament }: Props) {
 
   useEffect(() => {
     setPage(0);
-  }, [parliament, statusFilter, search]);
+  }, [parliament, statusFilter, riskFilter, search]);
 
   useEffect(() => {
     loadData();
-  }, [parliament, page, statusFilter]);
+  }, [parliament, page, statusFilter, riskFilter]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -92,6 +94,23 @@ export default function FeatureWorkTable({ parliament }: Props) {
               <option value="EXPENDITURE_STARTED">Expenditure Started</option>
               <option value="SANCTIONED">Sanctioned</option>
               <option value="RECOMMENDED_ONLY">Recommended Only</option>
+            </select>
+          </div>
+
+          {/* Risk Filter */}
+          <div className="flex items-center gap-1.5 border rounded-xl px-2.5 py-1.5 bg-white">
+            <Filter className="w-4 h-4 text-red-400" />
+            <select
+              value={riskFilter}
+              onChange={(e) => setRiskFilter(e.target.value)}
+              className="text-xs font-semibold focus:outline-none bg-transparent text-gray-700"
+            >
+              <option value="ALL">All Risk Levels</option>
+              <option value="ALL_ANOMALIES">All Flagged Anomalies</option>
+              <option value="CRITICAL_RISK">Critical Risk (&ge; 85%)</option>
+              <option value="HIGH_RISK">High Risk (70-84%)</option>
+              <option value="MEDIUM_RISK">Medium Risk (50-69%)</option>
+              <option value="LOW_RISK">Low Risk (&lt; 50%)</option>
             </select>
           </div>
 

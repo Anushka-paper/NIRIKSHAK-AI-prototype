@@ -97,21 +97,29 @@ export default function StateCard({ state, parliament = "all", className = "" }:
                 {/* Popover / Tooltip */}
                 {showInfo && (
                   <div
-                    className="absolute left-0 top-7 z-30 w-56 p-3 bg-[#0F172A] text-white text-[11px] rounded-xl shadow-xl space-y-1 border border-slate-700 animate-in fade-in zoom-in-95 duration-150"
+                    className="absolute left-0 top-7 z-30 w-64 p-3 bg-[#0F172A] text-white text-[11px] rounded-xl shadow-xl space-y-1.5 border border-slate-700 animate-in fade-in zoom-in-95 duration-150"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <div className="font-bold text-slate-100 flex items-center justify-between">
                       <span>{stateName} Details</span>
-                      <span className="text-[10px] text-emerald-400 font-mono">Rank #{rank}</span>
+                      <span className="text-[10px] text-emerald-400 font-mono">Rank #{rank} of {totalStates}</span>
                     </div>
+                    <p className="text-slate-300 leading-snug">
+                      Type: <strong className="text-white">{state.type === "UT" ? "Union Territory" : "Full State"}</strong>
+                    </p>
                     <p className="text-slate-300 leading-snug">
                       Total Projects: <strong className="text-white">{state.totalProjects.toLocaleString()}</strong>
                     </p>
                     <p className="text-slate-300 leading-snug">
-                      Type: <strong className="text-white">{state.type === "UT" ? "Union Territory" : "Full State"}</strong>
+                      Ongoing: <strong className="text-amber-300">{(state.ongoingProjects ?? 0).toLocaleString()}</strong>
+                      <span className="mx-1 text-slate-600">&bull;</span>
+                      Pending: <strong className="text-red-400">{(state.pendingProjects ?? 0).toLocaleString()}</strong>
+                    </p>
+                    <p className="text-slate-300 leading-snug">
+                      Fund Utilization: <strong className="text-white">{calculatedExpenditureRate.toFixed(1)}%</strong>
                     </p>
                     <p className="text-slate-400 text-[9px] pt-1 border-t border-slate-700">
-                      Source: Official MoSPI Portals
+                      Source: MPLADS Portal Data
                     </p>
                   </div>
                 )}
@@ -186,7 +194,13 @@ export default function StateCard({ state, parliament = "all", className = "" }:
             aria-label={`Expenditure rate is ${calculatedExpenditureRate}%`}
           >
             <div
-              className="h-full bg-[#16A34A] rounded-full transition-all duration-500 ease-out"
+              className={`h-full rounded-full transition-all duration-500 ease-out ${
+                calculatedExpenditureRate >= 75
+                  ? "bg-[#16A34A]"
+                  : calculatedExpenditureRate >= 40
+                  ? "bg-amber-500"
+                  : "bg-red-500"
+              }`}
               style={{ width: `${progressWidth}%` }}
             />
           </div>

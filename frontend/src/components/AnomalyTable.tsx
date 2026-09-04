@@ -8,42 +8,34 @@ interface AnomalyData {
   critical_anomalies: number;
 }
 
-export default function AnomalyTable() {
+export default function AnomalyTable({ parliament = "all" }: { parliament?: string }) {
   const [data, setData] = useState<AnomalyData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    // Replace with your actual deployed FastAPI URL when in production
     const fetchAnomalies = async () => {
+      setLoading(true);
+      setError(false);
       try {
-        const baseUrl = process.env.NEXT_PUBLIC_ML_SERVICE_URL || "http://localhost:8000";
-        const res = await fetch(`${baseUrl}/api/anomalies/states`);
+        const res = await fetch(`/api/ml/anomalies-by-state?parliament=${parliament}`);
         if (res.ok) {
           const json = await res.json();
-          setData(json.data);
+          setData(json.data || []);
         } else {
-          // Fallback to mock data if backend isn't running yet
-          setData([
-            { state: "Maharashtra", critical_anomalies: 12 },
-            { state: "Delhi", critical_anomalies: 5 },
-            { state: "Karnataka", critical_anomalies: 0 },
-          ]);
+          setError(true);
         }
-      } catch (e) {
-        // Fallback to mock data if backend isn't running yet
-        setData([
-          { state: "Maharashtra", critical_anomalies: 12 },
-          { state: "Delhi", critical_anomalies: 5 },
-          { state: "Karnataka", critical_anomalies: 0 },
-        ]);
+      } catch {
+        setError(true);
       } finally {
         setLoading(false);
       }
     };
     fetchAnomalies();
-  }, []);
+  }, [parliament]);
 
-  if (loading) return <div className="p-4 text-gray-500 animate-pulse">Loading anomalies...</div>;
+  if (loading) return <div className="p-6 text-gray-400 animate-pulse text-sm">Loading anomaly data...</div>;
+  if (error) return <div className="p-6 text-red-500 text-sm font-medium">Failed to load anomaly data. Check backend connection.</div>;
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
@@ -52,6 +44,9 @@ export default function AnomalyTable() {
         Critical Anomalies by State
       </h2>
       <div className="overflow-x-auto">
+        {data.length === 0 ? (
+          <p className="text-gray-400 text-sm py-4">No critical anomalies found.</p>
+        ) : (
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-gray-50 text-gray-600 text-sm uppercase tracking-wider border-b">
@@ -64,7 +59,7 @@ export default function AnomalyTable() {
             {data.map((row, idx) => (
               <tr key={idx} className="hover:bg-gray-50 transition-colors">
                 <td className="p-3 font-medium">{row.state}</td>
-                <td className="p-3">{row.critical_anomalies}</td>
+                <td className="p-3 font-mono font-bold">{row.critical_anomalies}</td>
                 <td className="p-3">
                   {row.critical_anomalies > 10 ? (
                     <span className="flex items-center gap-1 text-red-600 bg-red-50 px-2 py-1 rounded-full text-xs font-bold w-fit">
@@ -84,6 +79,7 @@ export default function AnomalyTable() {
             ))}
           </tbody>
         </table>
+        )}
       </div>
     </div>
   );
