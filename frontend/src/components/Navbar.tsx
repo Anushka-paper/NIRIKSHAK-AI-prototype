@@ -12,9 +12,11 @@ export default function Navbar() {
   }
 
   const links = [
-    { name: "Overview", href: "/overview" },
+    { name: "Overview",     href: "/overview" },
     { name: "Browse States", href: "/states" },
-    { name: "Projects", href: "/projects" },
+    { name: "Projects",     href: "/projects" },
+    { name: "Anomalies",    href: "/anomalies" },
+    { name: "ML Dashboard", href: "/ml-dashboard" },
   ];
 
   return (
