@@ -537,3 +537,40 @@ def get_v1_raw_completed(parliament: str = "all", state: str = None, limit: int 
         import traceback
         traceback.print_exc()
         return {"records": [], "total_count": 0, "total_amount": 0, "error": str(e)}
+
+@app.get("/api/v1/features/works/{work_id}")
+def get_v1_features_work(work_id: str, parliament: str = "all"):
+    try:
+        import pandas as pd
+        from pathlib import Path
+        BASE_DIR = Path(__file__).parent.parent
+        parliaments = ["lok_sabha", "rajya_sabha"] if parliament == "all" else [parliament]
+        dfs = []
+        for p in parliaments:
+            csv_path = BASE_DIR / "data" / "features" / p / "work_features.csv"
+            if csv_path.exists():
+                dfs.append(pd.read_csv(csv_path, low_memory=False))
+                
+        if not dfs:
+            from fastapi import HTTPException
+            raise HTTPException(status_code=404, detail="Not Found")
+            
+        df = pd.concat(dfs, ignore_index=True) if len(dfs) > 1 else dfs[0]
+        
+        # Filter for specific canonical_work_id
+        work = df[df["canonical_work_id"] == work_id]
+        if work.empty:
+            from fastapi import HTTPException
+            raise HTTPException(status_code=404, detail="Not Found")
+            
+        import json
+        record = json.loads(work.iloc[0:1].to_json(orient="records"))[0]
+        
+        return record
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        from fastapi import HTTPException
+        raise HTTPException(status_code=500, detail=str(e))
