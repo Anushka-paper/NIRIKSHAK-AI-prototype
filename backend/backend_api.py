@@ -543,7 +543,7 @@ def get_v1_features_work(work_id: str, parliament: str = "all"):
         import json
         record = json.loads(work.iloc[0:1].to_json(orient="records"))[0]
         
-        return record
+        return {"features": record}
     except HTTPException:
         raise
     except Exception as e:
