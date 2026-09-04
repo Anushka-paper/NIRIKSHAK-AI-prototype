@@ -82,7 +82,7 @@ export default function StateDetailPage() {
 
   // Helper to parse cluttered work ID strings into clean ID & Title
   const parseWorkInfo = (rawWork: string) => {
-    if (!rawWork) return { id: "MPLADS Project", title: "Public Infrastructure Work" };
+    if (!rawWork) return { id: "--", title: "--" };
     // Example: "WS/MP492/2024-2025/134984-Lighting of public spaces"
     const dashIdx = rawWork.indexOf("-");
     if (dashIdx !== -1 && rawWork.startsWith("WS/")) {
@@ -467,7 +467,7 @@ export default function StateDetailPage() {
                           className="text-sm font-bold text-gray-900 mt-1 line-clamp-2 leading-snug"
                           title={rc.description || cleanWorkTitle}
                         >
-                          {rc.description || cleanWorkTitle || "Development Project"}
+                          {rc.description || cleanWorkTitle || "--"}
                         </h4>
                       </div>
 
@@ -476,13 +476,13 @@ export default function StateDetailPage() {
                         <div className="flex items-center justify-between gap-2">
                           <span className="text-gray-400 font-medium">MP</span>
                           <span className="font-bold text-gray-800 text-right truncate max-w-[180px]">
-                            {rc.mp_name || "-"}
+                            {rc.mp_name || "--"}
                           </span>
                         </div>
                         <div className="flex items-center justify-between gap-2">
                           <span className="text-gray-400 font-medium">Constituency</span>
                           <span className="text-gray-700 font-medium text-right truncate max-w-[180px]">
-                            {rc.constituency || "-"}
+                            {rc.constituency || "--"}
                           </span>
                         </div>
                         {rc.ida_agency && (
@@ -544,9 +544,9 @@ export default function StateDetailPage() {
                         {rc.work_id}
                       </td>
                       <td className="p-3 font-medium text-gray-800 max-w-sm truncate" title={rc.description}>
-                        {rc.description || "Completed Development Work"}
+                        {rc.description || "--"}
                       </td>
-                      <td className="p-3 text-gray-600">{rc.constituency || "-"}</td>
+                      <td className="p-3 text-gray-600">{rc.constituency || "--"}</td>
                       <td className="p-3 text-gray-600 font-medium">{rc.mp_name}</td>
                       <td className="p-3 text-right font-mono font-bold text-gray-900">
                         {formatINR(rc.amount)}
@@ -693,9 +693,9 @@ export default function StateDetailPage() {
                   >
                     <td className="p-3 font-mono font-bold text-primary">{proj.canonical_work_id}</td>
                     <td className="p-3 font-medium text-gray-900 max-w-sm truncate" title={proj.work_description}>
-                      {proj.work_description || "MPLADS Project"}
+                      {proj.work_description || "--"}
                     </td>
-                    <td className="p-3 text-gray-600">{proj.constituency || "-"}</td>
+                    <td className="p-3 text-gray-600">{proj.constituency || "--"}</td>
                     <td className="p-3 text-gray-700 font-medium">{proj.mp_name}</td>
                     <td className="p-3 text-right font-mono font-bold text-gray-900">
                       {formatINR(Number(proj.sanctioned_amount))}

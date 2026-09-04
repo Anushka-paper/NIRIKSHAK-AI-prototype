@@ -76,9 +76,9 @@ export default function ProjectDetailPage() {
         work_id: work.canonical_work_id,
         estimated_cost: Number(work.sanctioned_amount || work.recommended_amount) || 1000000,
         days_since_sanction: Number(work.recommendation_to_sanction_days) || 120,
-        current_status: String(work.work_status || work.lifecycle_status || "Sanction"),
-        state: String(work.state || "National"),
-        category: String(work.work_category || "General Infrastructure")
+        current_status: String(work.work_status || work.lifecycle_status || "--"),
+        state: String(work.state || "--"),
+        category: String(work.work_category || "--")
       });
       if (res && res.success && res.data) {
         setMlPrediction(res.data);
@@ -184,7 +184,7 @@ export default function ProjectDetailPage() {
             </div>
 
             <h1 className="font-headline font-bold text-2xl sm:text-3xl text-gray-900 leading-tight">
-              {work.work_description || "MPLADS Development Project"}
+              {work.work_description || "--"}
             </h1>
 
             <div className="flex items-center gap-6 flex-wrap text-xs text-gray-600 pt-2">
@@ -435,7 +435,7 @@ export default function ProjectDetailPage() {
               <span className="text-[11px] text-gray-400 uppercase font-bold block">Entity Resolution Match</span>
               <span className="font-headline font-bold text-xl text-green-700 block mt-1 flex items-center gap-1.5">
                 <CheckCircle2 className="w-5 h-5 text-green-600" />
-                {work.entity_resolution_confidence || "HIGH"} ({work.entity_resolution_score || 100}%)
+                {work.entity_resolution_confidence || "--"} ({work.entity_resolution_score || 0}%)
               </span>
               <span className="text-[10px] text-gray-500 mt-0.5 block">Cross-dataset provenance score</span>
             </div>

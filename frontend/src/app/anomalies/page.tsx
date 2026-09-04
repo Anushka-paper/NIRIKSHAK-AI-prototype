@@ -344,7 +344,7 @@ export default function AnomaliesPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2.5 flex-wrap mb-2">
                       <span className="px-2.5 py-1 rounded-md bg-gray-100 text-gray-700 text-[11px] font-bold tracking-tight uppercase">
-                        {item.category || "Public Infrastructure"}
+                        {item.category || "--"}
                       </span>
                       <span className="px-2.5 py-1 rounded-md bg-primary/10 text-primary text-[11px] font-bold">
                         {item.state}
@@ -355,14 +355,14 @@ export default function AnomaliesPage() {
                     </div>
 
                     <h3 className="font-headline font-bold text-base md:text-lg text-gray-900 leading-snug line-clamp-2">
-                      {item.description || "Unspecified Work Description"}
+                      {item.description || "--"}
                     </h3>
 
                     {/* Explainable Reasons */}
                     <div className="mt-3 flex items-start gap-2 bg-rose-50/70 border border-rose-100 rounded-xl p-3">
                       <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
                       <p className="text-xs text-rose-800 font-semibold leading-relaxed">
-                        {item.anomaly_reasons || "Multivariate financial & timeline outlier"}
+                        {item.anomaly_reasons || "--"}
                       </p>
                     </div>
                   </div>

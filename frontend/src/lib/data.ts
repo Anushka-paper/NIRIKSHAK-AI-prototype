@@ -73,12 +73,13 @@ export function getTrendingProjects() {
     
     for (let i = 1; i < Math.min(4, lines.length); i++) {
       const cols = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+      const rawTitle = cols[titleIdx]?.replace(/^"|"$/g, '') || "--";
       projects.push({
         id: i,
-        title: cols[titleIdx]?.replace(/^"|"$/g, '') || "Development Work",
+        title: rawTitle,
         amount: parseFloat(cols[amtIdx]) || 0,
         status: "Recommended",
-        location: cols[locIdx]?.replace(/^"|"$/g, '') || "India"
+        location: cols[locIdx]?.replace(/^"|"$/g, '') || "--"
       });
     }
     

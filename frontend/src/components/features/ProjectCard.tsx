@@ -63,7 +63,7 @@ export default function ProjectCard({ work, onViewDetails }: ProjectCardProps) {
               {work.canonical_work_id}
             </span>
             <span className="text-[11px] uppercase font-bold px-2 py-0.5 rounded-md bg-gray-100 text-gray-600">
-              {work.parliament.replace("_", " ")}
+              {work.parliament?.replace("_", " ") || "UNKNOWN"}
             </span>
             {/* Live ML Trained Model Risk Tag */}
             <span
