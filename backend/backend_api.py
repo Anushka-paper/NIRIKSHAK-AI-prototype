@@ -400,9 +400,53 @@ class NLPRequest(BaseModel):
 
 @app.post("/api/nlp/check-duplicate")
 def check_duplicate(req: NLPRequest):
-    orchestrator = UnifiedSyncOrchestrator()
-    res = orchestrator.sbert_model.check_duplicate(req.query)
-    return {"matches": res}
+    try:
+        from sentence_transformers import SentenceTransformer
+        from sklearn.metrics.pairwise import cosine_similarity
+        import pickle
+        import os
+        
+        # Load precomputed embeddings if not in memory
+        global _nlp_model, _nlp_data
+        if '_nlp_model' not in globals():
+            print("Loading NLP Model for semantic search...")
+            global _nlp_model
+            _nlp_model = SentenceTransformer('all-MiniLM-L6-v2')
+            
+            with open("artifacts/work_embeddings.pkl", "rb") as f:
+                global _nlp_data
+                _nlp_data = pickle.load(f)
+                
+        # Generate embedding for incoming query
+        query_emb = _nlp_model.encode([req.query])
+        
+        # Calculate cosine similarity
+        similarities = cosine_similarity(query_emb, _nlp_data["embeddings"])[0]
+        
+        # Get top 5 matches
+        import numpy as np
+        top_indices = np.argsort(similarities)[::-1][:5]
+        
+        matches = []
+        for idx in top_indices:
+            score = float(similarities[idx])
+            # Only include reasonable matches
+            if score > 0.4:
+                matches.append({
+                    "work_id": _nlp_data["ids"][idx],
+                    "similarity_score": round(score * 100, 1),
+                    "description": _nlp_data["descriptions"][idx],
+                    "mp_name": _nlp_data["mp_name"][idx],
+                    "state": _nlp_data["state"][idx],
+                    "cost": _nlp_data["cost"][idx]
+                })
+                
+        return {"matches": matches}
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        from fastapi import HTTPException
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/dashboard/{role}/{entity}")
 def get_rbac_dashboard(role: str, entity: str):
