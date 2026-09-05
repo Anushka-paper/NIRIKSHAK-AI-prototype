@@ -271,7 +271,7 @@ export default function AnomaliesPage() {
       </div>
 
       {/* GRAPH ANALYTICS SECTION */}
-      {graphs && (
+      {activeView === "graphs" && graphs && (
         <VisualGraphs
           stateBreakdown={graphs.state_breakdown || []}
           riskBands={graphs.risk_bands || []}
@@ -281,7 +281,9 @@ export default function AnomaliesPage() {
         />
       )}
 
-      {/* FILTER & SEARCH TOOLBAR */}
+      {activeView === "table" && (
+        <>
+          {/* FILTER & SEARCH TOOLBAR */}
       <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-subtle flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3 flex-1 min-w-[280px]">
           <div className="relative w-full max-w-md">
@@ -411,6 +413,8 @@ export default function AnomaliesPage() {
             })}
           </div>
         </div>
+      )}
+        </>
       )}
     </div>
   );
