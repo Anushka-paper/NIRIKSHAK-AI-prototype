@@ -601,7 +601,7 @@ def get_feature_aggregations(parliament: str = Query("lok_sabha", pattern="^(lok
     return {
         "parliament": parliament,
         "mps": load_clean("mp")[:50], # Top 50
-        "constituencies": load_clean("constituency")[:50],
+        "constituencies": load_clean("constituency"),
         "states": load_clean("state"),
         "vendors": load_clean("vendor")
     }
