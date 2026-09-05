@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -58,10 +59,15 @@ function getStateRiskColor(score: number | null): string {
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
+function toStateSlug(name: string): string {
+  return name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+}
+
 export function IndiaMap({
   constituencies = [],
   lastUpdated = "Aug 2026",
 }: IndiaMapProps) {
+  const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [filter, setFilter] = useState<FilterMode>("all");
 
@@ -149,16 +155,18 @@ export function IndiaMap({
                     const geoName = geo.properties.st_nm || geo.properties.NAME_1 || geo.properties.name || "";
                     const score = resolveStateScore(geoName, constituencies);
                     const fill = getStateRiskColor(score);
+                    const slug = toStateSlug(geoName);
                     return (
                       <Tooltip key={geo.rsmKey}>
                         <TooltipTrigger
                           render={
                             <Geography
                               geography={geo}
+                              onClick={() => router.push(`/states/${slug}`)}
                               style={{
-                                default: { fill, stroke: "#94A3B8", strokeWidth: 0.5, outline: "none" },
-                                hover:   { fill, stroke: "#475569", strokeWidth: 1,   outline: "none", filter: "brightness(0.88)" },
-                                pressed: { fill, stroke: "#475569", strokeWidth: 1,   outline: "none" },
+                                default: { fill, stroke: "#94A3B8", strokeWidth: 0.5, outline: "none", cursor: "pointer" },
+                                hover:   { fill, stroke: "#475569", strokeWidth: 1,   outline: "none", filter: "brightness(0.88)", cursor: "pointer" },
+                                pressed: { fill, stroke: "#475569", strokeWidth: 1,   outline: "none", cursor: "pointer" },
                               }}
                             />
                           }
@@ -198,11 +206,17 @@ export function IndiaMap({
                       <Tooltip>
                         <TooltipTrigger
                           render={
-                            <g className="outline-none cursor-pointer">
-                              {/* Invisible larger hover target to make it easier to hover */}
+                            <g
+                              className="outline-none cursor-pointer"
+                              onClick={() => {
+                                const stateSlug = toStateSlug(c.state);
+                                router.push(`/states/${stateSlug}`);
+                              }}
+                            >
+                              {/* Invisible larger hover target */}
                               <circle r={Math.max(radius + 10, 14)} fill="transparent" />
                               
-                              {/* Core dot only, no pulse ring */}
+                              {/* Core dot */}
                               <motion.circle
                                 r={radius}
                                 fill={color}
