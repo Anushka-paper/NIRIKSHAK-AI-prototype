@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const ML_BASE = process.env.ML_API_URL || "http://localhost:8000";
+const ML_BASE = (process.env.ML_SERVICE_URL || process.env.ML_API_URL || "http://localhost:8000").replace(/\/+$/, "");
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
