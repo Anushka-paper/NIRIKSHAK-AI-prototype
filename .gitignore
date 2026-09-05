@@ -53,7 +53,7 @@ frontend/.next/
 frontend/out/
 frontend/build/
 frontend/*.tsbuildinfo
-frontend/next-env.d.ts
+# frontend/next-env.d.ts
 node_modules/
 .next/
 *.tsbuildinfo

@@ -104,7 +104,7 @@ export default async function Home() {
           </p>
           <div className="flex flex-wrap items-center gap-4">
             <Link
-              href="#overview"
+              href="/overview"
               className="bg-primary hover:bg-[var(--color-primary-hover)] text-white font-bold py-3.5 px-8 rounded-full text-lg transition-all flex items-center gap-2 shadow-md hover:shadow-lg"
             >
               View Overview <ArrowRight className="w-5 h-5" />
