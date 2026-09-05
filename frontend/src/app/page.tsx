@@ -22,7 +22,7 @@ const FLAG_TYPE_LABELS: Record<string, string> = {
 };
 
 export default async function Home() {
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+  const API_BASE = (process.env.ML_SERVICE_URL || process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000").replace(/\/+$/, "");
   // ── 1. Fetch Dashboard Stats
   let overview = { analytics: { totalExpenditureAmount: 0 }, projectStatusMetrics: { totalWorks: 0 }, geography: { totalStatesRepresented: 0 } };
   let anomaliesSummary = { lok_sabha: { critical_anomalies: 0 } };
