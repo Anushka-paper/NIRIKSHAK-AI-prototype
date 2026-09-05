@@ -127,7 +127,7 @@ export default function AnomaliesPage() {
   const fetchAnomalies = async () => {
     setLoading(true);
     try {
-      let url = `/api/anomalies?parliament=${parliament}&min_score=${minScore}&limit=60`;
+      let url = `/api/anomalies?parliament=${parliament}&min_score=${minScore}&limit=60&only_anomalies=false`;
       if (selectedState) {
         url += `&state=${encodeURIComponent(selectedState)}`;
       }
