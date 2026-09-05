@@ -42,10 +42,13 @@ jobs:
           path: data_processed/parliament_data.duckdb
           retention-days: 7
 
-      - name: Commit updated timestamp
+      - name: Commit updated timestamp and data files
         run: |
           git config user.name "nirikshak-bot"
           git config user.email "bot@nirikshak.ai"
           git add data_pipeline/.last_scraped
+          git add -f data_pipeline/LS_DATASET/loksabha_state_tiles.csv || true
+          git add -f data_processed/parliament_data.duckdb || true
+          git add -f data_pipeline/parliament_data.duckdb || true
           git diff --staged --quiet || git commit -m "chore: nightly data sync $(date -u +%Y-%m-%d)"
           git push
