@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { StateSummary } from "@/types/overview";
 import { getStateAggregations } from "@/lib/api";
 import StateCard from "@/components/features/StateCard";
+import { useRequireAuth } from "@/lib/authContext";
 import {
   MapPin,
   Search,
@@ -18,6 +19,7 @@ import {
 import Link from "next/link";
 
 export default function BrowseStatesPage() {
+  const { user, loading: authLoading } = useRequireAuth();
   const [parliament, setParliament] = useState<string>("all");
   const [states, setStates] = useState<StateSummary[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -49,8 +51,10 @@ export default function BrowseStatesPage() {
   };
 
   useEffect(() => {
+    if (!user) return;
     fetchStates();
-  }, [parliament]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [parliament, user]);
 
   // Filtered and Sorted States
   const filteredStates = useMemo(() => {
@@ -75,6 +79,10 @@ export default function BrowseStatesPage() {
 
   const totalWorks = states.reduce((acc, s) => acc + s.totalProjects, 0);
   const totalCompleted = states.reduce((acc, s) => acc + s.completedProjects, 0);
+
+  if (authLoading || !user) {
+    return <div className="py-24 text-center text-sm text-gray-500">Loading...</div>;
+  }
 
   return (
     <div className="flex flex-col gap-8 font-body pb-24">
@@ -133,7 +141,7 @@ export default function BrowseStatesPage() {
       </div>
 
       {/* High-Level Overview Strip */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-subtle">
           <span className="text-[10px] uppercase font-bold text-gray-400 block">States Covered</span>
           <span className="font-headline font-bold text-xl text-gray-900 block mt-0.5">

@@ -12,21 +12,25 @@ import {
   MapPin,
   IndianRupee,
 } from "lucide-react";
+import { useAuth, withAuthHeader } from "@/lib/authContext";
 
 export default function WorksComplianceList() {
+  const { user } = useAuth();
   const [works, setWorks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedWorkId, setExpandedWorkId] = useState<number | null>(null);
   const [lifecycleFilter, setLifecycleFilter] = useState<string>("ALL");
 
   useEffect(() => {
+    if (!user) return;
     fetchWorks();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   const fetchWorks = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/compliance/works");
+      const res = await fetch("/api/compliance/works", { headers: withAuthHeader(user) });
       const json = await res.json();
       if (json.success && json.data?.works) {
         setWorks(json.data.works);

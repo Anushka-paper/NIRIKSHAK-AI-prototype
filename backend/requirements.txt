@@ -14,3 +14,5 @@ xgboost
 reportlab
 prophet
 python-multipart
+rapidfuzz
+anthropic

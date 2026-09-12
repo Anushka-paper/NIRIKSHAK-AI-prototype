@@ -25,6 +25,7 @@ import {
   TrendingUp,
   Award
 } from "lucide-react";
+import { useRequireAuth } from "@/lib/authContext";
 
 interface RawCompletedRecord {
   work_id: string;
@@ -34,12 +35,12 @@ interface RawCompletedRecord {
   mp_name: string;
   amount: number;
   completion_date: string;
-  ida_agency: string;
   category: string;
   parliament: string;
 }
 
 export default function MPDetailPage() {
+  const { user, loading: authLoading } = useRequireAuth();
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -58,6 +59,7 @@ export default function MPDetailPage() {
   // All Works State
   const [allWorks, setAllWorks] = useState<WorkFeature[]>([]);
   const [loadingAllWorks, setLoadingAllWorks] = useState<boolean>(true);
+  const [allWorksError, setAllWorksError] = useState<string | null>(null);
 
   // Filters & Pagination
   const [viewMode, setViewMode] = useState<"cards" | "table">("cards");
@@ -68,7 +70,7 @@ export default function MPDetailPage() {
 
   // 1. Fetch Completed Works for this MP
   useEffect(() => {
-    if (!mpName || mpName === "undefined") return;
+    if (!user || !mpName || mpName === "undefined") return;
     async function loadCompletedWorks() {
       setLoadingCompleted(true);
       setCompletedError(null);
@@ -97,13 +99,15 @@ export default function MPDetailPage() {
       }
     }
     loadCompletedWorks();
-  }, [mpName, parliament]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mpName, parliament, user]);
 
   // 2. Fetch All Works for this MP (for total counts & overall stats)
   useEffect(() => {
-    if (!mpName || mpName === "undefined") return;
+    if (!user || !mpName || mpName === "undefined") return;
     async function loadAllWorks() {
       setLoadingAllWorks(true);
+      setAllWorksError(null);
       try {
         const qParams = new URLSearchParams({
           parliament,
@@ -116,16 +120,22 @@ export default function MPDetailPage() {
           const json = await res.json();
           if (json.success && json.data) {
             setAllWorks(json.data.records || []);
+          } else {
+            setAllWorksError("Overall work totals could not be loaded (unexpected response).");
           }
+        } else {
+          setAllWorksError("Overall work totals could not be loaded.");
         }
       } catch (err) {
         console.error("Error loading MP works:", err);
+        setAllWorksError("Overall work totals could not be loaded.");
       } finally {
         setLoadingAllWorks(false);
       }
     }
     loadAllWorks();
-  }, [mpName, parliament]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mpName, parliament, user]);
 
   // Currency & Metric Helper
   const formatINR = (val?: number) => {
@@ -183,6 +193,10 @@ export default function MPDetailPage() {
     const start = (completedPage - 1) * limit;
     return filteredCompletedWorks.slice(start, start + limit);
   }, [filteredCompletedWorks, completedPage, limit]);
+
+  if (authLoading || !user) {
+    return <div className="py-24 text-center text-sm text-gray-500">Loading...</div>;
+  }
 
   return (
     <div className="flex flex-col gap-8 font-body pb-24 max-w-7xl mx-auto px-4 sm:px-6">
@@ -250,6 +264,11 @@ export default function MPDetailPage() {
       </div>
 
       {/* MP High-Level Metrics Cards */}
+      {!loadingAllWorks && allWorksError && (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-2 text-xs font-semibold text-amber-800">
+          {allWorksError} Totals below may be based on completed works only, not this MP's full portfolio.
+        </div>
+      )}
       <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-white p-5 rounded-2xl shadow-subtle border border-gray-100">
           <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block">

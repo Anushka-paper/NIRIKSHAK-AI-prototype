@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
@@ -12,14 +12,18 @@ import json
 import httpx
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
+sys.path.append(PROJECT_ROOT)
 sys.path.append(os.path.join(PROJECT_ROOT, "ml_models"))
 sys.path.append(os.path.join(PROJECT_ROOT, "data_pipeline"))
 sys.path.append(os.path.join(PROJECT_ROOT, "reports"))
 sys.path.append(os.path.join(PROJECT_ROOT, "backend"))
+sys.path.append(os.path.join(PROJECT_ROOT, "ml-service"))
 sys.path.append(os.path.dirname(__file__))
 
 from unified_sync_orchestrator import UnifiedSyncOrchestrator
 from audit_dossier_generator import generate_dossier_pdf
+from auth import CurrentUser, get_current_user
+from models import UserRole
 
 app = FastAPI(title="ML Features API")
 
@@ -63,6 +67,16 @@ async def startup_event():
         print("Models loaded successfully.")
     except Exception as e:
         print(f"Warning: Could not load models. Error: {e}")
+
+    # Ensures risk_explanations (Epic 6's cache table) exists even if
+    # this service runs standalone, without api.py having created the
+    # SQLite schema first. Safe to call from multiple processes -- it
+    # only creates tables that don't already exist.
+    try:
+        import db as demo_db
+        demo_db.init_db()
+    except Exception as e:
+        print(f"Warning: could not initialize risk_explanations schema: {e}")
 
 
 # ─── Helper: get last scraped timestamp ────────────────────────────────────
@@ -370,7 +384,7 @@ def get_v1_features_works(parliament: str = "all", limit: int = 24, offset: int 
             mp_query = mp_name.lower().replace("-", " ").strip()
             df = df[
                 (df["mp_name"].astype(str).str.lower().str.strip() == mp_name.lower().strip()) |
-                (df["mp_name"].astype(str).str.lower().str.replace("-", " ").str.strip().str.contains(mp_query, regex=False))
+                (df["mp_name"].astype(str).str.lower().str.replace("-", " ").str.strip() == mp_query)
             ]
 
         if search:
@@ -615,7 +629,7 @@ def get_v1_raw_completed(parliament: str = "all", state: str = None, mp_name: st
             mp_q = mp_name.lower().replace("-", " ").strip()
             df = df[
                 (df["mp_name"].astype(str).str.lower().str.strip() == mp_name.lower().strip()) |
-                (df["mp_name"].astype(str).str.lower().str.replace("-", " ").str.strip().str.contains(mp_q, regex=False))
+                (df["mp_name"].astype(str).str.lower().str.replace("-", " ").str.strip() == mp_q)
             ]
 
         total_count = len(df)
@@ -694,15 +708,97 @@ class PredictRequest(BaseModel):
 
 @app.post("/api/v1/predict")
 def predict_risk(payload: PredictRequest):
+    # Real model path: a HistGradientBoostingClassifier trained on 24,101
+    # real historical works (see ml-service/prediction/delay/train.py).
+    # Falls back to the heuristic below ONLY if the trained artifact is
+    # missing -- e.g. a fresh clone before `python train.py` has been run.
+    try:
+        from prediction.delay.predict import predict_delay_risk
+
+        real_features: dict = {}
+        if payload.work_id:
+            # A real work_id lets us use its actual historical-rate and
+            # description features instead of guessing from just
+            # cost/state/category -- meaningfully more accurate.
+            try:
+                dfs = []
+                for p in ["lok_sabha", "rajya_sabha"]:
+                    csv_path = Path(PROJECT_ROOT) / "data" / "features" / p / "work_features.csv"
+                    if csv_path.exists():
+                        dfs.append(pd.read_csv(csv_path, low_memory=False))
+                if dfs:
+                    df_all = pd.concat(dfs, ignore_index=True)
+                    match = df_all[df_all["canonical_work_id"] == payload.work_id]
+                    if not match.empty:
+                        row = match.iloc[0]
+                        for col in [
+                            "recommended_amount", "recommendation_to_sanction_days",
+                            "mp_historical_completion_rate", "state_historical_completion_rate",
+                            "constituency_historical_completion_rate", "vendor_historical_completion_rate",
+                            "work_description_length", "work_description_word_count",
+                            "amount_percentile", "amount_z_score", "sanction_month",
+                            "sanction_quarter", "work_category",
+                        ]:
+                            val = row.get(col)
+                            real_features[col] = None if pd.isna(val) else val
+            except Exception:
+                pass  # fall through to just the payload's own fields
+
+        real_features.setdefault("work_category", payload.category)
+        result = predict_delay_risk(
+            sanctioned_amount=payload.estimated_cost,
+            state=payload.state,
+            **real_features,
+        )
+
+        if result is not None:
+            risk_level = result["risk_level"]
+            factors = [
+                f"Model: HistGradientBoostingClassifier trained on {result['training_rows']:,} real "
+                f"historical works (v{result['model_version']})"
+            ]
+            recs = "Standard monitoring recommended."
+            if risk_level == "HIGH":
+                recs = "Immediate administrative review required. High predicted probability of delay."
+                factors.append(f"Predicted delay probability: {result['delayed_probability']:.0%}")
+
+            # This is a model trained on sanction-time-only features (see
+            # dataset.py's leakage note), so it cannot see live elapsed
+            # time. Layer a transparent, separate statutory-SLA check on
+            # top for works already running long, rather than pretending
+            # the ML score accounts for it.
+            if payload.days_since_sanction and payload.days_since_sanction > 540 and payload.current_status != "COMPLETED":
+                risk_level = "HIGH"
+                factors.append(
+                    f"Already {payload.days_since_sanction} days since sanction -- exceeds the 18-month statutory completion SLA"
+                )
+
+            predicted_delay_days = int(payload.days_since_sanction * 0.5) if risk_level == "HIGH" else 0
+
+            return {
+                "risk_level": risk_level,
+                "risk_probability": result["risk_probability"],
+                "predicted_delay_days": predicted_delay_days,
+                "model_engine": "HistGradientBoostingClassifier (trained, not heuristic)",
+                "model_version": result["model_version"],
+                "trained_at": result["trained_at"],
+                "recommendations": recs,
+                "key_factors": factors,
+            }
+    except Exception as e:
+        print(f"Trained delay-risk model unavailable, falling back to heuristic: {e}")
+
+    # --- Heuristic fallback (only reached if the trained model artifact
+    # is missing or failed to load) ---
     try:
         import hashlib
         import random
-        
+
         # Seed random based on work_id to get stable but varied predictions
         seed_str = str(payload.work_id) if payload.work_id else "default"
         seed_int = int(hashlib.md5(seed_str.encode()).hexdigest(), 16) % (10**8)
         random.seed(seed_int)
-        
+
         # Generate organic-looking risk features
         cost_variance = random.uniform(0.5, 2.5)
         days_variance = random.uniform(0.5, 2.5)
@@ -752,11 +848,12 @@ def predict_risk(payload: PredictRequest):
         
         random.shuffle(potential_factors)
         factors = potential_factors[:2]
-            
+
         return {
             "risk_level": risk_level,
             "risk_probability": prob,
             "predicted_delay_days": delay_days,
+            "model_engine": "heuristic (fallback -- trained model artifact unavailable, run ml-service/prediction/delay/train.py)",
             "recommendations": recs,
             "key_factors": factors
         }
@@ -765,6 +862,103 @@ def predict_risk(payload: PredictRequest):
         traceback.print_exc()
         from fastapi import HTTPException
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ── Risk Explanation (Epic 6: LLM-grounded, SHAP-attributed) ────────────────
+
+sys.path.append(os.path.join(PROJECT_ROOT, "ml-service", "genai"))
+
+
+@app.get("/api/works/{work_id}/risk-explanation")
+def get_work_risk_explanation(work_id: str):
+    """
+    Grounded natural-language explanation of the delay-risk score for a
+    real work, composed over Epic 3's trained model + SHAP attributions
+    -- see ml-service/genai/investigation.py's module docstring for why
+    this doesn't compromise explainability. Cached per (work_id,
+    model_version); falls back to a template if the LLM is unavailable,
+    never crashes or returns a blank state.
+    """
+    try:
+        from prediction.delay.predict import predict_delay_risk, explain_delay_risk, is_model_available
+        from prediction.delay.dataset import compute_peer_baseline
+        from genai.context import build_grounding_payload
+        from genai.investigation import get_risk_explanation_safe
+
+        if not is_model_available():
+            raise HTTPException(status_code=503, detail="Delay-risk model artifact not available")
+
+        dfs = []
+        for p in ["lok_sabha", "rajya_sabha"]:
+            csv_path = Path(PROJECT_ROOT) / "data" / "features" / p / "work_features.csv"
+            if csv_path.exists():
+                dfs.append(pd.read_csv(csv_path, low_memory=False))
+        if not dfs:
+            raise HTTPException(status_code=404, detail="Work features dataset not found")
+        df_all = pd.concat(dfs, ignore_index=True)
+        match = df_all[df_all["canonical_work_id"] == work_id]
+        if match.empty:
+            raise HTTPException(status_code=404, detail=f"Work '{work_id}' not found")
+        row = match.iloc[0]
+
+        def _to_native(val):
+            """pandas/numpy scalars (int64, float64, bool_) aren't JSON-
+            serializable -- everything that ends up in the grounding
+            payload must be a plain Python type before it's cached."""
+            if val is None or (isinstance(val, float) and pd.isna(val)):
+                return None
+            if hasattr(val, "item"):
+                return val.item()
+            return val
+
+        feature_kwargs = {}
+        for col in [
+            "sanctioned_amount", "recommended_amount", "recommendation_to_sanction_days",
+            "mp_historical_completion_rate", "state_historical_completion_rate",
+            "constituency_historical_completion_rate", "vendor_historical_completion_rate",
+            "work_description_length", "work_description_word_count",
+            "amount_percentile", "amount_z_score", "sanction_month", "sanction_quarter",
+            "state", "work_category",
+        ]:
+            val = row.get(col)
+            feature_kwargs[col] = None if pd.isna(val) else _to_native(val)
+
+        prediction = predict_delay_risk(**feature_kwargs)
+        contributions = explain_delay_risk(**feature_kwargs)
+        baseline = compute_peer_baseline(feature_kwargs.get("work_category") or "Unknown")
+
+        work_facts = {
+            "sanction_amount": feature_kwargs.get("sanctioned_amount"),
+            "vendor_name": _to_native(row.get("vendor_name")),
+            "sanction_date": str(row.get("sanction_date")) if pd.notna(row.get("sanction_date")) else None,
+            "progress_pct": _to_native(row.get("expenditure_utilization_percentage")),
+            "evidence_on_file": bool(row.get("has_completion")) if pd.notna(row.get("has_completion")) else None,
+        }
+
+        payload = build_grounding_payload(
+            work_id=work_id,
+            risk_score=prediction["risk_probability"],
+            risk_band=prediction["risk_level"],
+            shap_contributions=contributions or [],
+            peer_baseline=baseline,
+            work_facts=work_facts,
+        )
+
+        import db as demo_db
+        session = demo_db.SessionLocal()
+        try:
+            result = get_risk_explanation_safe(session, work_id, prediction["model_version"], payload)
+        finally:
+            session.close()
+
+        return {"work_id": work_id, "prediction": prediction, **result}
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 # ── Anomaly Detection Endpoints ──────────────────────────────────────────────
 
@@ -921,7 +1115,16 @@ def get_anomaly_graphs(parliament: str = Query("all")):
 # ─── Compliance Audit Endpoints ──────────────────────────────────────────────
 
 @app.get("/api/v1/compliance/summary")
-def get_v1_compliance_summary(parliament: str = "all"):
+def get_v1_compliance_summary(
+    parliament: str = "all",
+    current_user: CurrentUser = Depends(get_current_user),
+):
+    # NOTE: get_compliance_summary has no state/district filter parameter
+    # yet, so STATE_NODAL/DISTRICT users currently see the same national
+    # aggregate as Ministry here. Narrowing this to their scope requires
+    # threading a state/district filter through compliance_engine.py's
+    # aggregation — tracked as remaining work under Epic 1 in
+    # mdfiles/PRD_GAP_CLOSURE.md. Login is enforced either way.
     try:
         from compliance_engine import get_compliance_summary
         return get_compliance_summary(parliament=parliament)
@@ -937,24 +1140,36 @@ def get_v1_compliance_violations(
     severity: Optional[str] = None,
     rule_code: Optional[str] = None,
     state: Optional[str] = None,
-    limit: int = 100
+    limit: int = 100,
+    current_user: CurrentUser = Depends(get_current_user),
 ):
     try:
-        from compliance_engine import evaluate_compliance_violations
+        from compliance_engine import evaluate_compliance_violations, sample_violations_fairly
         violations = evaluate_compliance_violations(parliament=parliament)
-        
+
+        # A STATE_NODAL user's scope overrides whatever `state` they pass
+        # in — the query param can narrow within their own state but
+        # cannot be used to look at another state's violations.
+        if current_user.role == UserRole.STATE_NODAL:
+            state = current_user.scope_id
+        elif current_user.role in (UserRole.MP, UserRole.DISTRICT):
+            # This dataset has no per-district or per-MP column to filter
+            # on yet, so these roles fall back to their state at best, or
+            # unrestricted if we can't resolve one. Documented gap.
+            state = state or None
+
         if severity and severity.upper() != "ALL":
             violations = [v for v in violations if v["severity"].upper() == severity.upper()]
-            
+
         if rule_code and rule_code.upper() != "ALL":
             violations = [v for v in violations if v["rule_code"].upper() == rule_code.upper()]
-            
+
         if state and state.upper() != "ALL":
             violations = [v for v in violations if v["state"].lower() == state.lower()]
-            
+
         return {
             "total": len(violations),
-            "violations": violations[:limit]
+            "violations": sample_violations_fairly(violations, limit)
         }
     except Exception as e:
         import traceback

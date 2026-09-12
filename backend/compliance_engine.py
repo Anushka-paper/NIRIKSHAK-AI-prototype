@@ -3,13 +3,21 @@ Automated Compliance Monitoring Engine for NIRIKSHAK AI.
 Evaluates MPLADS development projects against 7 statutory compliance rules.
 """
 
+import re
+from collections import defaultdict
 from pathlib import Path
 from typing import Dict, Any, List, Optional
 import pandas as pd
 import numpy as np
 from functools import lru_cache
+from rapidfuzz import fuzz
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Statutory work-completion SLA (Para 8.12.1 / 10.6.1): 18 months from
+# sanction. Shared with rules_engine.CompletionSLARule — update both if
+# the guideline changes.
+COMPLETION_SLA_DAYS = 18 * 30
 
 COMPLIANCE_RULES = [
     {
@@ -60,12 +68,55 @@ COMPLIANCE_RULES = [
         "description": "Single category/agency executing an abnormal proportion of works in a single region.",
         "severity": "MEDIUM",
         "category": "Procurement Audit"
+    },
+    {
+        "code": "DUPLICATE_WORK_SUSPECTED",
+        "title": "Suspected Duplicate Work",
+        "description": "Same MP, same financial year, near-identical sanctioned amount and paraphrased "
+                        "work description — a likely resubmission of the same work, not just a "
+                        "byte-identical row match.",
+        "severity": "HIGH",
+        "category": "Duplicate Detection"
     }
 ]
 
 def parse_num(v, default=0.0) -> float:
     res = pd.to_numeric(v, errors="coerce")
     return float(res) if pd.notna(res) else default
+
+
+_NON_ALNUM_RE = re.compile(r"[^a-z0-9\s]")
+_WHITESPACE_RE = re.compile(r"\s+")
+_STOPWORDS = {"of", "the", "in", "at", "a", "an", "to", "for", "and", "or", "on", "with", "near", "no", "number"}
+
+
+def _normalize_description(text: str) -> str:
+    """
+    Lowercase + strip punctuation so 'Ward-5' and 'Ward 5', or 'Construction
+    of X' and 'X construction', compare as equivalent tokens. Without this,
+    rapidfuzz's token_set_ratio undershoots badly on real paraphrased
+    duplicates (verified: a real near-duplicate pair scored 56 raw vs 100
+    normalized).
+    """
+    text = _NON_ALNUM_RE.sub(" ", str(text).lower())
+    return _WHITESPACE_RE.sub(" ", text).strip()
+
+
+def _distinguishing_token_diff(norm_a: str, norm_b: str) -> int:
+    """
+    Count of non-stopword tokens that appear in exactly one of the two
+    descriptions. This is the gate that actually separates real duplicates
+    from MPLADS's extremely common false-positive pattern: boilerplate
+    descriptions ("solar street light at X", "smart boards for school Y")
+    that are near-identical *except* for the place name -- which
+    token_set_ratio alone can't tell apart from a genuine paraphrase,
+    since it scores 85-97 on both. Verified against real flagged pairs:
+    true duplicates score 0 here; real false positives (different village/
+    ward/constituency, same boilerplate) score >= 2.
+    """
+    tokens_a = set(norm_a.split()) - _STOPWORDS
+    tokens_b = set(norm_b.split()) - _STOPWORDS
+    return len(tokens_a ^ tokens_b)
 
 def load_work_features(parliament: str = "all") -> pd.DataFrame:
     """Loads and unifies work features dataset."""
@@ -83,6 +134,108 @@ def load_work_features(parliament: str = "all") -> pd.DataFrame:
 
     df = pd.concat(dfs, ignore_index=True) if len(dfs) > 1 else dfs[0]
     return df
+
+def _detect_suspected_duplicates(
+    df: pd.DataFrame,
+    amount_tolerance: float = 0.05,
+    similarity_threshold: float = 85.0,
+    max_distinguishing_tokens: int = 1,
+    max_results: int = 50,
+) -> List[Dict[str, Any]]:
+    """
+    Flags likely duplicate work submissions that a byte-identical
+    df.duplicated() check (see DUPLICATE_PAYMENT_PATTERN) would miss --
+    the realistic fraud pattern of the same work resubmitted with
+    slightly different wording ("Ward-5" vs "Ward 5", reordered phrasing).
+
+    Blocking key: same MP + same financial year + sanctioned amount
+    within `amount_tolerance`. This keeps the comparison tractable
+    (pairwise only within each MP/FY group, not O(n^2) over the full
+    ~98K-row dataset) and matches how a duplicate resubmission actually
+    happens -- the same MP, same budget cycle.
+
+    Text similarity: rapidfuzz token_set_ratio over normalized
+    descriptions (see _normalize_description) -- chosen over plain
+    fuzzy ratio because it's order- and duplicate-word-insensitive, so
+    "Construction of community hall in Ward 5" and "Community hall
+    construction, Ward-5" score 100, not ~56.
+    """
+    required_cols = {"mp_name", "sanction_financial_year", "sanctioned_amount", "work_description", "canonical_work_id"}
+    if not required_cols.issubset(df.columns):
+        return []
+
+    optional_cols = [c for c in ["state", "constituency", "lifecycle_status", "parliament_source"] if c in df.columns]
+    work = df[list(required_cols) + optional_cols].copy()
+    work["sanctioned_amount"] = pd.to_numeric(work["sanctioned_amount"], errors="coerce")
+    work = work.dropna(subset=["sanctioned_amount", "mp_name", "sanction_financial_year", "work_description"])
+    work = work[work["sanctioned_amount"] > 0]
+    work["_norm_desc"] = work["work_description"].map(_normalize_description)
+    work = work[work["_norm_desc"].str.len() > 0]
+
+    violations: List[Dict[str, Any]] = []
+    seen_pairs = set()
+
+    for (mp_name, fy), group in work.groupby(["mp_name", "sanction_financial_year"]):
+        if len(group) < 2 or len(violations) >= max_results:
+            break
+        records = group.to_dict("records")
+        for i in range(len(records)):
+            for j in range(i + 1, len(records)):
+                if len(violations) >= max_results:
+                    break
+                a, b = records[i], records[j]
+                amt_a, amt_b = a["sanctioned_amount"], b["sanctioned_amount"]
+                if abs(amt_a - amt_b) / max(amt_a, amt_b) > amount_tolerance:
+                    continue
+
+                score = fuzz.token_set_ratio(a["_norm_desc"], b["_norm_desc"])
+                if score < similarity_threshold:
+                    continue
+                # The fuzzy score alone can't tell a genuine paraphrase apart
+                # from two different villages/wards described with the same
+                # boilerplate -- both score 85-97. This gate is what actually
+                # discriminates them (see _distinguishing_token_diff docstring).
+                if _distinguishing_token_diff(a["_norm_desc"], b["_norm_desc"]) > max_distinguishing_tokens:
+                    continue
+
+                id_a, id_b = str(a["canonical_work_id"]), str(b["canonical_work_id"])
+                pair_key = tuple(sorted([id_a, id_b]))
+                if pair_key in seen_pairs:
+                    continue
+                seen_pairs.add(pair_key)
+
+                violations.append({
+                    "id": f"COMP-VIOL-DUP-{pair_key[0]}-{pair_key[1]}",
+                    "work_id": id_a,
+                    "work_description": a["work_description"],
+                    "state": str(a.get("state", "")).strip(),
+                    "constituency": str(a.get("constituency", "")).strip(),
+                    "mp_name": mp_name,
+                    "rule_code": "DUPLICATE_WORK_SUSPECTED",
+                    "rule_title": "Suspected Duplicate Work",
+                    "severity": "HIGH",
+                    "category": "Duplicate Detection",
+                    "details": (
+                        f"{score:.0f}% description match with work {id_b} "
+                        f"(\"{b['work_description']}\") -- same MP, FY {fy}, sanctioned "
+                        f"amounts within {amount_tolerance:.0%} "
+                        f"(₹{amt_a:,.0f} vs ₹{amt_b:,.0f})."
+                    ),
+                    "sanctioned_amount": amt_a,
+                    "expenditure_amount": 0.0,
+                    "lifecycle_status": str(a.get("lifecycle_status", "UNKNOWN")).upper(),
+                    "parliament": str(a.get("parliament_source", "lok_sabha")),
+                    # Extra fields so a reviewer can see both works side by
+                    # side, not just a single flagged row (Epic 4 acceptance
+                    # criterion) -- not used by other rules, safe to ignore
+                    # for consumers that don't expect them.
+                    "duplicate_of_work_id": id_b,
+                    "duplicate_of_description": b["work_description"],
+                    "similarity_score": round(score, 1),
+                })
+
+    return violations
+
 
 @lru_cache(maxsize=32)
 def evaluate_compliance_violations(parliament: str = "all", financial_year: str = "all") -> List[Dict[str, Any]]:
@@ -189,8 +342,11 @@ def evaluate_compliance_violations(parliament: str = "all", financial_year: str 
                 "parliament": parl
             })
 
-        # Rule 3: Excessive Execution Delay
-        if (days_sanc > 365 or is_delayed == 1) and status != "COMPLETED":
+        # Rule 3: Excessive Execution Delay.
+        # Threshold matches the statutory 18-month completion SLA
+        # (Para 8.12.1 / 10.6.1) enforced by rules_engine.CompletionSLARule
+        # — keep these in sync, they audit the same guideline.
+        if (days_sanc > COMPLETION_SLA_DAYS or is_delayed == 1) and status != "COMPLETED":
             violations.append({
                 "id": f"COMP-VIOL-R3-{work_id}",
                 "work_id": work_id,
@@ -272,7 +428,44 @@ def evaluate_compliance_violations(parliament: str = "all", financial_year: str 
                 "parliament": str(row.get("parliament_source", "lok_sabha"))
             })
 
+    # Rule 8: Suspected Duplicate Work (paraphrase-tolerant, see docstring)
+    violations.extend(_detect_suspected_duplicates(df))
+
     return violations
+
+
+def sample_violations_fairly(violations: List[Dict[str, Any]], limit: int) -> List[Dict[str, Any]]:
+    """
+    Truncating a mixed-rule violations list to `limit` by simple slicing
+    silently starves any rule that's capped or rarer than the uncapped
+    early rules -- Rules 1-5 above have no per-rule cap and can produce
+    thousands of matches across ~75K rows, so a plain `violations[:limit]`
+    at the default limit=200 returned ONLY FINANCIAL_PHYSICAL_MISMATCH and
+    EXP_EXCEEDS_SANCTION in practice, with DUPLICATE_WORK_SUSPECTED (added
+    last, capped at 50) never reaching the client at all. Round-robins
+    across rule_code groups instead so every rule type present gets fair
+    representation up to the limit.
+    """
+    if len(violations) <= limit:
+        return violations
+
+    by_rule: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
+    for v in violations:
+        by_rule[v["rule_code"]].append(v)
+
+    iterators = {code: iter(items) for code, items in by_rule.items()}
+    result: List[Dict[str, Any]] = []
+    while len(result) < limit and iterators:
+        for code in list(iterators.keys()):
+            try:
+                result.append(next(iterators[code]))
+            except StopIteration:
+                del iterators[code]
+                continue
+            if len(result) >= limit:
+                break
+    return result
+
 
 def get_compliance_summary(parliament: str = "all", financial_year: str = "all") -> Dict[str, Any]:
     """
@@ -367,28 +560,45 @@ def get_compliance_summary(parliament: str = "all", financial_year: str = "all")
         under_review_count = 0
         compliant_count = 0
 
-    # Monthly Trend (Apr to Sep)
-    monthly_trend = [
-        {"month": "Apr", "compliant": int(compliant_count * 0.25), "under_review": int(under_review_count * 0.4), "non_compliant": int(non_compliant_count * 0.5)},
-        {"month": "May", "compliant": int(compliant_count * 0.30), "under_review": int(under_review_count * 0.5), "non_compliant": int(non_compliant_count * 0.6)},
-        {"month": "Jun", "compliant": int(compliant_count * 0.45), "under_review": int(under_review_count * 0.6), "non_compliant": int(non_compliant_count * 0.7)},
-        {"month": "Jul", "compliant": int(compliant_count * 0.65), "under_review": int(under_review_count * 0.8), "non_compliant": int(non_compliant_count * 0.85)},
-        {"month": "Aug", "compliant": int(compliant_count * 0.88), "under_review": int(under_review_count * 0.95), "non_compliant": int(non_compliant_count * 0.95)},
-        {"month": "Sep", "compliant": compliant_count, "under_review": under_review_count, "non_compliant": non_compliant_count},
-    ]
+    # Monthly Trend: computed from real sanction_date data when available.
+    # Cumulative compliant/under-review/non-compliant counts per month,
+    # based on works sanctioned by the end of that month.
+    month_order = ["Apr", "May", "Jun", "Jul", "Aug", "Sep"]
+    monthly_trend = []
+    if not df.empty and "sanction_date" in df.columns:
+        sanc_dates = pd.to_datetime(df["sanction_date"], errors="coerce")
+        for i, month_name in enumerate(month_order, start=4):
+            cutoff_mask = sanc_dates.dt.month <= i
+            m_work_ids = set(work_id_col[cutoff_mask]) if not work_id_col.empty else set()
+            m_viol_ids = m_work_ids & viol_work_ids
+            m_non_compliant = len(m_viol_ids)
+            m_under_review = int((cutoff_mask & under_review_mask).sum())
+            m_compliant = max(0, len(m_work_ids) - m_non_compliant - m_under_review)
+            monthly_trend.append({
+                "month": month_name,
+                "compliant": m_compliant,
+                "under_review": m_under_review,
+                "non_compliant": m_non_compliant,
+            })
+    else:
+        # No date data to build a real trend — report only the current
+        # totals for the latest month rather than fabricating history.
+        monthly_trend = [
+            {"month": month_order[-1], "compliant": compliant_count, "under_review": under_review_count, "non_compliant": non_compliant_count}
+        ]
 
-    # AI Detected Issues breakdown calculated directly from rule violations
+    # AI Detected Issues breakdown calculated directly from rule violations (no fabricated floors)
     rule_viol_counts = {}
     for v in violations_list:
         code = v["rule_code"]
         rule_viol_counts[code] = rule_viol_counts.get(code, 0) + 1
 
     ai_detected_issues = {
-        "fake_images": max(12, rule_viol_counts.get("SINGLE_VENDOR_CONCENTRATION", 12)),
-        "missing_docs": max(18, rule_viol_counts.get("MISSING_COMPLETION_CERT", 18)),
-        "progress_mismatch": max(15, rule_viol_counts.get("FINANCIAL_PHYSICAL_MISMATCH", 37)),
-        "delayed_completion": max(14, rule_viol_counts.get("EXCESSIVE_DELAY", 14)),
-        "irregular_fund_utilization": max(13, rule_viol_counts.get("EXP_EXCEEDS_SANCTION", 0) + rule_viol_counts.get("EXP_BEFORE_SANCTION", 0))
+        "vendor_concentration": rule_viol_counts.get("SINGLE_VENDOR_CONCENTRATION", 0),
+        "missing_docs": rule_viol_counts.get("MISSING_COMPLETION_CERT", 0),
+        "progress_mismatch": rule_viol_counts.get("FINANCIAL_PHYSICAL_MISMATCH", 0),
+        "delayed_completion": rule_viol_counts.get("EXCESSIVE_DELAY", 0),
+        "irregular_fund_utilization": rule_viol_counts.get("EXP_EXCEEDS_SANCTION", 0) + rule_viol_counts.get("EXP_BEFORE_SANCTION", 0)
     }
 
     # Recent projects sample from actual work features dataframe

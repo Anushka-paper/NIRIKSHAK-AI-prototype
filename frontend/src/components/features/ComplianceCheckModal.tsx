@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ShieldCheck, AlertOctagon, AlertTriangle, CheckCircle, Send, FileText } from "lucide-react";
+import { useAuth, withAuthHeader } from "@/lib/authContext";
 
 interface ComplianceCheckModalProps {
   isOpen: boolean;
@@ -10,8 +11,9 @@ interface ComplianceCheckModalProps {
 }
 
 export default function ComplianceCheckModal({ isOpen, onClose, onSubmitted }: ComplianceCheckModalProps) {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
-    mp_id: 1,
+    mp_id: user?.role === "mp" && user.scopeId ? Number(user.scopeId) : 1,
     financial_year: "2025-26",
     title: "",
     description: "",
@@ -40,7 +42,7 @@ export default function ComplianceCheckModal({ isOpen, onClose, onSubmitted }: C
     try {
       const res = await fetch("/api/compliance/check", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: withAuthHeader(user, { "Content-Type": "application/json" }),
         body: JSON.stringify({
           ...formData,
           estimated_cost: Number(formData.estimated_cost),

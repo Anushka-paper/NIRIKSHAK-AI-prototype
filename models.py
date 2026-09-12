@@ -49,6 +49,13 @@ class BeneficiaryCategory(PyEnum):
     ST = "st"
 
 
+class UserRole(PyEnum):
+    MP = "mp"
+    STATE_NODAL = "state_nodal"
+    DISTRICT = "district"
+    MINISTRY = "ministry"
+
+
 # ---------------------------------------------------------------------
 # CORE ENTITIES
 # ---------------------------------------------------------------------
@@ -66,6 +73,41 @@ class MemberOfParliament(Base):
 
     ledgers = relationship("FinancialYearLedger", back_populates="mp")
     works = relationship("WorkRecommendation", back_populates="mp")
+
+
+class User(Base):
+    """
+    Login identity for the 4 SIH26102 personas. `scope_id` is what
+    every data endpoint filters on:
+      - MP           -> mps.id (as a string)
+      - STATE_NODAL  -> state name (matches WorkRecommendation.work_location_state)
+      - DISTRICT     -> district name (matches WorkRecommendation.work_location_district)
+      - MINISTRY     -> null (unrestricted, national scope)
+
+    Accounts are provisioned by a Ministry admin, not self-registered
+    (see auth.create_invited_user / POST /admin/users): `password_hash`
+    starts null and the account is unusable until the invited user
+    accepts their invite and sets their own password
+    (POST /auth/accept-invite). This avoids ever having Ministry choose
+    or transmit a real password on someone else's behalf.
+    """
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True)
+    email = Column(String, nullable=False, unique=True)
+    password_hash = Column(String, nullable=True)
+    full_name = Column(String, nullable=False)
+    role = Column(Enum(UserRole), nullable=False)
+    scope_id = Column(String, nullable=True)
+    created_at = Column(Date, nullable=False)
+
+    invite_token = Column(String, nullable=True, unique=True)
+    invite_expires_at = Column(Date, nullable=True)
+
+    # Ministry can deactivate an account (revoke access) without deleting
+    # it. Checked on every request, not just at login, so deactivating
+    # someone takes effect immediately even on an already-issued JWT.
+    is_active = Column(Boolean, default=True, nullable=False)
 
 
 class ConstituencyBoundary(Base):
@@ -184,6 +226,63 @@ class InspectionRecord(Base):
     inspection_date = Column(Date)
     passed = Column(Boolean)
     notes = Column(Text)
+
+
+class Alert(Base):
+    """
+    Risk-based alert raised when a rule fires at BLOCK/CRITICAL severity
+    against a work. Scoped so each of the 4 personas only sees alerts
+    relevant to them — see auth.scope_alerts_query. Epic 2 of
+    mdfiles/PRD_GAP_CLOSURE.md.
+    """
+    __tablename__ = "alerts"
+
+    id = Column(Integer, primary_key=True)
+    work_id = Column(Integer, ForeignKey("work_recommendations.id"), nullable=False)
+    rule_code = Column(String, nullable=False)
+    severity = Column(String, nullable=False)  # "BLOCK" / "CRITICAL"
+    message = Column(Text, nullable=False)
+
+    # Who this alert is for. target_role is always set; target_scope_id
+    # narrows it (an MP's id, or a state/district name) — null means
+    # "every user of that role" (used for the MINISTRY rollup).
+    target_role = Column(Enum(UserRole), nullable=False)
+    target_scope_id = Column(String, nullable=True)
+
+    created_at = Column(Date, nullable=False)
+    read_at = Column(Date, nullable=True)
+    resolved_at = Column(Date, nullable=True)
+
+
+class RiskExplanation(Base):
+    """
+    Cache + audit trail for Epic 6's LLM-grounded risk explanation layer
+    (ml-service/genai/). Keyed by (work_id, model_version) -- a cache hit
+    means "the underlying risk score hasn't changed since we last
+    explained it," so there's no reason to pay for a fresh LLM call.
+    Stores the full grounding payload alongside the generated text so an
+    auditor can see exactly what evidence the explanation was allowed to
+    reference (see genai/context.py's build_grounding_payload).
+    """
+    __tablename__ = "risk_explanations"
+
+    id = Column(Integer, primary_key=True)
+    # String, not an FK to work_recommendations: the risk model (Epic 3)
+    # predicts over the historical analytics dataset's canonical_work_id
+    # (e.g. "CW_LO_006138" from data/features/*/work_features.csv), a
+    # separate ID space from this demo DB's small integer-keyed
+    # WorkRecommendation table -- see mdfiles/PRD_GAP_CLOSURE.md's note
+    # on the two disconnected data domains.
+    work_id = Column(String, nullable=False, index=True)
+    model_version = Column(String, nullable=False)
+
+    grounding_payload_json = Column(Text, nullable=False)
+    why_json = Column(Text, nullable=False)              # JSON list[str]
+    recommended_actions_json = Column(Text, nullable=False)  # JSON list[{action, rationale}]
+    confidence_note = Column(Text, nullable=False)
+
+    generated_by = Column(String, nullable=False)  # "llm" | "fallback"
+    created_at = Column(Date, nullable=False)
 
 
 class ComplianceCheckLog(Base):

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
+import { forwardAuthHeader } from "@/lib/serverAuth";
 
-const BACKEND_API = process.env.BACKEND_API_URL || "http://127.0.0.1:8000";
+const BACKEND_API = process.env.BACKEND_API_URL || process.env.ML_SERVICE_URL || "http://127.0.0.1:8000";
 
 export async function POST(request: Request, context: { params: Promise<{ workId: string }> }) {
   try {
@@ -9,7 +10,7 @@ export async function POST(request: Request, context: { params: Promise<{ workId
 
     const res = await fetch(`${BACKEND_API}/review-queue/${workId}/decide`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...forwardAuthHeader(request) },
       body: JSON.stringify(body),
     });
 

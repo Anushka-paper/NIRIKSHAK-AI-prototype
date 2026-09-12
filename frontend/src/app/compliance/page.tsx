@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useRequireAuth, withAuthHeader } from "@/lib/authContext";
 import {
   FileText,
   CheckCircle2,
@@ -10,7 +11,7 @@ import {
   PlayCircle,
   FileCheck,
   BookOpen,
-  Image as ImageIcon,
+  Users,
   FileWarning,
   TrendingUp,
   IndianRupee,
@@ -31,6 +32,7 @@ import RulesAndLegalProcedure from "@/components/features/RulesAndLegalProcedure
 import ComplianceCheckModal from "@/components/features/ComplianceCheckModal";
 import HumanReviewQueue from "@/components/features/HumanReviewQueue";
 import WorksComplianceList from "@/components/features/WorksComplianceList";
+import ComplianceFindings from "@/components/features/ComplianceFindings";
 
 interface RuleBreakdown {
   code: string;
@@ -59,7 +61,7 @@ interface MonthlyTrendItem {
 }
 
 interface AIDetectedIssues {
-  fake_images: number;
+  vendor_concentration: number;
   missing_docs: number;
   progress_mismatch: number;
   delayed_completion: number;
@@ -109,12 +111,18 @@ interface ViolationItem {
   expenditure_amount: number;
   lifecycle_status: string;
   parliament: string;
+  // Present only on rule_code === "DUPLICATE_WORK_SUSPECTED" (see
+  // backend/compliance_engine.py::_detect_suspected_duplicates)
+  duplicate_of_work_id?: string;
+  duplicate_of_description?: string;
+  similarity_score?: number;
 }
 
 export default function CompliancePage() {
+  const { user, loading: authLoading } = useRequireAuth();
   const [parliament, setParliament] = useState<string>("all");
   const [financialYear, setFinancialYear] = useState<string>("all");
-  const [activeTab, setActiveTab] = useState<"dashboard" | "legal_procedure" | "review_queue" | "works_list">("dashboard");
+  const [activeTab, setActiveTab] = useState<"dashboard" | "legal_procedure" | "review_queue" | "works_list" | "violations" | "findings">("dashboard");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [summary, setSummary] = useState<ComplianceSummary | null>(null);
   const [violations, setViolations] = useState<ViolationItem[]>([]);
@@ -127,38 +135,55 @@ export default function CompliancePage() {
   const [severityFilter, setSeverityFilter] = useState<string>("ALL");
   const [ruleFilter, setRuleFilter] = useState<string>("ALL");
 
+  // Guards against a slow, out-of-order response overwriting a newer
+  // one -- e.g. clicking "Lok Sabha" right after page load, before the
+  // initial (slower, larger) "All" request resolves, would otherwise let
+  // the stale "All" response land last and silently revert the numbers.
+  const summaryRequestId = useRef(0);
+  const violationsRequestId = useRef(0);
+
   useEffect(() => {
+    if (!user) return;
     fetchSummary();
     fetchViolations();
-  }, [parliament, financialYear]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [parliament, financialYear, user]);
 
   const fetchSummary = async () => {
+    const requestId = ++summaryRequestId.current;
     setLoadingSummary(true);
     try {
-      const res = await fetch(`/api/compliance/summary?parliament=${parliament}&financial_year=${financialYear}`);
+      const res = await fetch(`/api/compliance/summary?parliament=${parliament}&financial_year=${financialYear}`, {
+        headers: withAuthHeader(user),
+      });
       const json = await res.json();
+      if (requestId !== summaryRequestId.current) return; // a newer request has since been fired -- discard
       if (json.success && json.data) {
         setSummary(json.data);
       }
     } catch (err) {
       console.error("Failed to load compliance summary:", err);
     } finally {
-      setLoadingSummary(false);
+      if (requestId === summaryRequestId.current) setLoadingSummary(false);
     }
   };
 
   const fetchViolations = async () => {
+    const requestId = ++violationsRequestId.current;
     setLoadingViolations(true);
     try {
-      const res = await fetch(`/api/compliance/violations?parliament=${parliament}&financial_year=${financialYear}&limit=200`);
+      const res = await fetch(`/api/compliance/violations?parliament=${parliament}&financial_year=${financialYear}&limit=200`, {
+        headers: withAuthHeader(user),
+      });
       const json = await res.json();
+      if (requestId !== violationsRequestId.current) return; // stale, discard
       if (json.success && json.data?.violations) {
         setViolations(json.data.violations);
       }
     } catch (err) {
       console.error("Failed to load compliance violations:", err);
     } finally {
-      setLoadingViolations(false);
+      if (requestId === violationsRequestId.current) setLoadingViolations(false);
     }
   };
 
@@ -246,11 +271,11 @@ export default function CompliancePage() {
 
   // Real AI-detected issues breakdown
   const aiIssues = summary?.ai_detected_issues || {
-    fake_images: 12,
-    missing_docs: 18,
-    progress_mismatch: 37,
-    delayed_completion: 14,
-    irregular_fund_utilization: 2704,
+    vendor_concentration: 0,
+    missing_docs: 0,
+    progress_mismatch: 0,
+    delayed_completion: 0,
+    irregular_fund_utilization: 0,
   };
 
   const defaultRecentProjects: RecentProject[] = [
@@ -302,6 +327,10 @@ export default function CompliancePage() {
   ];
 
   const recentProjects = summary?.recent_projects?.length ? summary.recent_projects : defaultRecentProjects;
+
+  if (authLoading || !user) {
+    return <div className="py-24 text-center text-sm text-gray-500">Loading your dashboard...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-slate-900 py-6 px-4 sm:px-6 lg:px-8 font-body">
@@ -654,11 +683,11 @@ export default function CompliancePage() {
               <div className="flex items-center justify-between text-xs font-bold">
                 <div className="flex items-center gap-2.5 text-slate-700">
                   <div className="p-1.5 rounded-lg bg-rose-50 text-rose-500">
-                    <ImageIcon className="w-4 h-4" />
+                    <Users className="w-4 h-4" />
                   </div>
-                  <span>Possible fake/edited images</span>
+                  <span>Single-vendor concentration</span>
                 </div>
-                <span className="text-rose-600 font-extrabold">{aiIssues.fake_images}</span>
+                <span className="text-rose-600 font-extrabold">{aiIssues.vendor_concentration}</span>
               </div>
 
               {/* Item 2 */}
@@ -727,12 +756,31 @@ export default function CompliancePage() {
             <CheckCircle2 className="w-4 h-4 text-emerald-500" /> All Projects Compliance Status
           </button>
           <button
+            onClick={() => setActiveTab("violations")}
+            className={`pb-3 text-xs sm:text-sm font-black flex items-center gap-2 border-b-2 transition-all ${
+              activeTab === "violations" ? "border-primary text-primary" : "border-transparent text-slate-500 hover:text-slate-900"
+            }`}
+          >
+            <AlertOctagon className="w-4 h-4 text-rose-500" /> Flagged Violations
+            {violations.length > 0 && (
+              <span className="rounded-full bg-rose-100 px-1.5 py-0.5 text-[10px] text-rose-700">{violations.length}</span>
+            )}
+          </button>
+          <button
             onClick={() => setActiveTab("review_queue")}
             className={`pb-3 text-xs sm:text-sm font-black flex items-center gap-2 border-b-2 transition-all ${
               activeTab === "review_queue" ? "border-primary text-primary" : "border-transparent text-slate-500 hover:text-slate-900"
             }`}
           >
             <AlertTriangle className="w-4 h-4 text-amber-500" /> Human Review Queue
+          </button>
+          <button
+            onClick={() => setActiveTab("findings")}
+            className={`pb-3 text-xs sm:text-sm font-black flex items-center gap-2 border-b-2 transition-all ${
+              activeTab === "findings" ? "border-primary text-primary" : "border-transparent text-slate-500 hover:text-slate-900"
+            }`}
+          >
+            <ShieldCheck className="w-4 h-4 text-violet-500" /> Compliance Findings
           </button>
           <button
             onClick={() => setActiveTab("legal_procedure")}
@@ -758,8 +806,111 @@ export default function CompliancePage() {
           <WorksComplianceList />
         ) : activeTab === "review_queue" ? (
           <HumanReviewQueue />
+        ) : activeTab === "findings" ? (
+          <ComplianceFindings />
         ) : activeTab === "legal_procedure" ? (
           <RulesAndLegalProcedure />
+        ) : activeTab === "violations" ? (
+          <div className="space-y-4">
+            {/* Filter bar */}
+            <div className="flex flex-col gap-3 rounded-2xl border border-slate-200/80 bg-white p-4 sm:flex-row sm:items-center">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <input
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search by work ID, description, MP, or state..."
+                  className="w-full rounded-lg border border-slate-200 py-2 pl-9 pr-3 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                />
+              </div>
+              <select
+                value={severityFilter}
+                onChange={(e) => setSeverityFilter(e.target.value)}
+                className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-700"
+              >
+                <option value="ALL">All Severities</option>
+                <option value="CRITICAL">Critical</option>
+                <option value="HIGH">High</option>
+                <option value="MEDIUM">Medium</option>
+              </select>
+              <select
+                value={ruleFilter}
+                onChange={(e) => setRuleFilter(e.target.value)}
+                className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-700"
+              >
+                <option value="ALL">All Rules</option>
+                {Array.from(new Set(violations.map((v) => v.rule_code))).sort().map((code) => (
+                  <option key={code} value={code}>{code.replaceAll("_", " ")}</option>
+                ))}
+              </select>
+            </div>
+
+            {loadingViolations ? (
+              <div className="rounded-2xl border border-slate-200/80 bg-white p-12 text-center text-xs font-semibold text-slate-400">
+                Loading flagged violations...
+              </div>
+            ) : filteredViolations.length === 0 ? (
+              <div className="rounded-2xl border border-slate-200/80 bg-white p-12 text-center">
+                <CheckCircle2 className="mx-auto mb-2 h-8 w-8 text-emerald-400" />
+                <p className="text-sm font-bold text-slate-600">
+                  {violations.length === 0 ? "No flagged violations." : "No violations match your filters."}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {filteredViolations.map((v) => {
+                  const severityStyle =
+                    v.severity === "CRITICAL"
+                      ? "bg-rose-100 text-rose-700"
+                      : v.severity === "HIGH"
+                      ? "bg-orange-100 text-orange-700"
+                      : "bg-amber-100 text-amber-700";
+                  const isDuplicate = v.rule_code === "DUPLICATE_WORK_SUSPECTED" && v.duplicate_of_work_id;
+
+                  return (
+                    <div key={v.id} className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-black ${severityStyle}`}>{v.severity}</span>
+                        <span className="text-sm font-black text-slate-900">{v.rule_title}</span>
+                        <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-500">{v.category}</span>
+                        {isDuplicate && (
+                          <span className="rounded-full bg-violet-100 px-2 py-0.5 text-[10px] font-black text-violet-700">
+                            {v.similarity_score}% match
+                          </span>
+                        )}
+                      </div>
+
+                      {isDuplicate ? (
+                        <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                          <div className="rounded-xl border border-slate-100 bg-slate-50 p-3">
+                            <p className="text-[10px] font-bold uppercase text-slate-400">Work {v.work_id}</p>
+                            <p className="mt-1 text-xs font-semibold text-slate-700">{v.work_description}</p>
+                          </div>
+                          <div className="rounded-xl border border-slate-100 bg-slate-50 p-3">
+                            <p className="text-[10px] font-bold uppercase text-slate-400">Work {v.duplicate_of_work_id}</p>
+                            <p className="mt-1 text-xs font-semibold text-slate-700">{v.duplicate_of_description}</p>
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="mt-2 text-xs font-semibold text-slate-600">{v.work_description}</p>
+                      )}
+
+                      <p className="mt-2 text-xs text-slate-500">{v.details}</p>
+
+                      <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-slate-100 pt-3 text-[11px] font-semibold text-slate-500">
+                        <span>{v.mp_name}</span>
+                        <span>{v.constituency}, {v.state}</span>
+                        <span className="flex items-center gap-1">
+                          <IndianRupee className="h-3 w-3" /> {v.sanctioned_amount.toLocaleString("en-IN")}
+                        </span>
+                        <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold">{v.lifecycle_status}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         ) : (
           /* Dashboard Tab Body: Bottom Section */
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">

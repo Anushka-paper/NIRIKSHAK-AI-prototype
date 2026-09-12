@@ -18,6 +18,7 @@ import {
   Sparkles
 } from "lucide-react";
 import Link from "next/link";
+import { useRequireAuth } from "@/lib/authContext";
 
 interface AnomalyItem {
   work_id: string;
@@ -81,6 +82,7 @@ interface GraphsData {
 }
 
 export default function AnomaliesPage() {
+  const { user, loading: authLoading } = useRequireAuth();
   const [parliament, setParliament] = useState<string>("all");
   const [minScore, setMinScore] = useState<number>(0.70);
   const [selectedState, setSelectedState] = useState<string>("");
@@ -92,13 +94,17 @@ export default function AnomaliesPage() {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    if (!user) return;
     fetchSummary();
     fetchGraphs();
-  }, [parliament]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [parliament, user]);
 
   useEffect(() => {
+    if (!user) return;
     fetchAnomalies();
-  }, [parliament, minScore, selectedState]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [parliament, minScore, selectedState, user]);
 
   const fetchSummary = async () => {
     try {
@@ -153,11 +159,14 @@ export default function AnomaliesPage() {
     return `₹${val.toLocaleString()}`;
   };
 
-  // Aggregated summary stats from backend
+  // Aggregated summary stats from backend. No hardcoded fallback numbers --
+  // if the summary fetch failed, these stay 0/null and the KPI cards show
+  // "--" rather than a fake specific figure (see render below).
+  const summaryLoaded = summary.total_works_evaluated !== undefined;
   const totalEvaluated = summary.total_works_evaluated || 0;
   const totalAnomalies = summary.anomalies_detected || 0;
   const totalHighRisk = summary.high_risk_works_count || 0;
-  const avgRate = totalEvaluated > 0 ? ((totalAnomalies / totalEvaluated) * 100).toFixed(1) : "5.0";
+  const avgRate = totalEvaluated > 0 ? ((totalAnomalies / totalEvaluated) * 100).toFixed(1) : null;
 
   // Max for relative bar widths in graphs
   const maxStateCount = graphs?.state_breakdown?.[0]?.anomaly_count || 1;
@@ -175,6 +184,10 @@ export default function AnomaliesPage() {
     );
   });
 
+  if (authLoading || !user) {
+    return <div className="py-24 text-center text-sm text-gray-500">Loading...</div>;
+  }
+
   return (
     <div className="flex flex-col gap-8 font-body pb-16">
       {/* Header Banner */}
@@ -182,7 +195,7 @@ export default function AnomaliesPage() {
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold mb-3">
             <ShieldAlert className="w-3.5 h-3.5 text-rose-600" />
-            Active Isolation Forest Model &bull; ROC-AUC 0.8972
+            Active Isolation Forest Model (unsupervised)
           </div>
           <h1 className="font-headline font-extrabold text-3xl md:text-4xl text-gray-900 tracking-tight">
             AI Anomaly & Fraud Risk Detection
@@ -240,33 +253,41 @@ export default function AnomaliesPage() {
         <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-subtle flex flex-col justify-between">
           <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Works Evaluated</span>
           <div className="text-2xl font-headline font-extrabold text-gray-900 mt-2">
-            {totalEvaluated ? totalEvaluated.toLocaleString() : "98,003"}
+            {summaryLoaded ? totalEvaluated.toLocaleString() : "--"}
           </div>
-          <span className="text-xs text-emerald-600 font-semibold mt-1">100% evaluated via Canonical Store</span>
+          <span className="text-xs text-emerald-600 font-semibold mt-1">
+            {summaryLoaded ? "100% evaluated via Canonical Store" : "Summary unavailable"}
+          </span>
         </div>
 
         <div className="bg-white p-5 rounded-2xl border border-rose-100 shadow-subtle flex flex-col justify-between">
           <span className="text-xs font-bold text-rose-500 uppercase tracking-wider">Anomalies Detected</span>
           <div className="text-2xl font-headline font-extrabold text-rose-600 mt-2">
-            {totalAnomalies ? totalAnomalies.toLocaleString() : "4,901"}
+            {summaryLoaded ? totalAnomalies.toLocaleString() : "--"}
           </div>
-          <span className="text-xs text-rose-500 font-semibold mt-1">{avgRate}% anomaly contamination</span>
+          <span className="text-xs text-rose-500 font-semibold mt-1">
+            {avgRate !== null ? `${avgRate}% anomaly contamination` : "Rate unavailable"}
+          </span>
         </div>
 
         <div className="bg-white p-5 rounded-2xl border border-amber-100 shadow-subtle flex flex-col justify-between">
           <span className="text-xs font-bold text-amber-500 uppercase tracking-wider">Critical High Risk</span>
           <div className="text-2xl font-headline font-extrabold text-amber-600 mt-2">
-            {totalHighRisk ? totalHighRisk.toLocaleString() : "860"}
+            {summaryLoaded ? totalHighRisk.toLocaleString() : "--"}
           </div>
-          <span className="text-xs text-amber-600 font-semibold mt-1">Score &ge; 0.75 (94% precision)</span>
+          <span className="text-xs text-amber-600 font-semibold mt-1">Anomaly score &ge; 0.75</span>
         </div>
 
+        {/* IsolationForest is unsupervised -- there's no ground-truth label
+            to compute accuracy/ROC-AUC/precision against, so this card
+            shows a real, honestly-computable figure (contamination rate)
+            instead of a fabricated performance metric. */}
         <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-subtle flex flex-col justify-between">
-          <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Model Accuracy</span>
+          <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Detection Rate</span>
           <div className="text-2xl font-headline font-extrabold text-primary mt-2">
-            93.8%
+            {avgRate !== null ? `${avgRate}%` : "--"}
           </div>
-          <span className="text-xs text-gray-500 font-semibold mt-1">ROC-AUC: 0.8972 (Robust)</span>
+          <span className="text-xs text-gray-500 font-semibold mt-1">Flagged works &divide; works evaluated</span>
         </div>
       </div>
 

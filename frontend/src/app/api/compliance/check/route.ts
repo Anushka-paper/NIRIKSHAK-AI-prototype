@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
+import { forwardAuthHeader } from "@/lib/serverAuth";
 
-const BACKEND_API = process.env.BACKEND_API_URL || "http://127.0.0.1:8000";
+const BACKEND_API = process.env.BACKEND_API_URL || process.env.ML_SERVICE_URL || "http://127.0.0.1:8000";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const res = await fetch(`${BACKEND_API}/check-and-submit-work`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...forwardAuthHeader(request) },
       body: JSON.stringify(body),
     });
     

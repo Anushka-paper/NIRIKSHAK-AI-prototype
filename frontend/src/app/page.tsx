@@ -26,6 +26,10 @@ export default async function Home() {
   // ── 1. Fetch Dashboard Stats
   let overview = { analytics: { totalExpenditureAmount: 0 }, projectStatusMetrics: { totalWorks: 0 }, geography: { totalStatesRepresented: 0 } };
   let anomaliesSummary = { lok_sabha: { critical_anomalies: 0 } };
+  // Tracks whether the live backend actually answered, so we never show a
+  // hardcoded placeholder number as if it were a real live statistic --
+  // if the fetch fails, the stat strip is hidden entirely instead.
+  let statsAvailable = false;
   try {
     const [resOv, resAnom] = await Promise.all([
       fetch(`${API_BASE}/api/v1/dashboard/overview`, { cache: "no-store" }).catch(() => null),
@@ -33,12 +37,13 @@ export default async function Home() {
     ]);
     if (resOv?.ok) overview = await resOv.json();
     if (resAnom?.ok) anomaliesSummary = await resAnom.json();
+    statsAvailable = Boolean(resOv?.ok && resAnom?.ok);
   } catch (e) { console.error(e); }
 
-  const fundsTrackedCr = Math.round((overview.analytics?.totalExpenditureAmount || 0) / 10000000) || 875;
-  const constituenciesAnalyzed = overview.projectStatusMetrics?.totalWorks || 35;
-  const criticalFlags = anomaliesSummary.lok_sabha?.critical_anomalies || 12;
-  const elevatedStates = overview.geography?.totalStatesRepresented || 6;
+  const fundsTrackedCr = Math.round((overview.analytics?.totalExpenditureAmount || 0) / 10000000);
+  const constituenciesAnalyzed = overview.projectStatusMetrics?.totalWorks || 0;
+  const criticalFlags = anomaliesSummary.lok_sabha?.critical_anomalies || 0;
+  const elevatedStates = overview.geography?.totalStatesRepresented || 0;
 
   // ── 2. Fetch Top 10 Anomalies
   let top5Works: any[] = [];
@@ -134,12 +139,19 @@ export default async function Home() {
         </div>
 
         {/* Key Stats - Placed right below the main header */}
-        <StatStrip
-          fundsTrackedCr={fundsTrackedCr}
-          constituenciesAnalyzed={constituenciesAnalyzed}
-          criticalFlags={criticalFlags}
-          elevatedStates={elevatedStates}
-        />
+        {statsAvailable ? (
+          <StatStrip
+            fundsTrackedCr={fundsTrackedCr}
+            constituenciesAnalyzed={constituenciesAnalyzed}
+            criticalFlags={criticalFlags}
+            elevatedStates={elevatedStates}
+          />
+        ) : (
+          <div className="mx-auto flex max-w-md items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs font-semibold text-amber-800">
+            <AlertTriangle className="h-4 w-4 shrink-0" />
+            Live statistics are temporarily unavailable — the analytics backend didn't respond.
+          </div>
+        )}
 
         {/* Main Dashboard Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">

@@ -3,7 +3,9 @@
  * Proxies requests between Next.js API route handlers and the Python FastAPI ML service.
  */
 
-const ML_SERVICE_URL = (process.env.ML_SERVICE_URL || "http://127.0.0.1:8000").replace(/\/+$/, "");
+const ML_SERVICE_URL = (
+  process.env.ML_SERVICE_URL || process.env.BACKEND_API_URL || "http://127.0.0.1:8000"
+).replace(/\/+$/, "");
 
 export async function callMLService<T = any>(
   endpoint: string,

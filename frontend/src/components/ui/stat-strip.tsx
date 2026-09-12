@@ -45,17 +45,21 @@ function AnimatedStat({ value, label, prefix = "", suffix = "" }: StatProps) {
 }
 
 interface StatStripProps {
-  fundsTrackedCr?: number;
-  constituenciesAnalyzed?: number;
-  criticalFlags?: number;
-  elevatedStates?: number;
+  // Required, not defaulted -- this strip only renders when the caller
+  // has real live data (see frontend/src/app/page.tsx's statsAvailable
+  // guard); a hardcoded default here would silently reintroduce fake
+  // numbers presented as live stats.
+  fundsTrackedCr: number;
+  constituenciesAnalyzed: number;
+  criticalFlags: number;
+  elevatedStates: number;
 }
 
 export function StatStrip({
-  fundsTrackedCr = 2715,
-  constituenciesAnalyzed = 37,
-  criticalFlags = 124,
-  elevatedStates = 11,
+  fundsTrackedCr,
+  constituenciesAnalyzed,
+  criticalFlags,
+  elevatedStates,
 }: StatStripProps) {
   return (
     <div className="w-full max-w-5xl mx-auto py-6">

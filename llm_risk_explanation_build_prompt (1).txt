@@ -1,0 +1,78 @@
+I'm building the LLM-based risk-explanation layer for an AI-powered MPLADS monitoring 
+platform (Members of Parliament Local Area Development Scheme — Indian government fund 
+utilization tracking). I need a production-ready Python implementation.
+
+CONTEXT:
+- We already have an XGBoost model producing a risk_score (0-1) per sanctioned work, 
+  and SHAP (TreeExplainer) producing per-prediction feature contributions.
+- The LLM's job is NOT to score risk and NOT to decide what's anomalous — that's already 
+  done by XGBoost + SHAP. The LLM's only job is to reason over the already-computed, 
+  already-grounded structured evidence and compose (a) a natural-language explanation of 
+  why the work was flagged, and (b) proportionate recommended actions — reasoning about 
+  how multiple contributing features interact, not just listing them independently.
+- This must be strictly grounded: the LLM must never invent a number, fact, policy, or 
+  threshold that isn't present in the structured payload it's given. Every claim it makes 
+  must trace back to a specific field in that payload.
+- This is a government compliance tool — outputs may be shown to auditors, District 
+  Authorities, and Ministry officials, so hallucination or overclaiming (e.g. using the 
+  word "fraud" instead of "risk indicator") is a real problem, not a cosmetic one.
+
+REQUIREMENTS — build all of the following as a single cohesive module:
+
+1. A `build_grounding_payload()` function that assembles ONLY the facts the LLM is allowed 
+   to reason about into one JSON object: risk_score, risk_band, the SHAP feature 
+   contributions (feature name, feature value, shap value, direction), the peer baseline 
+   used for comparison (median, 90th percentile, baseline_version, n_obs — so thin samples 
+   are visible), and the raw work facts (sanction_amount, vendor_id, sanction_date, 
+   progress_pct, evidence_on_file). Nothing outside this payload should ever reach the LLM.
+
+2. An LLM call using the Anthropic API (claude-sonnet-4-6) with:
+   - Forced structured output via tool use — a tool schema named "risk_explanation" 
+     returning {why: string[], recommended_actions: {action, rationale}[], confidence_note: string}
+   - A system prompt that explicitly instructs the model to: 
+     (a) only reference facts/numbers present in the payload, quoting the actual figures, 
+     (b) reason about interaction effects when multiple features are significant together 
+     (e.g. cost deviation + vendor concentration compounding is a different, stronger story 
+     than either alone), 
+     (c) keep recommended actions proportionate to which specific feature drove the score 
+     (don't recommend a payment hold if the primary driver is a delay signal), 
+     (d) explicitly flag low-confidence situations in confidence_note when baseline n_obs 
+     is small (below a configurable threshold), 
+     (e) never use the word "fraud" — only "risk indicator," "warrants review," or 
+     "requires verification"
+
+3. A caching layer: check a database/table for an existing explanation keyed by 
+   (work_id, model_version, baseline_version) before calling the LLM; only regenerate 
+   when either version changes (meaning the underlying score actually changed). Store the 
+   full grounding payload alongside the generated explanation for audit traceability.
+
+4. A rule-based fallback function that produces a template-based (non-LLM) version of the 
+   same {why, recommended_actions, confidence_note} shape, used automatically if the LLM 
+   call fails, times out, or the payload is too thin to be meaningful — this must degrade 
+   gracefully, never crash or return a blank/error state to the frontend.
+
+5. A validation step after the LLM responds: verify every numeric claim in the "why" array 
+   actually appears in the grounding payload (simple substring/regex check against the 
+   payload's serialized values) before accepting the response — if validation fails, log it 
+   and fall back to the rule-based version rather than serving an unverified LLM claim.
+
+CONSTRAINTS:
+- Python 3.10+, using the `anthropic` SDK, `sqlalchemy` (or a simple interface I can adapt) 
+  for the caching layer, standard library for validation
+- Code must be modular: separate functions for build_grounding_payload(), 
+  generate_risk_explanation(), validate_response(), get_risk_explanation_safe() 
+  (the cached + fallback-wrapped entry point), and a template-based fallback function
+- Include docstrings explaining WHY each design choice was made — I need to defend this 
+  architecture to a hackathon panel and explain why an LLM here doesn't compromise 
+  explainability (the LLM composes language over fixed, already-computed SHAP attributions; 
+  it never touches the score or invents a feature contribution)
+- Assume a FastAPI endpoint will call get_risk_explanation_safe() — structure the final 
+  function so it's a one-line call from an endpoint like 
+  GET /api/works/{work_id}/risk-explanation
+
+DELIVERABLE:
+A single Python file (or small set of files) with all the above implemented, plus a short 
+runnable example at the bottom that constructs a synthetic grounding payload (one work with 
+2-3 significant SHAP contributions, one with a thin baseline sample) and shows the full flow 
+running end-to-end — including one example where I simulate an LLM failure to show the 
+fallback actually engages.

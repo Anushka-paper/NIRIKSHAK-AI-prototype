@@ -20,12 +20,14 @@ import {
   Search
 } from "lucide-react";
 import { WorkFeature } from "@/types/features";
-import { predictRisk, PredictionResponse, checkDuplicate } from "@/lib/api";
+import { predictRisk, PredictionResponse, checkDuplicate, getRiskExplanation, RiskExplanationResponse } from "@/lib/api";
+import { useRequireAuth } from "@/lib/authContext";
 import dynamic from "next/dynamic";
 const RiskGauge     = dynamic(() => import("@/components/charts/RiskGauge"),     { ssr: false });
 const FinancialBars = dynamic(() => import("@/components/charts/FinancialBars"), { ssr: false });
 
 export default function ProjectDetailPage() {
+  const { user, loading: authLoading } = useRequireAuth();
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -41,12 +43,35 @@ export default function ProjectDetailPage() {
   const [predicting, setPredicting] = useState<boolean>(false);
   const [mlPrediction, setMlPrediction] = useState<PredictionResponse["data"] | null>(null);
 
+  // Epic 6: LLM-grounded (SHAP-attributed) risk explanation
+  const [explaining, setExplaining] = useState<boolean>(false);
+  const [explanation, setExplanation] = useState<RiskExplanationResponse["data"] | null>(null);
+  const [explanationError, setExplanationError] = useState<string | null>(null);
+
+  const handleGetExplanation = async () => {
+    if (!work) return;
+    setExplaining(true);
+    setExplanationError(null);
+    try {
+      const res = await getRiskExplanation(work.canonical_work_id);
+      if (res.success && res.data) {
+        setExplanation(res.data);
+      } else {
+        setExplanationError(res.error || "Failed to generate explanation");
+      }
+    } catch (err: any) {
+      setExplanationError(err.message);
+    } finally {
+      setExplaining(false);
+    }
+  };
+
   // Duplicate Check State
   const [checkingDuplicates, setCheckingDuplicates] = useState<boolean>(false);
   const [duplicates, setDuplicates] = useState<any[] | null>(null);
 
   useEffect(() => {
-    if (!id) return;
+    if (!user || !id) return;
     async function fetchWork() {
       setLoading(true);
       setError(null);
@@ -68,7 +93,8 @@ export default function ProjectDetailPage() {
       }
     }
     fetchWork();
-  }, [id, parliament]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, parliament, user]);
 
   const formatINR = (val?: number | unknown) => {
     const num = Number(val);
@@ -118,6 +144,10 @@ export default function ProjectDetailPage() {
       setCheckingDuplicates(false);
     }
   };
+
+  if (authLoading || !user) {
+    return <div className="py-24 text-center text-sm text-gray-500">Loading...</div>;
+  }
 
   if (loading) {
     return (
@@ -334,6 +364,64 @@ export default function ProjectDetailPage() {
                   )}
                 </div>
               </div>
+
+              {/* Epic 6: LLM-grounded, SHAP-attributed explanation */}
+              <div className="bg-white rounded-2xl border shadow-sm p-4 space-y-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="text-xs font-bold text-gray-900">
+                    Grounded Risk Explanation (SHAP + LLM synthesis)
+                  </span>
+                  <button
+                    onClick={handleGetExplanation}
+                    disabled={explaining}
+                    className="px-3 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-[11px] font-bold transition-all disabled:opacity-50"
+                  >
+                    {explaining ? "Generating..." : explanation ? "Regenerate Explanation" : "Get Full AI Explanation"}
+                  </button>
+                </div>
+
+                {explanationError && (
+                  <p className="text-xs text-rose-600 font-semibold">{explanationError}</p>
+                )}
+
+                {explanation && (
+                  <div className="space-y-3">
+                    <span
+                      className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-black ${
+                        explanation.generated_by === "llm"
+                          ? "bg-violet-100 text-violet-700"
+                          : "bg-amber-100 text-amber-700"
+                      }`}
+                    >
+                      {explanation.generated_by === "llm" ? "LLM-generated" : "Template fallback (LLM unavailable)"}
+                      {explanation.cached ? " · cached" : ""}
+                    </span>
+
+                    <ul className="space-y-1.5 text-xs text-gray-700">
+                      {explanation.why.map((w, i) => (
+                        <li key={i} className="flex items-start gap-2 rounded-lg bg-gray-50 p-2.5 border">
+                          <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-violet-500" />
+                          <span>{w}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    {explanation.recommended_actions.length > 0 && (
+                      <div className="space-y-1.5">
+                        <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Recommended Actions</span>
+                        {explanation.recommended_actions.map((a, i) => (
+                          <div key={i} className="rounded-lg border border-violet-100 bg-violet-50 p-2.5 text-xs">
+                            <p className="font-bold text-violet-900">{a.action}</p>
+                            <p className="text-violet-700">{a.rationale}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    <p className="text-[11px] italic text-gray-500">{explanation.confidence_note}</p>
+                  </div>
+                )}
+              </div>
             </div>
           ) : (
             <div className="py-6 text-center text-xs text-gray-400">
@@ -354,7 +442,7 @@ export default function ProjectDetailPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="p-4 bg-gray-50/70 rounded-2xl border border-gray-100">
               <span className="text-[11px] text-gray-400 uppercase font-bold block">1. Recommended</span>
               <span className="font-headline font-bold text-lg text-gray-900 block mt-1">

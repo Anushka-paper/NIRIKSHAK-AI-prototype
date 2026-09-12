@@ -28,6 +28,7 @@ import {
   Tag
 } from "lucide-react";
 import MPPerformanceSection, { MPPerformanceRecord } from "@/components/features/MPPerformanceSection";
+import { useRequireAuth } from "@/lib/authContext";
 
 interface RawCompletedRecord {
   work_id: string;
@@ -37,12 +38,12 @@ interface RawCompletedRecord {
   mp_name: string;
   amount: number;
   completion_date: string;
-  ida_agency: string;
   category: string;
   parliament: string;
 }
 
 export default function StateDetailPage() {
+  const { user, loading: authLoading } = useRequireAuth();
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -65,6 +66,7 @@ export default function StateDetailPage() {
   // MP Performance Graph State
   const [mpsPerformance, setMpsPerformance] = useState<MPPerformanceRecord[]>([]);
   const [loadingMps, setLoadingMps] = useState<boolean>(true);
+  const [mpsError, setMpsError] = useState<string | null>(null);
 
   // Filters & Pagination
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -87,7 +89,7 @@ export default function StateDetailPage() {
 
   // 1. Fetch State Aggregated Summary
   useEffect(() => {
-    if (!stateId || stateId === "undefined") return;
+    if (!user || !stateId || stateId === "undefined") return;
     async function loadStateSummary() {
       setLoadingSummary(true);
       setSummaryError(null);
@@ -107,13 +109,15 @@ export default function StateDetailPage() {
       }
     }
     loadStateSummary();
-  }, [stateId, parliament]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stateId, parliament, user]);
 
   // 3. Fetch MP Performance for this State (for the graph & roster)
   useEffect(() => {
-    if (!stateId || stateId === "undefined") return;
+    if (!user || !stateId || stateId === "undefined") return;
     async function loadMpsPerformance() {
       setLoadingMps(true);
+      setMpsError(null);
       try {
         const res = await fetch(`/api/overview/states/${encodeURIComponent(stateId)}/mps?parliament=${parliament}`);
         if (res && res.ok) {
@@ -124,20 +128,26 @@ export default function StateDetailPage() {
             setMpsPerformance(json);
           } else if (json && Array.isArray(json.data)) {
             setMpsPerformance(json.data);
+          } else {
+            setMpsError("MP performance data was returned in an unexpected format.");
           }
+        } else {
+          setMpsError("Failed to load MP performance data for this state.");
         }
       } catch (err) {
         console.error("Error loading MP performance:", err);
+        setMpsError("Failed to load MP performance data for this state.");
       } finally {
         setLoadingMps(false);
       }
     }
     loadMpsPerformance();
-  }, [stateId, parliament]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stateId, parliament, user]);
 
   // 4. Fetch Filtered Projects for this State
   useEffect(() => {
-    if (!stateId || stateId === "undefined") return;
+    if (!user || !stateId || stateId === "undefined") return;
     async function loadProjects() {
       setLoadingProjects(true);
       setProjectsError(null);
@@ -173,7 +183,8 @@ export default function StateDetailPage() {
       }
     }
     loadProjects();
-  }, [stateId, parliament, page, statusFilter, searchQuery]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stateId, parliament, page, statusFilter, searchQuery, user]);
 
   const formatINR = (val?: number) => {
     if (!val || isNaN(val)) return "₹0";
@@ -183,6 +194,10 @@ export default function StateDetailPage() {
   };
 
   const totalPages = Math.ceil(totalProjectsCount / limit) || 1;
+
+  if (authLoading || !user) {
+    return <div className="py-24 text-center text-sm text-gray-500">Loading...</div>;
+  }
 
   if (loadingSummary) {
     return (
@@ -386,6 +401,11 @@ export default function StateDetailPage() {
           mps={mpsPerformance}
           stateName={stateSummary.name}
         />
+      )}
+      {!loadingMps && mpsPerformance.length === 0 && mpsError && (
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-xs font-semibold text-amber-800">
+          {mpsError} This is different from the state genuinely having no MP data.
+        </div>
       )}
 
 

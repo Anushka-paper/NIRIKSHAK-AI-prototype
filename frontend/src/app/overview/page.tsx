@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { OverviewData, DatasetSummary, StateSummary } from "@/types/overview";
 import { getDashboardOverview, getStateAggregations } from "@/lib/api";
+import { useRequireAuth } from "@/lib/authContext";
 import StateCard from "@/components/features/StateCard";
 import {
   Database,
@@ -27,6 +28,7 @@ const StatusDonut       = dynamic(() => import("@/components/charts/StatusDonut"
 const OverviewFinancial = dynamic(() => import("@/components/charts/OverviewFinancial"), { ssr: false });
 
 export default function OverviewPage() {
+  const { user, loading: authLoading } = useRequireAuth();
   const [parliament, setParliament] = useState<string>("all");
   const [data, setData] = useState<OverviewData | null>(null);
   const [states, setStates] = useState<StateSummary[]>([]);
@@ -62,8 +64,10 @@ export default function OverviewPage() {
   };
 
   useEffect(() => {
+    if (!user) return;
     fetchOverview();
-  }, [parliament]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [parliament, user]);
 
   const formatINR = (val?: number) => {
     if (val === undefined || val === null || isNaN(val)) return "₹0";
@@ -79,6 +83,10 @@ export default function OverviewPage() {
   const pendingWorks = data?.projectStatusMetrics?.pendingWorks ?? states.reduce((acc, s) => acc + s.pendingProjects, 0);
   const completedAmount = data?.projectStatusMetrics?.completedAmount ?? states.reduce((acc, s) => acc + s.completedAmount, 0);
   const completionPercentage = totalWorks > 0 ? ((completedWorks / totalWorks) * 100).toFixed(1) : "0.0";
+
+  if (authLoading || !user) {
+    return <div className="py-24 text-center text-sm text-gray-500">Loading your dashboard...</div>;
+  }
 
   return (
     <div className="flex flex-col font-body pb-24">
@@ -178,7 +186,7 @@ export default function OverviewPage() {
       {data && (
         <>
           {/* Section 1: Dynamic High-Level Project Status Cards (Section 2 & 3 in spec) */}
-          <section className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+          <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {/* Completed Work Card - Requirement 2 */}
             <div className="bg-white p-5 rounded-2xl shadow-subtle border border-emerald-100 hover:shadow-medium transition-all">
               <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 mb-3">
@@ -278,7 +286,7 @@ export default function OverviewPage() {
               </span>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
               <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
                 <span className="text-[10px] font-bold uppercase text-gray-400 block">
                   Total Allocated Amount

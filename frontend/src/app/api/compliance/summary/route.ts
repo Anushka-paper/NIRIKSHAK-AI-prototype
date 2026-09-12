@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { callMLService } from "@/services/ml.service";
+import { forwardAuthHeader } from "@/lib/serverAuth";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -9,7 +10,7 @@ export async function GET(request: NextRequest) {
   try {
     const data = await callMLService(
       `/api/v1/compliance/summary?parliament=${parliament}&financial_year=${financialYear}`,
-      { method: "GET" }
+      { method: "GET", headers: forwardAuthHeader(request) }
     );
     return NextResponse.json({ success: true, data });
   } catch (error: unknown) {

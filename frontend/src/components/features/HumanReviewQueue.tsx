@@ -2,21 +2,25 @@
 
 import { useEffect, useState } from "react";
 import { CheckCircle, XCircle, Clock, AlertTriangle, FileText } from "lucide-react";
+import { useAuth, withAuthHeader } from "@/lib/authContext";
 
 export default function HumanReviewQueue() {
+  const { user } = useAuth();
   const [queue, setQueue] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [processingId, setProcessingId] = useState<number | null>(null);
   const [reviewerNotes, setReviewerNotes] = useState<{ [key: number]: string }>({});
 
   useEffect(() => {
+    if (!user) return;
     fetchQueue();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   const fetchQueue = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/compliance/review-queue");
+      const res = await fetch("/api/compliance/review-queue", { headers: withAuthHeader(user) });
       const json = await res.json();
       if (json.success && json.data?.queue) {
         setQueue(json.data.queue);
@@ -35,7 +39,7 @@ export default function HumanReviewQueue() {
     try {
       const res = await fetch(`/api/compliance/review-queue/${workId}/decide`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: withAuthHeader(user, { "Content-Type": "application/json" }),
         body: JSON.stringify({ approved, reviewer_notes: notes }),
       });
       const json = await res.json();

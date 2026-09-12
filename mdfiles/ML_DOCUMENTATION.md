@@ -65,8 +65,8 @@ To ensure transparency and rigorous engineering standards, here is the exact aud
 | **Entity Resolution Master** |  **100% Operational** | **75,501** resolved canonical works mapped end-to-end. |
 | **118 Feature Matrix Calculation** |  **100% Operational** | Precomputed in `data/features/{parliament}/work_features.csv`. |
 | **Feature Leakage Prevention** |  **100% Operational** | Audited in `feature_leakage_report.csv`. |
-| **Active Prediction API (`/api/v1/predict`)** |  **Heuristic Active** | Uses parameterized heuristic weights based on elapsed days and cost. |
-| **Trained Binary Model Artifacts (`.pkl`/`.joblib`)** |  **Pending Training** | Models in `ml-service/prediction/delay/` are structured stubs ready for fitting. |
+| **Active Prediction API (`/api/v1/predict`)** |  **Trained Model Active** (2026-09-12) | `backend/backend_api.py` now calls a real trained classifier first; the old heuristic is kept only as a fallback if the model artifact is missing. |
+| **Trained Binary Model Artifacts (`.pkl`/`.joblib`)** |  **Trained** | `ml-service/prediction/delay/` — `HistGradientBoostingClassifier`, trained on 24,101 real historical works, held-out test set: 95.15% accuracy, ROC-AUC 0.9899, delayed-class precision 0.910 / recall 0.868 / F1 0.888 (full metrics in `ml-service/models/delay_risk_model_metrics.json`). Label is a censored/hazard-style "delayed beyond the 18-month statutory SLA" flag (see `dataset.py`'s docstring for why a naive completed-works-only label was rejected — it's 98.8% survivorship-biased toward "on time"). Retrained nightly alongside the scrape pipeline (`.github/workflows/nightly_scrape.yml`). |
 
 ---
 

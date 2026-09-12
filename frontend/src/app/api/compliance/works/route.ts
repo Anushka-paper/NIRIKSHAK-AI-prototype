@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
+import { forwardAuthHeader } from "@/lib/serverAuth";
 
-const BACKEND_API = process.env.BACKEND_API_URL || "http://127.0.0.1:8000";
+const BACKEND_API = process.env.BACKEND_API_URL || process.env.ML_SERVICE_URL || "http://127.0.0.1:8000";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const res = await fetch(`${BACKEND_API}/works`, { cache: "no-store" });
+    const res = await fetch(`${BACKEND_API}/works`, { cache: "no-store", headers: forwardAuthHeader(request) });
     if (!res.ok) {
       return NextResponse.json({ success: false, error: "Failed to fetch works" }, { status: res.status });
     }

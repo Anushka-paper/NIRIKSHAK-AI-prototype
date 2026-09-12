@@ -4,9 +4,15 @@ import React, { useState } from "react";
 import FeatureWorkTable from "@/components/features/FeatureWorkTable";
 import { Briefcase, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { useRequireAuth } from "@/lib/authContext";
 
 export default function ProjectsPage() {
+  const { user, loading: authLoading } = useRequireAuth();
   const [parliament, setParliament] = useState<string>("lok_sabha");
+
+  if (authLoading || !user) {
+    return <div className="py-24 text-center text-sm text-gray-500">Loading...</div>;
+  }
 
   return (
     <div className="flex flex-col gap-8 font-body pb-20">

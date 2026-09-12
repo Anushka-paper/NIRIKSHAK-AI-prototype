@@ -51,6 +51,25 @@ export async function predictRisk(payload: any): Promise<PredictionResponse> {
   return res.json();
 }
 
+export interface RiskExplanationResponse {
+  success: boolean;
+  data?: {
+    work_id: string;
+    prediction: any;
+    why: string[];
+    recommended_actions: { action: string; rationale: string }[];
+    confidence_note: string;
+    generated_by: "llm" | "fallback";
+    cached: boolean;
+  };
+  error?: string;
+}
+
+export async function getRiskExplanation(workId: string): Promise<RiskExplanationResponse> {
+  const res = await fetch(`/api/ml/risk-explanation/${encodeURIComponent(workId)}`, { cache: "no-store" });
+  return res.json();
+}
+
 export async function checkDuplicate(query: string): Promise<any> {
   const res = await fetch("/api/nlp/check-duplicate", {
     method: "POST",

@@ -6,4 +6,13 @@ scikit-learn
 joblib
 playwright
 aiohttp
+fastapi
+uvicorn
+sqlalchemy
+pydantic>=2
+bcrypt
+pyjwt
+rapidfuzz
+anthropic
+shap
 

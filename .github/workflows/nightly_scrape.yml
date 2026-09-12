@@ -43,6 +43,17 @@ jobs:
       - name: Re-train ML Models on new data
         run: python ml_models/train_all.py
 
+      - name: Re-train real delay-risk classifier (Epic 3)
+        run: |
+          # Trains a HistGradientBoostingClassifier on the freshly-scraped
+          # work_features.csv (see ml-service/prediction/delay/ for the
+          # dataset/train/evaluate/predict split). Non-fatal if it errors --
+          # backend_api.py falls back to a labeled heuristic when the
+          # artifact is missing or stale, so a bad nightly run degrades
+          # gracefully instead of breaking the whole pipeline.
+          pip install scikit-learn joblib
+          python ml-service/prediction/delay/train.py || echo "Delay-risk retrain failed -- live service will keep using its last good model / fallback heuristic"
+
       - name: Upload DuckDB artifact for backend
         uses: actions/upload-artifact@v4
         with:
@@ -58,4 +69,6 @@ jobs:
           git add -f data_pipeline/LS_DATASET/loksabha_state_tiles.csv || true
           git add -f data_processed/parliament_data.duckdb || true
           git add -f data_pipeline/parliament_data.duckdb || true
+          git add -f ml-service/models/delay_risk_model.joblib || true
+          git add -f ml-service/models/delay_risk_model_metrics.json || true
           git diff --staged --quiet || (git commit -m "chore: nightly data sync $(date -u +%Y-%m-%d)" && git pull --rebase origin main && git push)
