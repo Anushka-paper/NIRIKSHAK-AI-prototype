@@ -16,3 +16,7 @@ prophet
 python-multipart
 rapidfuzz
 anthropic
+bcrypt
+pyjwt
+sqlalchemy
+shap
