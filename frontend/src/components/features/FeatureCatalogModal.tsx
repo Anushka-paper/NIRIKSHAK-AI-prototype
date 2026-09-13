@@ -89,7 +89,7 @@ export default function FeatureCatalogModal({ isOpen, onClose, parliament }: Pro
         </div>
 
         {/* Catalog Table */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 min-h-0 overflow-y-auto p-6">
           {loading ? (
             <div className="py-20 text-center text-gray-400 text-sm">Loading feature metadata...</div>
           ) : filtered.length === 0 ? (

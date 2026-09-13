@@ -985,7 +985,7 @@ export default function CompliancePage() {
                   Quick Actions
                 </h2>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {/* Tile 1: Upload Project Documents */}
                   <button
                     onClick={() => setUploadNotice("Upload interface ready. Drop sanction orders or estimates to verify.")}

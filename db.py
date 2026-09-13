@@ -142,6 +142,24 @@ def seed_sample_data(db: Session) -> Tuple[MemberOfParliament, FinancialYearLedg
                 work_location_state="Uttar Pradesh",
                 recommendation_date=date(2025, 1, 10),
                 status=WorkStatus.RECOMMENDED  # Flagged/Needs Review
+            ),
+            WorkRecommendation(
+                id=5,
+                mp_id=mp.id,
+                fy_ledger_id=ledger.id,
+                title="Community Hall Construction",
+                description="Construction of a multipurpose community hall.",
+                estimated_cost=1_950_000,
+                beneficiary_category=BeneficiaryCategory.GENERAL,
+                # Outside allowed_districts and not declared out-of-constituency
+                # -- a genuine GEO_JURISDICTION (BLOCK) violation, so the demo
+                # DB has at least one real alert/finding to show out of the box.
+                work_location_district="Lucknow",
+                work_location_state="Uttar Pradesh",
+                recommendation_date=date(2025, 2, 1),
+                sanction_date=date(2025, 2, 20),
+                completion_deadline=date(2026, 2, 20),
+                status=WorkStatus.EXECUTING
             )
         ]
         for w in sample_works:
@@ -161,8 +179,45 @@ def seed_sample_data(db: Session) -> Tuple[MemberOfParliament, FinancialYearLedg
         for w in sample_works:
             report = engine.evaluate(w, ledger, context)
             log_compliance_check(db, w.id, report.results)
+            # Also raise alerts/findings for any BLOCK-severity failures, same
+            # as a live submission would -- otherwise a fresh demo DB has zero
+            # rows in Alert/ComplianceFinding until someone manually resubmits
+            # a work through the compliance-check flow.
+            raise_alerts_for_work(db, w, report.results)
+            raise_findings_for_work(db, w, report.results)
 
     return mp, ledger
+
+
+def backfill_alerts_for_existing_works(db: Session) -> None:
+    """
+    One-time repair for databases seeded before raise_alerts_for_work/
+    raise_findings_for_work were wired into seed_sample_data: re-evaluates
+    every existing WorkRecommendation and raises alerts/findings for any
+    BLOCK-severity failure, same as a live submission would. No-op once
+    the Alert table is non-empty, so this only ever does real work once
+    per pre-existing database.
+    """
+    if db.query(Alert).count() > 0 or db.query(WorkRecommendation).count() == 0:
+        return
+
+    from rules_engine import ComplianceEngine
+    engine = ComplianceEngine()
+    for w in db.query(WorkRecommendation).all():
+        ledger = db.query(FinancialYearLedger).filter(FinancialYearLedger.id == w.fy_ledger_id).first()
+        if not ledger:
+            continue
+        mp = db.query(MemberOfParliament).filter(MemberOfParliament.id == w.mp_id).first()
+        context = {
+            "mp_type": mp.mp_type.value if mp else MPType.LOK_SABHA.value,
+            "mp_id": w.mp_id,
+            "allowed_districts": [w.work_location_district] if w.work_location_district else [],
+            "is_calamity_declared": False,
+            "society": None,
+        }
+        report = engine.evaluate(w, ledger, context)
+        raise_alerts_for_work(db, w, report.results)
+        raise_findings_for_work(db, w, report.results)
 
 
 def log_compliance_check(db: Session, work_id: int, results: list):

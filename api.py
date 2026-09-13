@@ -18,6 +18,7 @@ from db import (
     init_db, get_db, seed_sample_data, log_compliance_check, update_ledger_on_sanction,
     raise_alerts_for_work, scope_alerts_query, sync_real_mps,
     seed_compliance_controls, raise_findings_for_work, scope_findings_query,
+    backfill_alerts_for_existing_works,
 )
 from integrations import NGODarpanService, GISBoundaryService, PFMSIntegrationService
 from auth import (
@@ -34,6 +35,7 @@ def startup_event():
     init_db()
     db = next(get_db())
     seed_sample_data(db)
+    backfill_alerts_for_existing_works(db)
     seed_demo_users(db)
     # Guard on count so this only scans the CSVs once, not on every
     # restart -- sync_real_mps itself also skips names it's already

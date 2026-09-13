@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { User, CheckCircle2, TrendingUp, IndianRupee, BarChart3, Trophy, ChevronRight, ExternalLink } from "lucide-react";
+import MPPerformanceBarChart from "@/components/charts/MPPerformanceBarChart";
 
 export interface MPPerformanceRecord {
   mp_name: string;
@@ -106,7 +107,15 @@ export default function MPPerformanceSection({ mps, stateName }: MPPerformanceSe
         </div>
       </div>
 
-      {/* Visual Graphical Horizontal Bar Chart */}
+      {/* Top-10 chart for the active metric */}
+      <div className="pt-2 border-b pb-6">
+        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">
+          Top {Math.min(10, mps.length)} MPs by {metric === "works" ? "Total Works" : metric === "rate" ? "Completion Rate" : "Sanctioned Funds"}
+        </p>
+        <MPPerformanceBarChart data={filteredMps} metric={metric} topN={10} />
+      </div>
+
+      {/* Full ranked list */}
       <div className="space-y-4 pt-2">
         {displayedList.map((mp, index) => {
           let barPct = 0;

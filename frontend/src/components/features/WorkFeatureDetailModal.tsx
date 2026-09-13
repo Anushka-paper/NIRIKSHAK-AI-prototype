@@ -76,7 +76,7 @@ export default function WorkFeatureDetailModal({ work, onClose }: Props) {
         </div>
 
         {/* Content Body */}
-        <div className="p-6 overflow-y-auto space-y-6">
+        <div className="p-6 overflow-y-auto flex-1 min-h-0 space-y-6">
           {/* Financial Breakdown */}
           <div>
             <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-3 flex items-center gap-2">
