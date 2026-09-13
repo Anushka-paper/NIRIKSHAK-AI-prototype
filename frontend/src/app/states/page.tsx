@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { StateSummary } from "@/types/overview";
 import { getStateAggregations } from "@/lib/api";
 import StateCard from "@/components/features/StateCard";
+import StateComparisonBar from "@/components/charts/StateComparisonBar";
 import { useRequireAuth } from "@/lib/authContext";
 import {
   MapPin,
@@ -167,6 +168,24 @@ export default function BrowseStatesPage() {
           </span>
         </div>
       </div>
+
+      {/* Completion Rate Comparison */}
+      {!loading && states.length > 0 && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-subtle">
+            <h2 className="text-sm font-black font-headline text-gray-900 mb-3">
+              Top 10 States/UTs by Completion Rate
+            </h2>
+            <StateComparisonBar data={states} topN={10} direction="top" />
+          </div>
+          <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-subtle">
+            <h2 className="text-sm font-black font-headline text-gray-900 mb-3">
+              Bottom 10 States/UTs by Completion Rate
+            </h2>
+            <StateComparisonBar data={states} topN={10} direction="bottom" />
+          </div>
+        </div>
+      )}
 
       {/* Search & Filter Toolbar */}
       <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-subtle flex flex-col sm:flex-row items-center justify-between gap-3">

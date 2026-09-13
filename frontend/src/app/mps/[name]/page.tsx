@@ -26,6 +26,7 @@ import {
   Award
 } from "lucide-react";
 import { useRequireAuth } from "@/lib/authContext";
+import StatusDonut from "@/components/charts/StatusDonut";
 
 interface RawCompletedRecord {
   work_id: string;
@@ -173,6 +174,16 @@ export default function MPDetailPage() {
   const totalDisbursed = completedWorks.reduce((acc, w) => acc + (Number(w.amount) || 0), 0) ||
                           allWorks.reduce((acc, w) => acc + (Number(w.expenditure_amount) || 0), 0);
 
+  // Real lifecycle breakdown for the status donut, same categorization the
+  // backend's state aggregator uses (COMPLETED / SANCTIONED-or-EXPENDITURE
+  // started / RECOMMENDED_ONLY).
+  const ongoingCount = allWorks.filter((w) =>
+    ["EXPENDITURE_STARTED", "SANCTIONED"].includes((w.lifecycle_status || "").toUpperCase())
+  ).length;
+  const pendingCount = allWorks.filter((w) =>
+    (w.lifecycle_status || "").toUpperCase() === "RECOMMENDED_ONLY"
+  ).length;
+
   // Filtered Completed Works by Search Query
   const filteredCompletedWorks = useMemo(() => {
     return completedWorks.filter((w) => {
@@ -310,6 +321,16 @@ export default function MPDetailPage() {
           <p className="text-[11px] text-gray-500 mt-1">Verified Physical Disbursal</p>
         </div>
       </section>
+
+      {/* Work Status Breakdown */}
+      {!loadingAllWorks && totalWorksCount > 0 && (
+        <section className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-subtle">
+          <h2 className="font-headline font-bold text-2xl text-gray-900 mb-4">
+            Work Status Breakdown for {mpName}
+          </h2>
+          <StatusDonut completed={totalCompletedCount} ongoing={ongoingCount} pending={pendingCount} />
+        </section>
+      )}
 
       {/* ─── COMPLETED WORKS SECTION IN CARD FORM ─────────────────────────── */}
       <section className="bg-white rounded-3xl p-6 sm:p-8 border border-emerald-100 shadow-subtle space-y-6">

@@ -111,6 +111,10 @@ export default function AdminUsersPage() {
     return <div className="py-24 text-center text-sm text-gray-500">Loading...</div>;
   }
 
+  const activeCount = users.filter((u) => u.status === "active").length;
+  const invitedCount = users.filter((u) => u.status === "invited").length;
+  const disabledCount = users.filter((u) => u.status === "disabled").length;
+
   return (
     <div className="mx-auto max-w-4xl space-y-8 py-6">
       <div>
@@ -119,6 +123,25 @@ export default function AdminUsersPage() {
           Create a login for an MP, State Nodal Authority, or District Authority. They'll set their
           own password using the invite link below — nobody chooses a password on their behalf.
         </p>
+      </div>
+
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="bg-white p-4 rounded-2xl shadow-subtle border border-gray-100">
+          <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block">Total Accounts</span>
+          <h3 className="font-headline font-bold text-2xl text-gray-900 mt-1">{users.length}</h3>
+        </div>
+        <div className="bg-white p-4 rounded-2xl shadow-subtle border border-emerald-100">
+          <span className="text-[11px] font-bold text-emerald-700 uppercase tracking-wider block">Active</span>
+          <h3 className="font-headline font-bold text-2xl text-emerald-700 mt-1">{activeCount}</h3>
+        </div>
+        <div className="bg-white p-4 rounded-2xl shadow-subtle border border-amber-100">
+          <span className="text-[11px] font-bold text-amber-700 uppercase tracking-wider block">Invited</span>
+          <h3 className="font-headline font-bold text-2xl text-amber-700 mt-1">{invitedCount}</h3>
+        </div>
+        <div className="bg-white p-4 rounded-2xl shadow-subtle border border-gray-100">
+          <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block">Disabled</span>
+          <h3 className="font-headline font-bold text-2xl text-gray-500 mt-1">{disabledCount}</h3>
+        </div>
       </div>
 
       <form onSubmit={handleCreate} className="grid grid-cols-1 gap-4 rounded-xl border bg-surface p-6 sm:grid-cols-2">
