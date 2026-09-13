@@ -128,7 +128,6 @@ export default function CompliancePage() {
   const [violations, setViolations] = useState<ViolationItem[]>([]);
   const [loadingSummary, setLoadingSummary] = useState<boolean>(true);
   const [loadingViolations, setLoadingViolations] = useState<boolean>(true);
-  const [uploadNotice, setUploadNotice] = useState<string | null>(null);
   const [now, setNow] = useState<Date | null>(null);
 
   useEffect(() => {
@@ -337,14 +336,6 @@ export default function CompliancePage() {
             </div>
           </div>
         </div>
-
-        {/* Upload / Notice alert banner */}
-        {uploadNotice && (
-          <div className="p-4 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-900 text-xs font-bold flex items-center justify-between">
-            <span>{uploadNotice}</span>
-            <button onClick={() => setUploadNotice(null)} className="text-indigo-600 underline">Dismiss</button>
-          </div>
-        )}
 
         {/* 2. Top KPI Metric Cards Grid (4 Cards) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -862,13 +853,20 @@ export default function CompliancePage() {
                 </h2>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {/* Tile 1: Upload Project Documents */}
+                  {/* Tile 1: Upload Project Documents -- no document storage/
+                      verification backend exists yet, so this is an honest
+                      disabled placeholder rather than a button that claims
+                      to accept an upload it can't actually process. */}
                   <button
-                    onClick={() => setUploadNotice("Upload interface ready. Drop sanction orders or estimates to verify.")}
-                    className="p-4 rounded-xl bg-blue-50/70 border border-blue-100 hover:bg-blue-100/70 transition-all flex flex-col items-center text-center space-y-2"
+                    disabled
+                    title="Document upload isn't wired to a backend yet"
+                    className="relative p-4 rounded-xl bg-gray-50 border border-gray-200 flex flex-col items-center text-center space-y-2 cursor-not-allowed opacity-60"
                   >
-                    <UploadCloud className="w-6 h-6 text-blue-600" />
-                    <span className="text-xs font-extrabold text-blue-950 leading-tight">
+                    <span className="absolute top-1.5 right-1.5 text-[9px] font-extrabold uppercase tracking-wide bg-gray-200 text-gray-500 px-1.5 py-0.5 rounded">
+                      Coming soon
+                    </span>
+                    <UploadCloud className="w-6 h-6 text-gray-400" />
+                    <span className="text-xs font-extrabold text-gray-500 leading-tight">
                       Upload Project Documents
                     </span>
                   </button>
@@ -884,13 +882,20 @@ export default function CompliancePage() {
                     </span>
                   </button>
 
-                  {/* Tile 3: Generate Compliance Report */}
+                  {/* Tile 3: Generate Compliance Report -- a real per-work
+                      PDF dossier endpoint exists (GET /api/works/{id}/dossier-pdf)
+                      but there's no dashboard-wide report generator; an honest
+                      disabled placeholder beats a fake "generating..." toast. */}
                   <button
-                    onClick={() => setUploadNotice("Generating PDF compliance summary report for MoSPI auditors...")}
-                    className="p-4 rounded-xl bg-indigo-50/70 border border-indigo-100 hover:bg-indigo-100/70 transition-all flex flex-col items-center text-center space-y-2"
+                    disabled
+                    title="Dashboard-wide PDF export isn't built yet -- per-project reports are available from a project's page"
+                    className="relative p-4 rounded-xl bg-gray-50 border border-gray-200 flex flex-col items-center text-center space-y-2 cursor-not-allowed opacity-60"
                   >
-                    <FileCheck className="w-6 h-6 text-indigo-600" />
-                    <span className="text-xs font-extrabold text-indigo-950 leading-tight">
+                    <span className="absolute top-1.5 right-1.5 text-[9px] font-extrabold uppercase tracking-wide bg-gray-200 text-gray-500 px-1.5 py-0.5 rounded">
+                      Coming soon
+                    </span>
+                    <FileCheck className="w-6 h-6 text-gray-400" />
+                    <span className="text-xs font-extrabold text-gray-500 leading-tight">
                       Generate Compliance Report
                     </span>
                   </button>
