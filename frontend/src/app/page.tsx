@@ -70,24 +70,49 @@ export default async function Home() {
     }
   } catch (e) { console.error(e); }
 
-  // ── 4. Map Live Data Injection
-  // We keep MOCK_CONSTITUENCIES solely for the geographical mapping (lat/lng coordinates)
-  // as the backend does not provide GIS points natively yet.
+  // ── 4. Fetch real per-state financial/works aggregates
+  let stateAggregates: any[] = [];
+  try {
+    const res = await fetch(`${API_BASE}/api/v1/overview/states?parliament=all`, { cache: "no-store" }).catch(() => null);
+    if (res?.ok) stateAggregates = await res.json();
+  } catch (e) { console.error(e); }
+
+  // ── 5. Map Live Data Injection
+  // MOCK_CONSTITUENCIES supplies only geography (lat/lng) and the display
+  // MP label, since the backend doesn't expose GIS points natively -- every
+  // numeric figure shown on the map (funds, works, risk flag) is replaced
+  // with the real per-state aggregate below. A state absent from the live
+  // aggregate falls back to zeros rather than the mock's fabricated numbers.
   const mapConstituencies = MOCK_CONSTITUENCIES.map(c => {
-    // Clone and clear hardcoded mock flags
-    const realC = { ...c, anomalyFlags: [] as any[] };
-    
-    // Inject actual risk flag based on live state anomalies count
+    const agg = stateAggregates.find((s: any) => s.name?.toLowerCase() === c.state.toLowerCase());
+    const anomalyFlags: any[] = [];
+
     const stateAnom = stateBreakdown.find((s: any) => s.state?.toLowerCase() === c.state.toLowerCase());
     if (stateAnom) {
       const count = stateAnom.anomaly_count || 0;
-      if (count > 200) realC.anomalyFlags.push({ type: "other", severity: "critical" });
-      else if (count > 50) realC.anomalyFlags.push({ type: "other", severity: "high" });
-      else if (count > 10) realC.anomalyFlags.push({ type: "other", severity: "medium" });
-      else realC.anomalyFlags.push({ type: "other", severity: "low" });
+      if (count > 200) anomalyFlags.push({ type: "other", severity: "critical" });
+      else if (count > 50) anomalyFlags.push({ type: "other", severity: "high" });
+      else if (count > 10) anomalyFlags.push({ type: "other", severity: "medium" });
+      else anomalyFlags.push({ type: "other", severity: "low" });
     }
-    
-    return realC;
+
+    const sanctionedCr = Math.round(((agg?.sanctionedAmount || 0) / 10000000) * 10) / 10;
+    const utilizedCr = Math.round(((agg?.expenditureAmount || 0) / 10000000) * 10) / 10;
+
+    return {
+      ...c,
+      // MPLADS funds are considered "released" once sanctioned; the
+      // dataset doesn't track a distinct release-tranche figure, so
+      // sanctioned is the accurate real-data stand-in here.
+      sanctionedAmount: sanctionedCr,
+      releasedAmount: sanctionedCr,
+      utilizedAmount: utilizedCr,
+      worksRecommended: agg?.totalProjects ?? 0,
+      worksCompleted: agg?.completedProjects ?? 0,
+      worksPending: agg?.pendingProjects ?? 0,
+      unspentBalanceAgeMonths: undefined,
+      anomalyFlags,
+    };
   });
 
   return (

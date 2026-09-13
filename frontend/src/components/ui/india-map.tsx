@@ -337,13 +337,15 @@ function ConstituencyTooltipCard({ c, score }: { c: ConstituencyMPLADS; score: n
         <span style={{ color: "#DC2626", fontWeight: 600 }}>{c.worksPending} pending</span>
       </div>
 
-      {/* Staleness */}
-      <div style={{ fontSize: "11px", color: "#334155" }}>
-        Unspent balance age:{" "}
-        <strong style={{ color: c.unspentBalanceAgeMonths > 18 ? "#DC2626" : "#0F172A" }}>
-          {c.unspentBalanceAgeMonths} months
-        </strong>
-      </div>
+      {/* Staleness (only shown when actually known) */}
+      {c.unspentBalanceAgeMonths != null && (
+        <div style={{ fontSize: "11px", color: "#334155" }}>
+          Unspent balance age:{" "}
+          <strong style={{ color: c.unspentBalanceAgeMonths > 18 ? "#DC2626" : "#0F172A" }}>
+            {c.unspentBalanceAgeMonths} months
+          </strong>
+        </div>
+      )}
 
       {/* Top flag */}
       {topFlag && (

@@ -31,7 +31,10 @@ export interface ConstituencyMPLADS {
   worksRecommended: number;
   worksCompleted: number;
   worksPending: number;
-  unspentBalanceAgeMonths: number;
+  // Not tracked in the real MPLADS dataset (no per-state "balance age"
+  // figure is computed anywhere upstream) -- optional so real-data callers
+  // can honestly omit it instead of inventing a number.
+  unspentBalanceAgeMonths?: number;
   anomalyFlags: AnomalyFlag[];
   lastUpdated?: string;
 }
@@ -47,16 +50,19 @@ export function computeRiskScore(c: ConstituencyMPLADS): number {
   const utilizationRate = c.utilizedAmount / (c.releasedAmount || 1);
   const utilizationGap = Math.max(0, 1 - utilizationRate);
   const pendingRate = c.worksPending / (c.worksRecommended || 1);
-  const staleness = Math.min(c.unspentBalanceAgeMonths / 24, 1);
   const flagWeight = c.anomalyFlags.reduce(
     (sum, f) => sum + (SEVERITY_WEIGHTS[f.severity] ?? 5),
     0
   );
-  const score =
-    utilizationGap * 25 +
-    pendingRate * 20 +
-    staleness * 15 +
-    Math.min(flagWeight, 40);
+  // Staleness (unspent-balance age) only contributes when actually known --
+  // real per-state data doesn't track it, so omitting it shouldn't silently
+  // read as "0 months old" (healthy); the weight is redistributed to the
+  // two components we can always compute for real.
+  const hasStaleness = c.unspentBalanceAgeMonths != null;
+  const staleness = hasStaleness ? Math.min(c.unspentBalanceAgeMonths! / 24, 1) : 0;
+  const score = hasStaleness
+    ? utilizationGap * 25 + pendingRate * 20 + staleness * 15 + Math.min(flagWeight, 40)
+    : utilizationGap * 30 + pendingRate * 30 + Math.min(flagWeight, 40);
   return Math.round(Math.min(score, 100));
 }
 

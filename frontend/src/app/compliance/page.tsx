@@ -16,7 +16,6 @@ import {
   TrendingUp,
   IndianRupee,
   Calendar,
-  ChevronDown,
   ShieldCheck,
   AlertOctagon,
   AlertTriangle,
@@ -129,6 +128,13 @@ export default function CompliancePage() {
   const [loadingSummary, setLoadingSummary] = useState<boolean>(true);
   const [loadingViolations, setLoadingViolations] = useState<boolean>(true);
   const [uploadNotice, setUploadNotice] = useState<string | null>(null);
+  const [now, setNow] = useState<Date | null>(null);
+
+  useEffect(() => {
+    setNow(new Date());
+    const interval = setInterval(() => setNow(new Date()), 60_000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Filters
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -248,26 +254,17 @@ export default function CompliancePage() {
     }
   };
 
-  // FY default fallback metrics when summary is loading or null
-  const fyDefaults: Record<string, { total: number; compliant: number; review: number; nonCompliant: number }> = {
-    "all": { total: 75501, compliant: 57282, review: 15477, nonCompliant: 2742 },
-    "2025-2026": { total: 33398, compliant: 25410, review: 6712, nonCompliant: 1276 },
-    "2024-2025": { total: 10463, compliant: 7921, review: 2110, nonCompliant: 432 },
-    "2023-2024": { total: 1132, compliant: 861, review: 228, nonCompliant: 43 },
-    "2026-2027": { total: 11699, compliant: 8901, review: 2315, nonCompliant: 483 },
-  };
+  // Real dataset metrics loaded from API summary matching selected financial year.
+  // No hardcoded per-FY fallback -- while loading or if the backend is
+  // unavailable, these honestly read as 0 rather than a fabricated number.
+  const totalProjects = summary?.total_audited ?? 0;
+  const compliantCount = summary?.compliant_count ?? 0;
+  const underReviewCount = summary?.under_review_count ?? 0;
+  const nonCompliantCount = summary?.non_compliant_count ?? 0;
 
-  const currentDefaults = fyDefaults[financialYear] || fyDefaults["all"];
-
-  // Real dataset metrics loaded from API summary matching selected financial year
-  const totalProjects = summary?.total_audited ?? currentDefaults.total;
-  const compliantCount = summary?.compliant_count ?? currentDefaults.compliant;
-  const underReviewCount = summary?.under_review_count ?? currentDefaults.review;
-  const nonCompliantCount = summary?.non_compliant_count ?? currentDefaults.nonCompliant;
-
-  const pctCompliant = totalProjects > 0 ? Math.round((compliantCount / totalProjects) * 100) : 76;
-  const pctUnderReview = totalProjects > 0 ? Math.round((underReviewCount / totalProjects) * 100) : 20;
-  const pctNonCompliant = totalProjects > 0 ? Math.round((nonCompliantCount / totalProjects) * 100) : 4;
+  const pctCompliant = totalProjects > 0 ? Math.round((compliantCount / totalProjects) * 100) : 0;
+  const pctUnderReview = totalProjects > 0 ? Math.round((underReviewCount / totalProjects) * 100) : 0;
+  const pctNonCompliant = totalProjects > 0 ? Math.round((nonCompliantCount / totalProjects) * 100) : 0;
 
   // Real AI-detected issues breakdown
   const aiIssues = summary?.ai_detected_issues || {
@@ -278,55 +275,7 @@ export default function CompliancePage() {
     irregular_fund_utilization: 0,
   };
 
-  const defaultRecentProjects: RecentProject[] = [
-    {
-      project_id: "CW_000018",
-      project_name: "Construction of Community Bhavan at Navalgund TQ Belavatagi Village Pry No 1/A Near Shivanand Math",
-      district: "DHARWAD",
-      state: "Karnataka",
-      amount: 495031,
-      compliance_status: "Non-Compliant",
-      last_updated: "09 Sep 2026",
-    },
-    {
-      project_id: "CW_001000",
-      project_name: "Construction of College room of CBS Charitable Foundation at Nulvi Village Pry No 817/3",
-      district: "DHARWAD",
-      state: "Karnataka",
-      amount: 500000,
-      compliance_status: "Compliant",
-      last_updated: "08 Sep 2026",
-    },
-    {
-      project_id: "CW_002150",
-      project_name: "Drinking Water Pipeline Supply and Storage Tank Construction at Ward 4",
-      district: "Gorakhpur",
-      state: "Uttar Pradesh",
-      amount: 1200000,
-      compliance_status: "Compliant",
-      last_updated: "07 Sep 2026",
-    },
-    {
-      project_id: "CW_003420",
-      project_name: "Renovation and Upgradation of Primary Healthcare Center Building",
-      district: "Patna",
-      state: "Bihar",
-      amount: 1850000,
-      compliance_status: "Under Review",
-      last_updated: "07 Sep 2026",
-    },
-    {
-      project_id: "CW_004890",
-      project_name: "Solar Powered Street Light Installation along Major Rural Connector Road",
-      district: "Ranchi",
-      state: "Jharkhand",
-      amount: 950000,
-      compliance_status: "Compliant",
-      last_updated: "06 Sep 2026",
-    },
-  ];
-
-  const recentProjects = summary?.recent_projects?.length ? summary.recent_projects : defaultRecentProjects;
+  const recentProjects = summary?.recent_projects ?? [];
 
   if (authLoading || !user) {
     return <div className="py-24 text-center text-sm text-gray-500">Loading your dashboard...</div>;
@@ -348,11 +297,14 @@ export default function CompliancePage() {
           </div>
 
           <div className="flex items-center gap-3 flex-wrap">
-            {/* Date Pill */}
+            {/* Live Date/Time */}
             <div className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-100/80 border border-slate-200 text-xs font-extrabold text-slate-700">
               <Calendar className="w-4 h-4 text-slate-500" />
-              <span>09 Sep 2026, 12:30 PM</span>
-              <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+              <span>
+                {now
+                  ? now.toLocaleString("en-IN", { day: "2-digit", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" })
+                  : " "}
+              </span>
             </div>
 
             {/* Parliament Filter Pills */}
@@ -944,6 +896,13 @@ export default function CompliancePage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
+                    {recentProjects.length === 0 && (
+                      <tr>
+                        <td colSpan={8} className="py-8 text-center text-slate-400 font-semibold">
+                          {loadingSummary ? "Loading recent projects…" : "No recent project activity to show yet."}
+                        </td>
+                      </tr>
+                    )}
                     {recentProjects.map((proj) => (
                       <tr key={proj.project_id} className="hover:bg-slate-50/80 transition-colors">
                         <td className="py-3.5 px-3 font-mono font-bold text-slate-900 whitespace-nowrap">

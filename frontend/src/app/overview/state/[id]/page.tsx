@@ -28,6 +28,7 @@ import {
   Tag
 } from "lucide-react";
 import MPPerformanceSection, { MPPerformanceRecord } from "@/components/features/MPPerformanceSection";
+import OverviewFinancial from "@/components/charts/OverviewFinancial";
 import { useRequireAuth } from "@/lib/authContext";
 
 interface RawCompletedRecord {
@@ -330,6 +331,22 @@ export default function StateDetailPage() {
           </h3>
           <p className="text-[11px] text-gray-500 mt-1">Recommended status</p>
         </div>
+      </section>
+
+      {/* Financial Lifecycle Chart */}
+      <section className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-subtle">
+        <div className="inline-flex items-center gap-1.5 text-xs font-bold text-primary uppercase tracking-wider mb-1">
+          <IndianRupee className="w-4 h-4 text-primary" />
+          Financial Lifecycle
+        </div>
+        <h2 className="font-headline font-bold text-2xl text-gray-900 mb-4">
+          Fund Allocation vs. Utilization in {stateSummary.name}
+        </h2>
+        <OverviewFinancial
+          allocated={stateSummary.allocated ?? stateSummary.recommendedAmount}
+          sanctioned={stateSummary.sanctionedAmount}
+          expenditure={stateSummary.expenditureAmount}
+        />
       </section>
 
       {/* Members of Parliament (MPs) Roster Section */}
