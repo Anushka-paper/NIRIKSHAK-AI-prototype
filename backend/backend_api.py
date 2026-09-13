@@ -72,11 +72,26 @@ async def startup_event():
     # this service runs standalone, without api.py having created the
     # SQLite schema first. Safe to call from multiple processes -- it
     # only creates tables that don't already exist.
+    #
+    # Also seeds the same demo users as api.py: this service is deployed
+    # as its OWN separate Railway process with its own independent SQLite
+    # file (no shared filesystem between services), so a JWT issued by
+    # api.py's /auth/login is only useful here if this service's Users
+    # table has a matching row at the same id -- get_current_user()
+    # re-validates the token's `sub` (user id) against the local DB on
+    # every request, and with an empty Users table that always fails as
+    # "Account disabled or not found", making every RBAC-gated route on
+    # this service (compliance summary/violations, etc.) permanently
+    # return 401 regardless of who's logged in. seed_demo_users runs the
+    # same deterministic insert order as api.py against an equally-fresh
+    # DB, so the ids line up.
     try:
         import db as demo_db
+        from auth import seed_demo_users
         demo_db.init_db()
+        seed_demo_users(next(demo_db.get_db()))
     except Exception as e:
-        print(f"Warning: could not initialize risk_explanations schema: {e}")
+        print(f"Warning: could not initialize auth schema/demo users: {e}")
 
 
 # ─── Helper: get last scraped timestamp ────────────────────────────────────

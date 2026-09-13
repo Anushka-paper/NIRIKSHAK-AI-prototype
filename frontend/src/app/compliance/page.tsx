@@ -32,6 +32,7 @@ import ComplianceCheckModal from "@/components/features/ComplianceCheckModal";
 import HumanReviewQueue from "@/components/features/HumanReviewQueue";
 import WorksComplianceList from "@/components/features/WorksComplianceList";
 import ComplianceFindings from "@/components/features/ComplianceFindings";
+import ComplianceTrendLine from "@/components/charts/ComplianceTrendLine";
 
 interface RuleBreakdown {
   code: string;
@@ -357,9 +358,6 @@ export default function CompliancePage() {
                 {totalProjects.toLocaleString()}
               </div>
               <div className="text-xs font-bold text-slate-500">Total Projects</div>
-              <div className="text-[11px] font-extrabold text-emerald-600 flex items-center gap-0.5 mt-0.5">
-                ↑ 12% from last month
-              </div>
             </div>
           </div>
 
@@ -532,90 +530,9 @@ export default function CompliancePage() {
               </select>
             </div>
 
-            {/* SVG Line Chart */}
-            <div className="py-4">
-              <svg className="w-full h-48" viewBox="0 0 400 180">
-                {/* Horizontal Grid lines */}
-                <line x1="30" y1="20" x2="380" y2="20" stroke="#F1F5F9" strokeWidth="1" />
-                <text x="5" y="24" className="text-[9px] fill-slate-400 font-bold">500</text>
-                
-                <line x1="30" y1="55" x2="380" y2="55" stroke="#F1F5F9" strokeWidth="1" />
-                <text x="5" y="59" className="text-[9px] fill-slate-400 font-bold">400</text>
-                
-                <line x1="30" y1="90" x2="380" y2="90" stroke="#F1F5F9" strokeWidth="1" />
-                <text x="5" y="94" className="text-[9px] fill-slate-400 font-bold">300</text>
-
-                <line x1="30" y1="125" x2="380" y2="125" stroke="#F1F5F9" strokeWidth="1" />
-                <text x="5" y="129" className="text-[9px] fill-slate-400 font-bold">200</text>
-
-                <line x1="30" y1="160" x2="380" y2="160" stroke="#E2E8F0" strokeWidth="1" />
-                <text x="15" y="164" className="text-[9px] fill-slate-400 font-bold">0</text>
-
-                {/* X Axis Labels */}
-                {["Apr", "May", "Jun", "Jul", "Aug", "Sep"].map((m, i) => (
-                  <text key={m} x={50 + i * 62} y="176" className="text-[10px] fill-slate-500 font-bold text-center">
-                    {m}
-                  </text>
-                ))}
-
-                {/* Compliant Green Line */}
-                <path
-                  d="M 50 115 L 112 105 L 174 90 L 236 70 L 298 48 L 360 40"
-                  fill="none"
-                  stroke="#10B981"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                />
-                {[
-                  [50, 115], [112, 105], [174, 90], [236, 70], [298, 48], [360, 40]
-                ].map(([x, y], i) => (
-                  <circle key={i} cx={x} cy={y} r="3.5" fill="#10B981" />
-                ))}
-
-                {/* Under Review Amber Line */}
-                <path
-                  d="M 50 145 L 112 138 L 174 130 L 236 112 L 298 112 L 360 118"
-                  fill="none"
-                  stroke="#F59E0B"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                />
-                {[
-                  [50, 145], [112, 138], [174, 130], [236, 112], [298, 112], [360, 118]
-                ].map(([x, y], i) => (
-                  <circle key={i} cx={x} cy={y} r="3.5" fill="#F59E0B" />
-                ))}
-
-                {/* Non-Compliant Red Line */}
-                <path
-                  d="M 50 155 L 112 150 L 174 146 L 236 142 L 298 142 L 360 140"
-                  fill="none"
-                  stroke="#EF4444"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                />
-                {[
-                  [50, 155], [112, 150], [174, 146], [236, 142], [298, 142], [360, 140]
-                ].map(([x, y], i) => (
-                  <circle key={i} cx={x} cy={y} r="3.5" fill="#EF4444" />
-                ))}
-              </svg>
-            </div>
-
-            {/* Trend Chart Legend */}
-            <div className="flex items-center justify-center gap-6 text-[11px] font-extrabold pt-2 border-t border-slate-100">
-              <div className="flex items-center gap-1.5">
-                <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-                <span className="text-slate-600">Compliant</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-                <span className="text-slate-600">Under Review</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <div className="w-2.5 h-2.5 rounded-full bg-rose-500" />
-                <span className="text-slate-600">Non-Compliant</span>
-              </div>
+            {/* Real Trend Chart (recharts), driven by summary.monthly_trend */}
+            <div className="py-2">
+              <ComplianceTrendLine data={summary?.monthly_trend || []} />
             </div>
           </div>
 
