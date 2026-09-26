@@ -118,8 +118,17 @@ def _distinguishing_token_diff(norm_a: str, norm_b: str) -> int:
     tokens_b = set(norm_b.split()) - _STOPWORDS
     return len(tokens_a ^ tokens_b)
 
+@lru_cache(maxsize=8)
 def load_work_features(parliament: str = "all") -> pd.DataFrame:
-    """Loads and unifies work features dataset."""
+    """
+    Loads and unifies work features dataset. Cached -- this is called
+    independently by both evaluate_compliance_violations and
+    get_compliance_summary (the latter calls it directly AND indirectly
+    via the former), so every compliance page load was re-reading and
+    re-concatenating the ~98K-row CSVs from disk 2+ times per request.
+    The files only change on a server restart, which also clears this
+    in-memory cache, so staleness isn't a concern.
+    """
     parliaments = ["lok_sabha", "rajya_sabha"] if parliament == "all" else [parliament]
     dfs = []
     for p in parliaments:
@@ -516,8 +525,12 @@ def get_compliance_summary(parliament: str = "all", financial_year: str = "all")
     # State compliance health index
     state_scores = []
     if not df.empty and "state" in df.columns:
-        df["state_clean"] = df["state"].astype(str).str.strip()
-        for state_name, g in df.groupby("state_clean"):
+        # Group on a derived Series rather than assigning a new column onto
+        # df -- load_work_features() is now cached, so df may be the same
+        # shared object across requests/parliaments; mutating it in place
+        # would leak this column into every future caller.
+        state_clean = df["state"].astype(str).str.strip()
+        for state_name, g in df.groupby(state_clean):
             if not state_name or state_name.lower() == "nan":
                 continue
             st_total = len(g)
