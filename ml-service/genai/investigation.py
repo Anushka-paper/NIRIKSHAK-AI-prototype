@@ -39,34 +39,67 @@ except ImportError:
 # session's model family and doesn't exist. Using the current flagship
 # instead -- see CLAUDE.md-equivalent guidance: default to the latest,
 # most capable model for new integrations.
-MODEL = "claude-sonnet-5"
+ANTHROPIC_MODEL = "claude-sonnet-5"
 
-_client = None
+# Google AI Studio (Gemini) has a genuine free tier with no billing setup
+# required, so it's tried first -- Anthropic remains available as a second
+# LLM option for anyone who already has API credits there. Both produce
+# the exact same {why, recommended_actions, confidence_note} shape and go
+# through the same validate_response() check before being trusted.
+GEMINI_MODEL = "gemini-2.5-flash"
+
+_anthropic_client = None
+_gemini_client = None
 
 
-def _get_client():
+def _get_anthropic_client():
     """Lazy import + init so this module can be imported (and its
     fallback/validation logic tested) even where the `anthropic` package
     or an API key isn't available."""
-    global _client
-    if _client is None:
+    global _anthropic_client
+    if _anthropic_client is None:
         api_key = os.environ.get("ANTHROPIC_API_KEY")
         if not api_key:
             raise RuntimeError("ANTHROPIC_API_KEY is not set")
         from anthropic import Anthropic
-        _client = Anthropic(api_key=api_key)
-    return _client
+        _anthropic_client = Anthropic(api_key=api_key)
+    return _anthropic_client
 
 
-def generate_risk_explanation(grounding_payload: Dict[str, Any], timeout: float = 20.0) -> Dict[str, Any]:
-    """
-    Raises on any failure (missing key, network error, timeout, malformed
-    response) -- callers must catch and fall back, this function never
-    silently returns a partial/fabricated result.
-    """
-    client = _get_client()
+def _get_gemini_client():
+    """Lazy import + init, same rationale as _get_anthropic_client()."""
+    global _gemini_client
+    if _gemini_client is None:
+        api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+        if not api_key:
+            raise RuntimeError("GEMINI_API_KEY (or GOOGLE_API_KEY) is not set")
+        from google import genai
+        _gemini_client = genai.Client(api_key=api_key)
+    return _gemini_client
+
+
+def _generate_risk_explanation_gemini(grounding_payload: Dict[str, Any], timeout: float = 20.0) -> Dict[str, Any]:
+    from google.genai import types
+    client = _get_gemini_client()
+    response = client.models.generate_content(
+        model=GEMINI_MODEL,
+        contents=f"Grounding payload:\n{json.dumps(grounding_payload, indent=2)}",
+        config=types.GenerateContentConfig(
+            system_instruction=SYSTEM_PROMPT,
+            response_mime_type="application/json",
+            response_json_schema=RISK_EXPLANATION_TOOL["input_schema"],
+            http_options=types.HttpOptions(timeout=int(timeout * 1000)),
+        ),
+    )
+    if not response.text:
+        raise RuntimeError("Gemini response had no text content")
+    return json.loads(response.text)
+
+
+def _generate_risk_explanation_anthropic(grounding_payload: Dict[str, Any], timeout: float = 20.0) -> Dict[str, Any]:
+    client = _get_anthropic_client()
     message = client.messages.create(
-        model=MODEL,
+        model=ANTHROPIC_MODEL,
         max_tokens=1024,
         system=SYSTEM_PROMPT,
         tools=[RISK_EXPLANATION_TOOL],
@@ -81,6 +114,25 @@ def generate_risk_explanation(grounding_payload: Dict[str, Any], timeout: float 
         if block.type == "tool_use" and block.name == "risk_explanation":
             return block.input
     raise RuntimeError("Model response did not include a risk_explanation tool call")
+
+
+def generate_risk_explanation(grounding_payload: Dict[str, Any], timeout: float = 20.0) -> Dict[str, Any]:
+    """
+    Tries each configured LLM provider in turn (Gemini first -- free tier,
+    no billing needed -- then Anthropic), returning the first one that
+    succeeds. Raises only if every configured provider failed (or none
+    are configured), so callers can catch a single exception type and
+    fall back to rule_based_fallback() regardless of which/how many
+    providers were tried.
+    """
+    errors = []
+    for provider_name, provider_fn in (("gemini", _generate_risk_explanation_gemini),
+                                        ("anthropic", _generate_risk_explanation_anthropic)):
+        try:
+            return provider_fn(grounding_payload, timeout)
+        except Exception as e:
+            errors.append(f"{provider_name}: {e}")
+    raise RuntimeError(f"No LLM provider available/succeeded -- {'; '.join(errors)}")
 
 
 _NUMBER_RE = re.compile(r"-?\d[\d,]*\.?\d*")

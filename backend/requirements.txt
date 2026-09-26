@@ -16,6 +16,7 @@ prophet
 python-multipart
 rapidfuzz
 anthropic
+google-genai
 bcrypt
 pyjwt
 sqlalchemy

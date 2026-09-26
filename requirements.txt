@@ -14,5 +14,6 @@ bcrypt
 pyjwt
 rapidfuzz
 anthropic
+google-genai
 shap
 
