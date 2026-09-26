@@ -137,9 +137,17 @@ def generate_risk_explanation(grounding_payload: Dict[str, Any], timeout: float 
 
 _NUMBER_RE = re.compile(r"-?\d[\d,]*\.?\d*")
 
+# Matches ordinal references like "90th percentile"/"1st"/"3rd" -- these are
+# field-name labels (peer_baseline.p90 etc.), not standalone data claims, so
+# stripping them before extraction avoids validate_response() treating "90"
+# in "90th percentile" as an unverified number when the payload legitimately
+# has no bare "90" but does have a p90 field the LLM was correctly citing.
+_ORDINAL_RE = re.compile(r"\b\d+(?:st|nd|rd|th)\b", re.IGNORECASE)
+
 
 def _extract_numbers(text: str) -> List[float]:
-    cleaned = text.replace(",", "").replace("₹", "").replace("%", "")
+    cleaned = _ORDINAL_RE.sub("", text)
+    cleaned = cleaned.replace(",", "").replace("₹", "").replace("%", "")
     return [float(m) for m in re.findall(r"-?\d+\.?\d*", cleaned)]
 
 
