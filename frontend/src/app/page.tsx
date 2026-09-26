@@ -25,7 +25,7 @@ export default async function Home() {
   const API_BASE = (process.env.ML_SERVICE_URL || process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000").replace(/\/+$/, "");
   // ── 1. Fetch Dashboard Stats
   let overview = { analytics: { totalExpenditureAmount: 0 }, projectStatusMetrics: { totalWorks: 0 }, geography: { totalStatesRepresented: 0 } };
-  let anomaliesSummary = { lok_sabha: { critical_anomalies: 0 } };
+  let anomaliesSummary = { critical_anomalies: 0 };
   // Tracks whether the live backend actually answered, so we never show a
   // hardcoded placeholder number as if it were a real live statistic --
   // if the fetch fails, the stat strip is hidden entirely instead.
@@ -42,7 +42,7 @@ export default async function Home() {
 
   const fundsTrackedCr = Math.round((overview.analytics?.totalExpenditureAmount || 0) / 10000000);
   const constituenciesAnalyzed = overview.projectStatusMetrics?.totalWorks || 0;
-  const criticalFlags = anomaliesSummary.lok_sabha?.critical_anomalies || 0;
+  const criticalFlags = anomaliesSummary.critical_anomalies || 0;
   const elevatedStates = overview.geography?.totalStatesRepresented || 0;
 
   // ── 2. Fetch Top 10 Anomalies
