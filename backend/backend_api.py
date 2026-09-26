@@ -12,6 +12,13 @@ import json
 import httpx
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
+
+# Load the repo-root .env (GEMINI_API_KEY, ANTHROPIC_API_KEY, etc.) so local
+# dev doesn't require re-exporting env vars in every terminal session.
+# override=False: real shell/deployment env vars still win if both are set.
+from dotenv import load_dotenv
+load_dotenv(os.path.join(PROJECT_ROOT, ".env"), override=False)
+
 sys.path.append(PROJECT_ROOT)
 sys.path.append(os.path.join(PROJECT_ROOT, "ml_models"))
 sys.path.append(os.path.join(PROJECT_ROOT, "data_pipeline"))

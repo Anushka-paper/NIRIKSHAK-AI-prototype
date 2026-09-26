@@ -12,6 +12,7 @@ sqlalchemy
 pydantic>=2
 bcrypt
 pyjwt
+python-dotenv
 rapidfuzz
 anthropic
 google-genai

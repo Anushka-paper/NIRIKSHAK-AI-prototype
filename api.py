@@ -2,11 +2,18 @@
 FastAPI layer over the compliance engine with DB persistence & Human Review Workflow.
 """
 
+import os
 from datetime import date
 from typing import Optional, List
 from fastapi import FastAPI, Depends, HTTPException, Query
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
+
+# Load the repo-root .env so local dev doesn't require re-exporting env vars
+# in every terminal session. override=False: real shell/deployment env vars
+# still win if both are set.
+from dotenv import load_dotenv
+load_dotenv(os.path.join(os.path.dirname(__file__), ".env"), override=False)
 
 from models import (
     WorkRecommendation, FinancialYearLedger, MemberOfParliament,

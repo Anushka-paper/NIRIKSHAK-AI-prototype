@@ -19,5 +19,6 @@ anthropic
 google-genai
 bcrypt
 pyjwt
+python-dotenv
 sqlalchemy
 shap
