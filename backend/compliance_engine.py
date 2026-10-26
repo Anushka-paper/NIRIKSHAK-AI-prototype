@@ -142,6 +142,19 @@ def load_work_features(parliament: str = "all") -> pd.DataFrame:
         return pd.DataFrame()
 
     df = pd.concat(dfs, ignore_index=True) if len(dfs) > 1 else dfs[0]
+
+    # Downcast numeric columns (pandas defaults to float64/int64 even when
+    # the values fit comfortably in float32/int32) -- this result is
+    # cached for the life of the process via @lru_cache above, so the
+    # memory saved here is paid back on every request for as long as the
+    # service runs, not just once. to_numeric's downcast is value-safe
+    # (never silently loses precision outside the target dtype's range).
+    for col in df.columns:
+        if df[col].dtype.kind == "f":
+            df[col] = pd.to_numeric(df[col], downcast="float")
+        elif df[col].dtype.kind == "i":
+            df[col] = pd.to_numeric(df[col], downcast="integer")
+
     return df
 
 def _detect_suspected_duplicates(

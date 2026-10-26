@@ -69,6 +69,7 @@ export default function ProjectDetailPage() {
   // Duplicate Check State
   const [checkingDuplicates, setCheckingDuplicates] = useState<boolean>(false);
   const [duplicates, setDuplicates] = useState<any[] | null>(null);
+  const [duplicatesError, setDuplicatesError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user || !id) return;
@@ -131,15 +132,19 @@ export default function ProjectDetailPage() {
     if (!work || !work.work_description) return;
     setCheckingDuplicates(true);
     setDuplicates(null);
+    setDuplicatesError(null);
     try {
       const res = await checkDuplicate(work.work_description);
       if (res && res.success && res.data && res.data.matches) {
         // filter out the exact same work if it appears
         const filtered = res.data.matches.filter((m: any) => m.work_id !== work.canonical_work_id);
         setDuplicates(filtered);
+      } else {
+        setDuplicatesError(res?.error || "Semantic search failed");
       }
     } catch (err) {
       console.error("Duplicate check error:", err);
+      setDuplicatesError("Semantic search failed -- the service didn't respond.");
     } finally {
       setCheckingDuplicates(false);
     }
@@ -630,6 +635,14 @@ export default function ProjectDetailPage() {
               </div>
             )}
             
+            {duplicatesError && (
+              <div className="mt-6 p-6 bg-amber-50 rounded-2xl border border-amber-100 text-center">
+                <AlertTriangle className="w-8 h-8 text-amber-500 mx-auto mb-2" />
+                <p className="text-amber-800 font-bold">Semantic search unavailable</p>
+                <p className="text-amber-700 text-xs mt-1 max-w-md mx-auto">{duplicatesError}</p>
+              </div>
+            )}
+
             {duplicates && duplicates.length === 0 && (
               <div className="mt-6 p-6 bg-emerald-50 rounded-2xl border border-emerald-100 text-center">
                 <CheckCircle2 className="w-8 h-8 text-emerald-500 mx-auto mb-2" />

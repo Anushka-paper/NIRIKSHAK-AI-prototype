@@ -514,12 +514,25 @@ class NLPRequest(BaseModel):
 
 @app.post("/api/nlp/check-duplicate")
 def check_duplicate(req: NLPRequest):
+    # sentence-transformers pulls in torch, which alone adds ~270MB of
+    # resident memory the moment the model is first loaded -- on a
+    # memory-constrained deployment (e.g. a 512MB free tier) that's enough
+    # to OOM-kill the whole service, taking every other endpoint down with
+    # it. DISABLE_SEMANTIC_SEARCH lets an operator opt out of this one
+    # feature to keep the rest of the service stable, rather than the
+    # whole process crashing the first time someone clicks "Find Similar
+    # Works". Unset/false by default (e.g. in local dev), where this
+    # feature works normally.
+    if os.environ.get("DISABLE_SEMANTIC_SEARCH", "").lower() in ("1", "true", "yes"):
+        raise HTTPException(
+            status_code=503,
+            detail="Semantic duplicate search is unavailable on this deployment (insufficient memory for the embedding model). The rule-based duplicate detection in Compliance Audit → Flagged Violations is unaffected.",
+        )
     try:
         from sentence_transformers import SentenceTransformer
         from sklearn.metrics.pairwise import cosine_similarity
         import pickle
-        import os
-        
+
         # Load precomputed embeddings if not in memory
         global _nlp_model, _nlp_data
         if '_nlp_model' not in globals():
@@ -559,7 +572,6 @@ def check_duplicate(req: NLPRequest):
     except Exception as e:
         import traceback
         traceback.print_exc()
-        from fastapi import HTTPException
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/dashboard/{role}/{entity}")
@@ -910,14 +922,17 @@ def get_work_risk_explanation(work_id: str):
         if not is_model_available():
             raise HTTPException(status_code=503, detail="Delay-risk model artifact not available")
 
-        dfs = []
-        for p in ["lok_sabha", "rajya_sabha"]:
-            csv_path = Path(PROJECT_ROOT) / "data" / "features" / p / "work_features.csv"
-            if csv_path.exists():
-                dfs.append(pd.read_csv(csv_path, low_memory=False))
-        if not dfs:
+        # Reuse compliance_engine's cached loader instead of independently
+        # re-reading+concatenating the same ~98K-row CSVs on every call --
+        # this endpoint used to hold its own full copy of the dataset in
+        # memory on top of the one compliance_engine.load_work_features()
+        # already caches, which is real memory pressure on a constrained
+        # deployment (doubles dataset residency any time both code paths
+        # have been hit in the same process).
+        from compliance_engine import load_work_features
+        df_all = load_work_features(parliament="all")
+        if df_all.empty:
             raise HTTPException(status_code=404, detail="Work features dataset not found")
-        df_all = pd.concat(dfs, ignore_index=True)
         match = df_all[df_all["canonical_work_id"] == work_id]
         if match.empty:
             raise HTTPException(status_code=404, detail=f"Work '{work_id}' not found")

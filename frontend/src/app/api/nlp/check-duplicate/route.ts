@@ -15,8 +15,13 @@ export async function POST(request: NextRequest) {
     });
     return NextResponse.json({ success: true, data });
   } catch (error: any) {
+    // callMLService's error message embeds the upstream JSON body as raw
+    // text (e.g. `ML Service returned status 503: {"detail":"..."}`) --
+    // pull the actual detail out so the frontend can show the real reason
+    // (e.g. "unavailable on this deployment") instead of that whole blob.
+    const match = typeof error?.message === "string" ? error.message.match(/"detail"\s*:\s*"([^"]+)"/) : null;
     return NextResponse.json(
-      { success: false, error: "Semantic search failed", details: error.message },
+      { success: false, error: match ? match[1] : "Semantic search failed", details: error.message },
       { status: 502 }
     );
   }

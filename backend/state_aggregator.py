@@ -36,22 +36,26 @@ def get_aggregated_states(parliament: str = "all") -> List[Dict[str, Any]]:
     Groups canonical work features by State/UT and computes metrics dynamically.
     Returns a sorted list of State/UT summary objects.
     """
-    parliaments = ["lok_sabha", "rajya_sabha"] if parliament == "all" else [parliament]
-    dfs = []
-    for p in parliaments:
-        csv_path = BASE_DIR / "data" / "features" / p / "work_features.csv"
-        if csv_path.exists():
-            dfs.append(pd.read_csv(csv_path, low_memory=False))
+    # Reuse compliance_engine's cached, dtype-downcasted loader instead of
+    # independently reading+holding a second full copy of the same ~98K-row
+    # CSVs -- on a memory-constrained deployment, two @lru_cache'd copies of
+    # the same dataset (this one and compliance_engine's) add up fast.
+    try:
+        from compliance_engine import load_work_features
+    except ImportError:
+        from backend.compliance_engine import load_work_features
+    df = load_work_features(parliament=parliament)
 
-    if not dfs:
+    if df.empty:
         return []
-
-    df = pd.concat(dfs, ignore_index=True) if len(dfs) > 1 else dfs[0]
     
-    # Filter valid states
+    # Filter valid states -- derive on local Series rather than assigning
+    # columns onto df, which (now that load_work_features is cached and
+    # shared across callers) would otherwise mutate that shared object.
+    state_clean = df["state"].astype(str).str.strip()
+    df = df[(state_clean != "") & (state_clean.str.lower() != "nan")].copy()
     df["state_clean"] = df["state"].astype(str).str.strip()
     df["mp_clean"] = df["mp_name"].astype(str).str.strip()
-    df = df[(df["state_clean"] != "") & (df["state_clean"].str.lower() != "nan")]
 
     state_results = []
 
@@ -137,28 +141,26 @@ def get_state_mp_performance(state_id: str, parliament: str = "all") -> List[Dic
     Groups by mp_name and computes total_works, completed_works, ongoing_works,
     pending_works, completion_rate, sanctioned_amount, expenditure_amount, utilization_rate.
     """
-    parliaments = ["lok_sabha", "rajya_sabha"] if parliament == "all" else [parliament]
-    dfs = []
-    for p in parliaments:
-        csv_path = BASE_DIR / "data" / "features" / p / "work_features.csv"
-        if csv_path.exists():
-            df_p = pd.read_csv(csv_path, low_memory=False)
-            df_p["parliament_source"] = p
-            dfs.append(df_p)
+    try:
+        from compliance_engine import load_work_features
+    except ImportError:
+        from backend.compliance_engine import load_work_features
+    df = load_work_features(parliament=parliament)
 
-    if not dfs:
+    if df.empty:
         return []
 
-    df = pd.concat(dfs, ignore_index=True) if len(dfs) > 1 else dfs[0]
-    df["state_clean"] = df["state"].astype(str).str.strip()
-    df["slug"] = df["state_clean"].apply(clean_state_id)
+    # Derive on local Series rather than assigning columns onto the shared
+    # cached df (see get_aggregated_states above for why).
+    state_clean = df["state"].astype(str).str.strip()
+    slug = state_clean.apply(clean_state_id)
 
     state_id_clean = state_id.lower().strip()
-    state_df = df[(df["slug"] == state_id_clean) | (df["state_clean"].str.lower() == state_id_clean)]
+    state_df = df[(slug == state_id_clean) | (state_clean.str.lower() == state_id_clean)]
 
     if state_df.empty:
         normalized_target = state_id_clean.replace("-", " ")
-        state_df = df[df["state_clean"].str.lower().str.replace("-", " ") == normalized_target]
+        state_df = df[state_clean.str.lower().str.replace("-", " ") == normalized_target]
 
     if state_df.empty:
         return []
